@@ -1,0 +1,73 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.9.RELEASE")
+        classpath 'org.springframework:springloaded:1.2.6.RELEASE'
+    }
+}
+
+apply plugin: 'base'
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'org.springframework.boot'
+
+
+def versionObj = new Version(major: 0, minor: 0, revision: 1)
+group = "Donkey"
+
+archivesBaseName = "DonkeyServ"
+version = "$versionObj"
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+javadoc {
+    source = sourceSets.main.allJava
+    classpath = configurations.compile
+}
+
+
+dependencies {
+    compile("org.springframework.boot:spring-boot-starter-web"){
+        exclude group:"org.springframework.boot", module: "spring-boot-starter-logging"
+        exclude group: "org.springframework.boot", module :"spring-boot-starter-tomcat"
+    }
+    compile("org.springframework.boot:spring-boot-starter-undertow")
+    compile("org.springframework.boot:spring-boot-starter-log4j2")
+
+    compile 'org.springframework.security:spring-security-web'
+    compile("org.springframework.boot:spring-boot-starter-data-jpa") {
+        exclude group:"org.springframework.boot", module: "spring-boot-starter-logging"
+    }
+    compile 'mysql:mysql-connector-java'
+
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+    testCompile('com.jayway.jsonpath:json-path')
+
+    compile("org.springframework.boot:spring-boot-starter-thymeleaf") {
+        exclude group:"org.springframework.boot", module: "spring-boot-starter-logging"
+    }
+}
+
+class Version {
+    String major, minor, revision
+
+    static String getBuild() {
+        System.getenv("BUILD_NUMBER") ?: System.getProperty("BUILD_NUMBER") ?:
+                System.getenv("GIT_COMMIT")?.substring(0, 7) ?: System.getProperty("GIT_COMMIT")?.substring(0, 7) ?:"DEV"
+    }
+
+    String toString() {
+        "${major}.${minor}.${revision}_$build"
+    }
+}
