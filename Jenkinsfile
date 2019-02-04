@@ -21,9 +21,7 @@ pipeline {
         stage('Gradle Build'){
             steps{
                 script{
-                    rtGradle = Artifactory.newGradleBuild()
-
-                    buildInfo = rtGradle.run rootDir: ".", buildFile: 'build.gradle', tasks: 'build'
+                    sh ".gradlew clean build"
                 }
 
             }
