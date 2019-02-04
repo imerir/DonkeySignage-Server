@@ -22,22 +22,20 @@ pipeline {
 
       }
     }
+
+
+    stage('Archive Artifacts') {
+      steps {
+        archiveArtifacts 'build/libs/*jar'
+      }
+    }
     stage('Build Docker image') {
-      parallel {
-        stage('Build Docker image') {
           steps {
             script {
               app = docker.build("donkeysignage/donkeysignage-server",'--build-arg BUILD_NBR=${BUILD_NUMBER} --build-arg BRANCH_NAME=${BRANCH_NAME} --rm=true .')
             }
 
           }
-        }
-        stage('Archive Artifacts') {
-          steps {
-            archiveArtifacts 'build/libs/*jar'
-          }
-        }
-      }
     }
     stage('Cleaning') {
       steps {
