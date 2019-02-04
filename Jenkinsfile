@@ -29,6 +29,7 @@ pipeline {
         archiveArtifacts 'build/libs/*jar'
       }
     }
+
     stage('Build Docker image') {
           steps {
             script {
