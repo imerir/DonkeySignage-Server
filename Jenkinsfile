@@ -20,9 +20,11 @@ pipeline {
         }
         stage('Gradle Build'){
             steps{
-                def rtGradle = Artifactory.newGradleBuild()
+                script{
+                    rtGradle = Artifactory.newGradleBuild()
 
-                buildInfo = rtGradle.run rootDir: ".", buildFile: 'build.gradle', tasks: 'build'
+                    buildInfo = rtGradle.run rootDir: ".", buildFile: 'build.gradle', tasks: 'build'
+                }
 
             }
 
