@@ -45,20 +45,16 @@ pipeline {
              * Second, the 'latest' tag.
              * Pushing multiple tags is cheap, as all the layers are reused. */
             steps {
-//                withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'docker-hub-credentials', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
-//                    sh 'docker login -u $USERNAME -p $PASSWORD'
-//                    script {
-//
-//                    }
-//                }
-                script {
-                    if (env.BRANCH_NAME == 'master') {
-                        app.push("master")
-                    } else {
-                        app.push("devel")
+                withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+                    sh 'docker login -u $USERNAME -p $PASSWORD'
+                    script {
+                        if (env.BRANCH_NAME == 'master') {
+                            app.push("master")
+                        } else {
+                            app.push("devel")
+                        }
                     }
                 }
-
             }
         }
 
