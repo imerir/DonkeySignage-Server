@@ -30,6 +30,16 @@ pipeline {
             }
         }
 
+        stage('Javadoc') {
+            steps {
+                script {
+                    sh "./gradlew javadoc"
+                    publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: true, reportDir: 'build/docs/javadoc', reportFiles: 'index.html', reportName: 'Javadoc', reportTitles: ''])
+                }
+
+            }
+        }
+
         stage('Build Docker image') {
             steps {
                 script {
