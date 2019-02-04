@@ -34,7 +34,7 @@ pipeline {
             steps {
                 script {
                     sh "./gradlew javadoc"
-                    publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: true, reportDir: 'build/docs/javadoc', reportFiles: 'index.html', reportName: 'Javadoc', reportTitles: ''])
+                    publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: true, reportDir: 'build/docs/javadoc', reportFiles: 'overview-summary.html', reportName: 'Javadoc', reportTitles: ''])
                 }
 
             }
