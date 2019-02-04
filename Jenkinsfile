@@ -34,7 +34,7 @@ pipeline {
              * docker build on the command line */
             steps{
                 script{
-                    app = docker.build("DonkeySignage/DonkeySignage-Server",'--build-arg BUILD_NBR=${BUILD_NUMBER} --build-arg BRANCH_NAME=${BRANCH_NAME} --rm=true .')
+                    app = docker.build("donkeysignage/donkeysignage-server",'--build-arg BUILD_NBR=${BUILD_NUMBER} --build-arg BRANCH_NAME=${BRANCH_NAME} --rm=true .')
                 }
 
             }
