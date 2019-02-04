@@ -1,6 +1,5 @@
 pipeline {
     agent any
-    def rtGradle = Artifactory.newGradleBuild()
 
     stages {
 
@@ -21,7 +20,9 @@ pipeline {
         }
         stage('Gradle Build'){
             steps{
-                        buildInfo = rtGradle.run rootDir: ".", buildFile: 'build.gradle', tasks: 'build'
+                def rtGradle = Artifactory.newGradleBuild()
+
+                buildInfo = rtGradle.run rootDir: ".", buildFile: 'build.gradle', tasks: 'build'
 
             }
 
