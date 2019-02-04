@@ -1,5 +1,7 @@
 pipeline {
     agent any
+    def rtGradle = Artifactory.newGradleBuild()
+
     stages {
 
         stage('Clone') { // for display purposes
@@ -19,13 +21,8 @@ pipeline {
         }
         stage('Gradle Build'){
             steps{
-                script {
-                    if (env.BRANCH_NAME == 'master') {
-                        build job: 'DonkeySignage-Server-Gradle', wait: true
-                    } else {
-                        build job: 'DonkeySignage-Server-Gradle-devel', wait: true
-                    }
-                }
+                        buildInfo = rtGradle.run rootDir: ".", buildFile: 'build.gradle', tasks: 'build'
+
             }
 
         }
