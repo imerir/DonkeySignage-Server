@@ -56,13 +56,13 @@ pipeline {
                         }
                     }
                 }
-            }*/
+            }
 
 
 
 
 
-        }
+        }*/
         stage('Cleaning'){
             steps{
                 sh "docker image prune -f"
