@@ -50,12 +50,16 @@ public class ScreenApiController {
 
     @RequestMapping(value = {"/isRegistered"}, method = RequestMethod.GET)
     public ResponseEntity<ScreenRegisterJson> isRegistered (@CookieValue(value = "uuid")String uuid){
+        log.debug("Uuid send by cookie : " + uuid);
         if(uuid != null && !uuid.equals("")){
             ScreenRegister newScreenRegister = screenRegisterRep.getScreenRegisterByUuid(uuid);
+            log.debug("ScreenRegister get in db: " + newScreenRegister);
             if(newScreenRegister != null){
                 ScreenRegisterJson newScreenRegisterJson = new ScreenRegisterJson(newScreenRegister.getToken(), newScreenRegister.getUuid());
+                log.debug("Send Json " + newScreenRegisterJson);
                 return new ResponseEntity<>(newScreenRegisterJson, HttpStatus.OK);
             }else{
+                log.debug("ScreenRegister not in db");
                 return new ResponseEntity<>(HttpStatus.FORBIDDEN);
             }
         }else{
