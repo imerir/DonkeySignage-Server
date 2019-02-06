@@ -6,6 +6,7 @@ import Donkey.Database.Entity.ScreenRegister;
 import Donkey.Database.Entity.TemporalRegister;
 import Donkey.Database.Repository.ScreenRegisterRepository;
 import Donkey.Database.Repository.TemporalRegisterRepository;
+import Donkey.Tools.IpTools;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,33 +34,9 @@ public class ScreenApiController {
         this.screenRegisterRep = screenRegisterRep;
     }
 
-    private final String[] IP_HEADER_CANDIDATES = {
-            "X-Forwarded-For",
-            "Proxy-Client-IP",
-            "WL-Proxy-Client-IP",
-            "HTTP_X_FORWARDED_FOR",
-            "HTTP_X_FORWARDED",
-            "HTTP_X_CLUSTER_CLIENT_IP",
-            "HTTP_CLIENT_IP",
-            "HTTP_FORWARDED_FOR",
-            "HTTP_FORWARDED",
-            "HTTP_VIA",
-            "REMOTE_ADDR" };
-
-    public String getClientIpAddress(HttpServletRequest request) {
-        for (String header : IP_HEADER_CANDIDATES) {
-            String ip = request.getHeader(header);
-            log.debug("Ip bypass : " + ip);
-            if (ip != null && ip.length() != 0 && !"unknown".equalsIgnoreCase(ip)) {
-                return ip;
-            }
-        }
-        return request.getRemoteAddr();
-    }
-
     @RequestMapping(value = {"/test"},method = RequestMethod.GET)
     public String test(HttpServletRequest request){
-        return  getClientIpAddress(request);
+        return IpTools.getInstance().getClientIpAddress(request);
     }
 
     @RequestMapping(value = {"/getToken"}, method = RequestMethod.GET)

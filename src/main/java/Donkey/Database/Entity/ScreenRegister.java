@@ -13,23 +13,16 @@ public class ScreenRegister {
     private String ip;
     private String token;
     private String uuid;
+    //private Groupe groupe;
 
     public ScreenRegister(){
 
     }
 
-    public ScreenRegister(String ip, String token, String uuid){
-        this.ip = ip;
+    public ScreenRegister(String token, String uuid /*,Groupe groupe*/){
         this.token = token;
         this.uuid = uuid;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
+        //this.groupe = groupe;
     }
 
     public String getIp() {

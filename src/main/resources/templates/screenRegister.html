@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <meta charset="UTF-8"/>
+    <title>Give your Temporary Token</title>
+</head>
+<body>
+    <form action="#" th:action="@{/screenRegister}" th:object="${tmpTokenForm}" method="POST">
+        <label for="tempToken"> : </label>
+        <input type="text" id="tempToken" name="tempToken"  th:field="*{tempToken}"/>
+        <br/>
+        <input type="submit" value="Submit"/>
+    </form>
+</body>
+</html>
