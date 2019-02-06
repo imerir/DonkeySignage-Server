@@ -1,32 +1,36 @@
 package Donkey.Api;
 
+import Donkey.Api.JSON.ScreenRegisterJson;
 import Donkey.Api.JSON.TemporalRegisterJson;
+import Donkey.Database.Entity.ScreenRegister;
 import Donkey.Database.Entity.TemporalRegister;
+import Donkey.Database.Repository.ScreenRegisterRepository;
 import Donkey.Database.Repository.TemporalRegisterRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/screen")
 public class ScreenApiController {
+    private final ScreenRegisterRepository screenRegisterRep;
     private final TemporalRegisterRepository tmpRegisterRep;
     private Logger log = LogManager.getLogger();
 
     @Autowired
-    public ScreenApiController(TemporalRegisterRepository tmpRegisterRep) {
+    public ScreenApiController(TemporalRegisterRepository tmpRegisterRep, ScreenRegisterRepository screenRegisterRep) {
         this.tmpRegisterRep = tmpRegisterRep;
+        this.screenRegisterRep = screenRegisterRep;
     }
 
     @RequestMapping(value = {"/getToken"}, method = RequestMethod.GET)
@@ -45,15 +49,20 @@ public class ScreenApiController {
     }
 
     @RequestMapping(value = {"/isRegistered"}, method = RequestMethod.GET)
-    public ResponseEntity<String> isRegistered (HttpServletRequest request){
-        if(tmpRegisterRep.getTemporalRegisterByIp(request.getRemoteAddr()) != null){
-            return new ResponseEntity<>("", HttpStatus.OK);
+    public ResponseEntity<ScreenRegisterJson> isRegistered (@CookieValue(value = "uuid")String uuid){
+        if(uuid != null && !uuid.equals("")){
+            ScreenRegister newScreenRegister = screenRegisterRep.getScreenRegisterByUuid(uuid);
+            if(newScreenRegister != null){
+                ScreenRegisterJson newScreenRegisterJson = new ScreenRegisterJson(newScreenRegister.getToken(), newScreenRegister.getUuid());
+                return new ResponseEntity<>(newScreenRegisterJson, HttpStatus.OK);
+            }else{
+                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            }
         }else{
-            return new ResponseEntity<>("", HttpStatus.FORBIDDEN);
+            log.debug("Bad Cookie");
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
         }
     }
-
-
 
     /**
      * Generate short check token
