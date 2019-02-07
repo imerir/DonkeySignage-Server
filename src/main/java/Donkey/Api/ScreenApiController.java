@@ -2,11 +2,13 @@ package Donkey.Api;
 
 import Donkey.Api.JSON.ScreenRegisterJson;
 import Donkey.Api.JSON.TemporalRegisterJson;
+import Donkey.Api.PostForm.UuidPostForm;
 import Donkey.Database.Entity.ScreenRegister;
 import Donkey.Database.Entity.TemporalRegister;
 import Donkey.Database.Repository.ScreenRegisterRepository;
 import Donkey.Database.Repository.TemporalRegisterRepository;
 import Donkey.Tools.IpTools;
+import Donkey.Tools.UserTools;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.security.SecureRandom;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/screen")
@@ -39,19 +36,21 @@ public class ScreenApiController {
         return IpTools.getInstance().getClientIpAddress(request);
     }
 
-    @RequestMapping(value = {"/getToken"}, method = RequestMethod.GET)
-    public TemporalRegisterJson getToken(HttpServletRequest request){
+    //To Modify
+    @PostMapping(value = {"/getToken"})
+    public TemporalRegisterJson getToken(HttpServletRequest request, @ModelAttribute UuidPostForm uuid){
         TemporalRegister newTmpRegister;
-        if(tmpRegisterRep.getTemporalRegisterByIp(request.getRemoteAddr()) == null){
-            newTmpRegister = new TemporalRegister(request.getRemoteAddr(),generateCheckToken(),generateUuid(),generateExpirationDateLocalDate());
+        log.debug("Post on getToken, value of uuid : " + uuid.getUuid());
+        if(tmpRegisterRep.getTemporalRegisterByUuid(uuid.getUuid()) == null){
+            newTmpRegister = new TemporalRegister(request.getRemoteAddr(), UserTools.getInstance().generateCheckToken(true),uuid.getUuid(),UserTools.getInstance().generateExpirationDateLocalDate());
         }else
         {
-            newTmpRegister = tmpRegisterRep.getTemporalRegisterByIp(request.getRemoteAddr());
-            newTmpRegister.setTempToken(generateCheckToken());
-            newTmpRegister.setExpirationDate(generateExpirationDateLocalDate());
+            newTmpRegister = tmpRegisterRep.getTemporalRegisterByUuid(uuid.getUuid());
+            newTmpRegister.setTempToken(UserTools.getInstance().generateCheckToken(true));
+            newTmpRegister.setExpirationDate(UserTools.getInstance().generateExpirationDateLocalDate());
         }
         tmpRegisterRep.save(newTmpRegister);
-        return new TemporalRegisterJson(newTmpRegister.getTempToken(),newTmpRegister.getUuid(),generateExpirationDateStr());
+        return new TemporalRegisterJson(newTmpRegister.getTempToken(),newTmpRegister.getUuid(),UserTools.getInstance().generateExpirationDateStr());
     }
 
     @RequestMapping(value = {"/isRegistered"}, method = RequestMethod.GET)
@@ -72,46 +71,5 @@ public class ScreenApiController {
             log.debug("Bad Cookie");
             return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
         }
-    }
-
-    /**
-     * Generate short check token
-     * @return check token as string
-     */
-    private String generateCheckToken(){
-        SecureRandom random = new SecureRandom();
-        long longToken = Math.abs(random.nextLong());
-        String randomStr = Long.toString( longToken, 16 );
-        randomStr = randomStr.substring(0,4);
-        randomStr = randomStr.toUpperCase();
-        return randomStr;
-    }
-
-    /**
-     * Generate an Uuid
-     * @return Uuid as string
-     */
-    private String generateUuid(){
-        UUID uuid = UUID.randomUUID();
-        return uuid.toString();
-    }
-
-    /**
-     * Generate Day Date + 2 day
-     * @return Date as LocalDate
-     */
-    private LocalDate generateExpirationDateLocalDate(){
-        LocalDate expirationDate = LocalDate.now().plusDays(2);
-        return expirationDate;
-    }
-
-    /**
-     * Generate Day Date + 2 day
-     * @return Date as string
-     */
-    private String generateExpirationDateStr(){
-        LocalDate expirationDate = LocalDate.now().plusDays(2);
-        DateTimeFormatter formatters = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        return expirationDate.format(formatters);
     }
 }

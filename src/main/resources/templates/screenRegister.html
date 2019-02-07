@@ -6,7 +6,7 @@
 </head>
 <body>
     <form action="#" th:action="@{/screenRegister}" th:object="${tmpTokenForm}" method="POST">
-        <label for="tempToken"> : </label>
+        <label for="tempToken"> Temporary Token : </label>
         <input type="text" id="tempToken" name="tempToken"  th:field="*{tempToken}"/>
         <br/>
         <input type="submit" value="Submit"/>
