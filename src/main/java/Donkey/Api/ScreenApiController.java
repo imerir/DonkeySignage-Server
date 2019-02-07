@@ -38,7 +38,7 @@ public class ScreenApiController {
 
     //To Modify
     @PostMapping(value = {"/getToken"})
-    public TemporalRegisterJson getToken(HttpServletRequest request, @ModelAttribute UuidPostForm uuid){
+    public TemporalRegisterJson getToken(HttpServletRequest request, @RequestBody UuidPostForm uuid){
         TemporalRegister newTmpRegister;
         log.debug("Post on getToken, value of uuid : " + uuid.getUuid());
         if(tmpRegisterRep.getTemporalRegisterByUuid(uuid.getUuid()) == null){
