@@ -30,28 +30,32 @@ public class ApiController {
 
     @PostMapping("/addGroup")
     public GroupEntity addGroup(@ModelAttribute GroupJson groupJson){
-        List<GroupEntity> entryInDB = new ArrayList<>();
-        GroupEntity newGroup = new GroupEntity();
-        entryInDB = groupRepository.getGroupEntityByName(groupJson.name);
-        if(entryInDB.size() == 0){
-            //TODO
-            //new entry
-            newGroup.setName(groupJson.name);
-
-            if(groupJson.parent == -1)
-                newGroup.setParent(null);
-            else
-                newGroup.setParent(groupRepository.getGroupEntityById(groupJson.parent));
-
-            
-        }else if (entryInDB.size() == 1){
-            //TODO
-            //modify row in db
-        }else {
-            //TODO
-            //check if
-        }
-
+        GroupEntity newGroup;
+//        if(groupJson.parent == -1){
+//            Group
+//        }else{
+//
+//        }
+//        if(entryInDB.size() == 0){
+//            //TODO
+//            //new entry
+//            newGroup.setName(groupJson.name);
+//
+//            if(groupJson.parent == -1)
+//                newGroup.setParent(null);
+//            else
+//                newGroup.setParent(groupRepository.getGroupEntityById(groupJson.parent));
+//
+//            newGroup.getScreenList().clear();
+//            newGroup.getChildrens().clear();
+//        }else if (entryInDB.size() == 1){
+//            //TODO
+//            newGroup.setName(entryInDB.get(0).getName());
+//        }else {
+//            //TODO
+//            //check if
+//        }
+//        groupRepository.save(newGroup);
         return newGroup;
     }
 

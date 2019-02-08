@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface GroupRepository extends CrudRepository<GroupEntity,Integer> {
     GroupEntity getGroupEntityById(int id);
-    List<GroupEntity> getGroupEntityByName(String name);
+    GroupEntity getGroupEntityByNameAndParent(String name, GroupEntity parent);
 }
