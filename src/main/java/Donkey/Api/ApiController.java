@@ -37,10 +37,13 @@ public class ApiController {
             //TODO
             //new entry
             newGroup.setName(groupJson.name);
-            if(groupJson.parent == -1s)
+
+            if(groupJson.parent == -1)
                 newGroup.setParent(null);
             else
                 newGroup.setParent(groupRepository.getGroupEntityById(groupJson.parent));
+
+            
         }else if (entryInDB.size() == 1){
             //TODO
             //modify row in db
