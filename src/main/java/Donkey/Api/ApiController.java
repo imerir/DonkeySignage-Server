@@ -30,7 +30,7 @@ public class ApiController {
 
     @PostMapping("/addGroup")
     public GroupEntity addGroup(@ModelAttribute GroupJson groupJson){
-        GroupEntity newGroup;
+        GroupEntity newGroup = new GroupEntity();
 //        if(groupJson.parent == -1){
 //            Group
 //        }else{
