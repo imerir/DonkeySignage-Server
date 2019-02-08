@@ -1,12 +1,10 @@
 package Donkey.WebSite.FormClass;
 
-import Donkey.Database.Entity.Groupe;
-
 public class ScreenRegisterForm {
 
     public String name;
     public String uuid;
-    //private Groupe groupe;
+    //private GroupEntity groupe;
 
     public String getUuid() {
         return uuid;

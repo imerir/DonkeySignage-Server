@@ -1,12 +1,11 @@
 package Donkey.Database.Entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import javax.persistence.*;
 
 @Entity
-public class ScreenRegister {
+public class ScreenEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
@@ -14,17 +13,21 @@ public class ScreenRegister {
     private String token;
     private String uuid;
     private String name;
-    //private Groupe groupe;
 
-    public ScreenRegister(){
+    @ManyToOne
+    @JoinColumn(nullable = true)
+    @JsonIgnore
+    private GroupEntity group;
+
+    public ScreenEntity(){
 
     }
 
-    public ScreenRegister(String token, String uuid, String name /*,Groupe groupe*/){
+    public ScreenEntity(String token, String uuid, String name ,GroupEntity group){
         this.token = token;
         this.uuid = uuid;
         this.name = name;
-        //this.groupe = groupe;
+        this.group = group;
     }
 
     public String getIp() {
@@ -57,5 +60,21 @@ public class ScreenRegister {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public GroupEntity getGroup() {
+        return group;
+    }
+
+    public void setGroup(GroupEntity group) {
+        this.group = group;
     }
 }

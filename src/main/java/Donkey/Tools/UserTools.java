@@ -27,17 +27,13 @@ public class UserTools {
      *  isShortToken is a boolean, if true = short token, false = long token
      * @return check token as string
      */
-    public String generateCheckToken(boolean isShortToken){
+    public String generateCheckToken(){
         SecureRandom random = new SecureRandom();
         long longToken = Math.abs(random.nextLong());
         String randomStr = Long.toString( longToken, 16 );
-        if(isShortToken){
-            randomStr = randomStr.substring(0,4);
-            randomStr = randomStr.toUpperCase();
-            return randomStr;
-        }else{
-            return randomStr;
-        }
+        randomStr = randomStr.substring(0,4);
+        randomStr = randomStr.toUpperCase();
+        return randomStr;
     }
 
     /**

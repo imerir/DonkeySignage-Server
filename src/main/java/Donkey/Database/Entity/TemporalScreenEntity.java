@@ -7,7 +7,7 @@ import javax.persistence.Id;
 import java.time.LocalDate;
 
 @Entity
-public class TemporalRegister {
+public class TemporalScreenEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
@@ -16,11 +16,11 @@ public class TemporalRegister {
     private String uuid;
     private LocalDate expirationDate;
 
-    public TemporalRegister(){
+    public TemporalScreenEntity(){
 
     }
 
-    public TemporalRegister (String ip, String tempToken, String uuid, LocalDate expirationDate){
+    public TemporalScreenEntity(String ip, String tempToken, String uuid, LocalDate expirationDate){
         this.ip = ip;
         this.tempToken = tempToken;
         this.uuid = uuid;

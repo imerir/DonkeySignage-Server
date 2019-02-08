@@ -3,10 +3,10 @@ package Donkey.Api;
 import Donkey.Api.JSON.ScreenRegisterJson;
 import Donkey.Api.JSON.TemporalRegisterJson;
 import Donkey.Api.PostForm.UuidPostForm;
-import Donkey.Database.Entity.ScreenRegister;
-import Donkey.Database.Entity.TemporalRegister;
-import Donkey.Database.Repository.ScreenRegisterRepository;
-import Donkey.Database.Repository.TemporalRegisterRepository;
+import Donkey.Database.Entity.ScreenEntity;
+import Donkey.Database.Entity.TemporalScreenEntity;
+import Donkey.Database.Repository.ScreenRepository;
+import Donkey.Database.Repository.TemporalScreenRepository;
 import Donkey.Tools.IpTools;
 import Donkey.Tools.UserTools;
 import org.apache.logging.log4j.LogManager;
@@ -18,15 +18,18 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
+/**
+ *
+ */
 @RestController
 @RequestMapping("/api/screen")
 public class ScreenApiController {
-    private final ScreenRegisterRepository screenRegisterRep;
-    private final TemporalRegisterRepository tmpRegisterRep;
+    private final ScreenRepository screenRegisterRep;
+    private final TemporalScreenRepository tmpRegisterRep;
     private Logger log = LogManager.getLogger();
 
     @Autowired
-    public ScreenApiController(TemporalRegisterRepository tmpRegisterRep, ScreenRegisterRepository screenRegisterRep) {
+    public ScreenApiController(TemporalScreenRepository tmpRegisterRep, ScreenRepository screenRegisterRep) {
         this.tmpRegisterRep = tmpRegisterRep;
         this.screenRegisterRep = screenRegisterRep;
     }
@@ -36,28 +39,38 @@ public class ScreenApiController {
         return IpTools.getInstance().getClientIpAddress(request);
     }
 
-    //To Modify
+    /**
+     * Request for obtain the temporary token, add screen in table TemporalScreen
+     * @param request, for obtain the ip address
+     * @param uuid, uniq for every screen
+     * @return TemporalRegisterJson, json who contains all informations of screen
+     */
     @PostMapping(value = {"/getToken"})
     public TemporalRegisterJson getToken(HttpServletRequest request, @RequestBody UuidPostForm uuid){
-        TemporalRegister newTmpRegister;
+        TemporalScreenEntity newTmpRegister;
         log.debug("Post on getToken, value of uuid : " + uuid.getUuid());
         if(tmpRegisterRep.getTemporalRegisterByUuid(uuid.getUuid()) == null){
-            newTmpRegister = new TemporalRegister(request.getRemoteAddr(), UserTools.getInstance().generateCheckToken(true),uuid.getUuid(),UserTools.getInstance().generateExpirationDateLocalDate());
+            newTmpRegister = new TemporalScreenEntity(request.getRemoteAddr(), UserTools.getInstance().generateCheckToken(),uuid.getUuid(),UserTools.getInstance().generateExpirationDateLocalDate());
         }else
         {
             newTmpRegister = tmpRegisterRep.getTemporalRegisterByUuid(uuid.getUuid());
-            newTmpRegister.setTempToken(UserTools.getInstance().generateCheckToken(true));
+            newTmpRegister.setTempToken(UserTools.getInstance().generateCheckToken());
             newTmpRegister.setExpirationDate(UserTools.getInstance().generateExpirationDateLocalDate());
         }
         tmpRegisterRep.save(newTmpRegister);
         return new TemporalRegisterJson(newTmpRegister.getTempToken(),newTmpRegister.getUuid(),UserTools.getInstance().generateExpirationDateStr());
     }
 
+    /**
+     * Check if the screen was add in the table screen_register
+     * @param uuid
+     * @return ResponseEntity, send a json and HTTP 200 if add, and 403 if not
+     */
     @RequestMapping(value = {"/isRegistered"}, method = RequestMethod.GET)
     public ResponseEntity<ScreenRegisterJson> isRegistered (@CookieValue(value = "uuid")String uuid){
         log.debug("Uuid send by cookie : " + uuid);
         if(uuid != null && !uuid.equals("")){
-            ScreenRegister newScreenRegister = screenRegisterRep.getScreenRegisterByUuid(uuid);
+            ScreenEntity newScreenRegister = screenRegisterRep.getScreenRegisterByUuid(uuid);
             log.debug("ScreenRegister get in db: " + newScreenRegister);
             if(newScreenRegister != null){
                 ScreenRegisterJson newScreenRegisterJson = new ScreenRegisterJson(newScreenRegister.getToken(), newScreenRegister.getUuid());
