@@ -1,24 +1,33 @@
 package Donkey.Tools;
 
+import Donkey.Database.Entity.ScreenEntity;
+import Donkey.Database.Repository.ScreenRepository;
+import Donkey.SpringContext;
+import Donkey.Tools.Exception.TokenNotMatch;
+import Donkey.Tools.Exception.UnknownUUID;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.context.ApplicationContext;
 
 import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
-public class UserTools {
+public class ScreenTools {
     private Logger log = LogManager.getLogger();
 
-    private static UserTools INSTANCE;
+    private ScreenRepository screenRepository;
 
-    private UserTools(){
+    private static ScreenTools INSTANCE;
 
+    private ScreenTools(){
+        ApplicationContext context = SpringContext.getAppContext();
+        screenRepository = (ScreenRepository) context.getBean("screenRepository");
     }
 
-    public static UserTools getInstance(){
-        return (INSTANCE == null) ? new UserTools() : INSTANCE;
+    public static ScreenTools getInstance(){
+        return (INSTANCE == null) ? new ScreenTools() : INSTANCE;
     }
 
     /**
@@ -50,8 +59,7 @@ public class UserTools {
      * @return Date as LocalDate
      */
     public LocalDate generateExpirationDateLocalDate(){
-        LocalDate expirationDate = LocalDate.now().plusDays(2);
-        return expirationDate;
+        return LocalDate.now().plusDays(2);
     }
 
     /**
@@ -63,4 +71,16 @@ public class UserTools {
         DateTimeFormatter formatters = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         return expirationDate.format(formatters);
     }
+
+    public ScreenEntity screenLogin(String uuid, String token) throws UnknownUUID, TokenNotMatch {
+        ScreenEntity screenEntity = screenRepository.getScreenRegisterByUuid(uuid);
+        if(screenEntity == null)
+            throw new UnknownUUID();
+
+        if(!screenEntity.getToken().equals(token))
+            throw new TokenNotMatch();
+
+        return screenEntity;
+    }
+
 }

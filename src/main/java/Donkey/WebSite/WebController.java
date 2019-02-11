@@ -4,7 +4,7 @@ import Donkey.Database.Entity.ScreenEntity;
 import Donkey.Database.Entity.TemporalScreenEntity;
 import Donkey.Database.Repository.ScreenRepository;
 import Donkey.Database.Repository.TemporalScreenRepository;
-import Donkey.Tools.UserTools;
+import Donkey.Tools.ScreenTools;
 import Donkey.WebSite.FormClass.ScreenRegisterForm;
 import Donkey.WebSite.FormClass.TmpTokenForm;
 import org.apache.logging.log4j.LogManager;
@@ -80,13 +80,13 @@ public class WebController {
                 newEntry.setIp(tmpReg.getIp());
                 newEntry.setUuid(tmpReg.getUuid());
                 newEntry.setName(screenRegisterForm.getName());
-                newEntry.setToken(UserTools.getInstance().generateUuid());
+                newEntry.setToken(ScreenTools.getInstance().generateUuid());
             }else{
                 ScreenEntity tmpScreen = screenRegRep.getScreenRegisterByUuid(screenRegisterForm.getUuid());
                 newEntry.setName(tmpScreen.getName());
                 newEntry.setUuid(tmpScreen.getUuid());
                 newEntry.setIp(tmpScreen.getIp());
-                newEntry.setToken(UserTools.getInstance().generateUuid());
+                newEntry.setToken(ScreenTools.getInstance().generateUuid());
             }
             screenRegRep.save(newEntry);
             tmpRegisterRep.delete(tmpRegisterRep.getTemporalRegisterByUuid(screenRegisterForm.getUuid()));

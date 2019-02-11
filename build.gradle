@@ -37,27 +37,43 @@ javadoc {
 }
 
 
+
 dependencies {
     compile('org.glassfish.jaxb:jaxb-runtime:2.3.0.1')
     compile("org.springframework.boot:spring-boot-starter-web"){
-        exclude group:"org.springframework.boot", module: "spring-boot-starter-logging"
-        exclude group: "org.springframework.boot", module :"spring-boot-starter-tomcat"
+        exclude group: "org.springframework.boot", module: "spring-boot-starter-logging"
+        exclude module: "spring-boot-starter-tomcat"
+        exclude group: "org.apache.tomcat.embed", module: "tomcat-embed-websocket"
     }
+    compile("org.springframework.boot:spring-boot-starter-websocket"){
+        exclude group: "org.springframework.boot", module: "spring-boot-starter-logging"
+        exclude group: "org.springframework.boot", module: "spring-boot-starter-tomcat"
+        exclude group: "org.apache.tomcat.embed", module: "tomcat-embed-websocket"
+    }
+    compile ("org.springframework.security:spring-security-web"){
+        exclude group: "org.springframework.boot", module: "spring-boot-starter-tomcat"
+    }
+
+    compile("org.springframework.boot:spring-boot-starter-thymeleaf") {
+        exclude group:"org.springframework.boot", module: "spring-boot-starter-logging"
+        exclude group: "org.springframework.boot", module: "spring-boot-starter-tomcat"
+    }
+    
+    
     compile("org.springframework.boot:spring-boot-starter-undertow")
     compile("org.springframework.boot:spring-boot-starter-log4j2")
 
-    compile 'org.springframework.security:spring-security-web'
+    
+    
     compile("org.springframework.boot:spring-boot-starter-data-jpa") {
         exclude group:"org.springframework.boot", module: "spring-boot-starter-logging"
     }
     compile 'mysql:mysql-connector-java'
 
-    testCompile('org.springframework.boot:spring-boot-starter-test')
-    testCompile('com.jayway.jsonpath:json-path')
+//    testCompile('org.springframework.boot:spring-boot-starter-test')
+//    testCompile('com.jayway.jsonpath:json-path')
 
-    compile("org.springframework.boot:spring-boot-starter-thymeleaf") {
-        exclude group:"org.springframework.boot", module: "spring-boot-starter-logging"
-    }
+    
 }
 
 class Version {

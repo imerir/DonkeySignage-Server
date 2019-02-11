@@ -8,7 +8,7 @@ import Donkey.Database.Entity.TemporalScreenEntity;
 import Donkey.Database.Repository.ScreenRepository;
 import Donkey.Database.Repository.TemporalScreenRepository;
 import Donkey.Tools.IpTools;
-import Donkey.Tools.UserTools;
+import Donkey.Tools.ScreenTools;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,15 +50,15 @@ public class ScreenApiController {
         TemporalScreenEntity newTmpRegister;
         log.debug("Post on getToken, value of uuid : " + uuid.getUuid());
         if(tmpRegisterRep.getTemporalRegisterByUuid(uuid.getUuid()) == null){
-            newTmpRegister = new TemporalScreenEntity(request.getRemoteAddr(), UserTools.getInstance().generateCheckToken(),uuid.getUuid(),UserTools.getInstance().generateExpirationDateLocalDate());
+            newTmpRegister = new TemporalScreenEntity(request.getRemoteAddr(), ScreenTools.getInstance().generateCheckToken(),uuid.getUuid(), ScreenTools.getInstance().generateExpirationDateLocalDate());
         }else
         {
             newTmpRegister = tmpRegisterRep.getTemporalRegisterByUuid(uuid.getUuid());
-            newTmpRegister.setTempToken(UserTools.getInstance().generateCheckToken());
-            newTmpRegister.setExpirationDate(UserTools.getInstance().generateExpirationDateLocalDate());
+            newTmpRegister.setTempToken(ScreenTools.getInstance().generateCheckToken());
+            newTmpRegister.setExpirationDate(ScreenTools.getInstance().generateExpirationDateLocalDate());
         }
         tmpRegisterRep.save(newTmpRegister);
-        return new TemporalRegisterJson(newTmpRegister.getTempToken(),newTmpRegister.getUuid(),UserTools.getInstance().generateExpirationDateStr());
+        return new TemporalRegisterJson(newTmpRegister.getTempToken(),newTmpRegister.getUuid(), ScreenTools.getInstance().generateExpirationDateStr());
     }
 
     /**
