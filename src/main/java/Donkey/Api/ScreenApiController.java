@@ -1,10 +1,10 @@
 package Donkey.Api;
 
-import Donkey.Api.JSON.ScreenRegisterJson;
-import Donkey.Api.JSON.TemporalRegisterJson;
-import Donkey.Api.JSON.UuidJson;
+import Donkey.Api.JSON.*;
+import Donkey.Database.Entity.GroupEntity;
 import Donkey.Database.Entity.ScreenEntity;
 import Donkey.Database.Entity.TemporalScreenEntity;
+import Donkey.Database.Repository.GroupRepository;
 import Donkey.Database.Repository.ScreenRepository;
 import Donkey.Database.Repository.TemporalScreenRepository;
 import Donkey.Tools.IpTools;
@@ -26,12 +26,14 @@ import javax.servlet.http.HttpServletRequest;
 public class ScreenApiController {
     private final ScreenRepository screenRegisterRep;
     private final TemporalScreenRepository tmpRegisterRep;
+    private final GroupRepository grpRep;
     private Logger log = LogManager.getLogger();
 
     @Autowired
-    public ScreenApiController(TemporalScreenRepository tmpRegisterRep, ScreenRepository screenRegisterRep) {
+    public ScreenApiController(TemporalScreenRepository tmpRegisterRep, ScreenRepository screenRegisterRep, GroupRepository grpRep) {
         this.tmpRegisterRep = tmpRegisterRep;
         this.screenRegisterRep = screenRegisterRep;
+        this.grpRep = grpRep;
     }
 
     @RequestMapping(value = {"/test"},method = RequestMethod.GET)
@@ -83,6 +85,38 @@ public class ScreenApiController {
         }else{
             log.debug("Bad Cookie");
             return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
+    }
+
+    @PostMapping(value = {"/addScreen"})
+    public ScreenJson addScreen (@RequestBody ScreenJson screenJson){
+        if(screenJson.uuid != null && !screenJson.uuid.isEmpty()){
+            ScreenEntity newEntry = new ScreenEntity();
+            if(screenRegisterRep.getScreenRegisterByUuid(screenJson.uuid) == null){
+                TemporalScreenEntity tmpReg = tmpRegisterRep.getTemporalRegisterByUuid(screenJson.uuid);
+                newEntry.setIp(tmpReg.getIp());
+                newEntry.setUuid(tmpReg.getUuid());
+                newEntry.setName(screenJson.name);
+                newEntry.setToken(ScreenTools.getInstance().generateUuid());
+                newEntry.setGroup(grpRep.getGroupEntityById(screenJson.groupId));
+            }else{
+                ScreenEntity tmpScreen = screenRegisterRep.getScreenRegisterByUuid(screenJson.uuid);
+                newEntry.setName(tmpScreen.getName());
+                newEntry.setUuid(tmpScreen.getUuid());
+                newEntry.setIp(tmpScreen.getIp());
+                newEntry.setToken(ScreenTools.getInstance().generateUuid());
+                newEntry.setGroup(grpRep.getGroupEntityById(screenJson.groupId));
+            }
+            screenRegisterRep.save(newEntry);
+            tmpRegisterRep.delete(tmpRegisterRep.getTemporalRegisterByUuid(screenJson.uuid));
+
+            GroupEntity groupNeedChange = grpRep.getGroupEntityById(newEntry.getGroup().getId());
+            groupNeedChange.getScreenList().add(newEntry);
+            //Maybe erase before add
+            grpRep.save(groupNeedChange);
+            return new ScreenJson(newEntry.getIp(),newEntry.getToken(),newEntry.getUuid(),newEntry.getName(),newEntry.getGroup().getId());
+        }else{
+            return new ScreenJson();
         }
     }
 }
