@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
+import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
@@ -19,11 +20,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
+/**
+ * Handler for screen socket connection
+ */
 @Component
 public class SocketHandler extends TextWebSocketHandler {
 
-    Logger logger = LogManager.getLogger();
+    private Logger logger = LogManager.getLogger();
 
+    /**
+     * When coonection is Established, register the screen
+     * @param session
+     * @throws Exception
+     */
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         List<SocketState.Info> notLogged = SocketState.getINSTANCE().notLogged;
@@ -54,6 +64,14 @@ public class SocketHandler extends TextWebSocketHandler {
                 logger.info("WebSocket auth success for " + entity.getName());
                 tmpMap.put("status", "ok");
                 response.data = tmpMap;
+                SocketState states = SocketState.getINSTANCE();
+                SocketState.Info noLoggedState = states.getNotLoggedBySocket(session);
+                noLoggedState.uuid = entity.getUuid();
+                noLoggedState.connectionDate = LocalDate.now();
+                states.logged.put(entity.getUuid(), noLoggedState);
+                states.notLogged.remove(noLoggedState);
+
+
 
             }
         } catch (IOException e) {
@@ -76,4 +94,8 @@ public class SocketHandler extends TextWebSocketHandler {
 
     }
 
+    @Override
+    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+
+    }
 }
