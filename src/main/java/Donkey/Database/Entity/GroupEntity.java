@@ -22,7 +22,7 @@ public class GroupEntity {
 
     @OneToMany
     @JsonIgnore
-    private List <GroupEntity> childrens;
+    private List <GroupEntity> childrens= new ArrayList<>();
 
     //TODO
     public GroupEntity(){
@@ -34,10 +34,10 @@ public class GroupEntity {
         for(ScreenEntity scree : screenList){
             this.getScreenList().add(scree);
         }
-//        this.setParent(parent);
-//        for (GroupEntity children : childrens) {
-//            this.getChildrens().add(children);
-//        }
+        this.setParent(parent);
+        for (GroupEntity children : childrens) {
+            this.getChildrens().add(children);
+        }
     }
 
     public String getName() {
@@ -70,5 +70,13 @@ public class GroupEntity {
 
     public void setChildrens(List<GroupEntity> childrens) {
         this.childrens = childrens;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

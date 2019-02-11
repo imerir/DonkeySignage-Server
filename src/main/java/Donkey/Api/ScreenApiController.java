@@ -2,7 +2,7 @@ package Donkey.Api;
 
 import Donkey.Api.JSON.ScreenRegisterJson;
 import Donkey.Api.JSON.TemporalRegisterJson;
-import Donkey.Api.PostForm.UuidPostForm;
+import Donkey.Api.JSON.UuidJson;
 import Donkey.Database.Entity.ScreenEntity;
 import Donkey.Database.Entity.TemporalScreenEntity;
 import Donkey.Database.Repository.ScreenRepository;
@@ -46,7 +46,7 @@ public class ScreenApiController {
      * @return TemporalRegisterJson, json who contains all informations of screen
      */
     @PostMapping(value = {"/getToken"})
-    public TemporalRegisterJson getToken(HttpServletRequest request, @RequestBody UuidPostForm uuid){
+    public TemporalRegisterJson getToken(HttpServletRequest request, @RequestBody UuidJson uuid){
         TemporalScreenEntity newTmpRegister;
         log.debug("Post on getToken, value of uuid : " + uuid.getUuid());
         if(tmpRegisterRep.getTemporalRegisterByUuid(uuid.getUuid()) == null){

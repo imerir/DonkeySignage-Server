@@ -1,6 +1,6 @@
-package Donkey.Api.PostForm;
+package Donkey.Api.JSON;
 
-public class UuidPostForm {
+public class UuidJson {
     public String uuid;
 
     public String getUuid() {

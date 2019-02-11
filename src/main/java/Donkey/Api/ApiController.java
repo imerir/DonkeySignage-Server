@@ -5,14 +5,10 @@ import Donkey.Database.Entity.GroupEntity;
 import Donkey.Database.Entity.ScreenEntity;
 import Donkey.Database.Repository.GroupRepository;
 import Donkey.Database.Repository.ScreenRepository;
-import Donkey.Database.Repository.TemporalScreenRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/")
@@ -21,6 +17,7 @@ public class ApiController {
     private Logger log = LogManager.getLogger();
     private final GroupRepository groupRepository;
     private final ScreenRepository screenRepository;
+
     @Autowired
     public ApiController(GroupRepository groupRepository, ScreenRepository screenRepository) {
         this.groupRepository = groupRepository;
@@ -28,35 +25,35 @@ public class ApiController {
 
     }
 
-    @PostMapping("/addGroup")
-    public GroupEntity addGroup(@ModelAttribute GroupJson groupJson){
+    /**
+     * Create and adding a group in database
+     * @param groupJson
+     * @return GroupJson
+     */
+    @PostMapping(value = {"/addGroup"})
+    public GroupJson addGroup(@RequestBody GroupJson groupJson){
+        System.out.println(groupJson.name + " " + groupJson.parent);
         GroupEntity newGroup = new GroupEntity();
-//        if(groupJson.parent == -1){
-//            Group
-//        }else{
-//
-//        }
-//        if(entryInDB.size() == 0){
-//            //TODO
-//            //new entry
-//            newGroup.setName(groupJson.name);
-//
-//            if(groupJson.parent == -1)
-//                newGroup.setParent(null);
-//            else
-//                newGroup.setParent(groupRepository.getGroupEntityById(groupJson.parent));
-//
-//            newGroup.getScreenList().clear();
-//            newGroup.getChildrens().clear();
-//        }else if (entryInDB.size() == 1){
-//            //TODO
-//            newGroup.setName(entryInDB.get(0).getName());
-//        }else {
-//            //TODO
-//            //check if
-//        }
-//        groupRepository.save(newGroup);
-        return newGroup;
+        if (groupRepository.getGroupEntityByNameAndParent_Id(groupJson.name, groupJson.parent) == null){
+            //TODO
+            newGroup.setName(groupJson.name);
+            if(groupJson.parent == -1)
+                newGroup.setParent(null);
+            else
+                newGroup.setParent(groupRepository.getGroupEntityById(groupJson.parent));
+            newGroup.getScreenList().clear();
+            newGroup.getChildrens().clear();
+        }
+        else{
+            //TODO
+            //Gestion erreur
+            log.info("[api/addGroup] this group is already create");
+        }
+        groupRepository.save(newGroup);
+        if(newGroup.getParent() == null)
+            return new GroupJson(newGroup.getName(),-1);
+        else
+            return new GroupJson(newGroup.getName(),newGroup.getParent().getId());
     }
 
     @RequestMapping("/test")
