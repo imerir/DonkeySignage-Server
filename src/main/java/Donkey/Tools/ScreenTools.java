@@ -32,8 +32,6 @@ public class ScreenTools {
 
     /**
      * Generate Token
-     * @param isShortToken
-     *  isShortToken is a boolean, if true = short token, false = long token
      * @return check token as string
      */
     public String generateCheckToken(){

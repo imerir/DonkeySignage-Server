@@ -26,15 +26,15 @@ public class ApiController {
 
     }
 
-    @DeleteMapping(value = {"/deleteGroup"})
+    @PostMapping(value = {"/deleteGroup"})
     public DeleteGroupJson deleteGroup(@RequestBody GroupJson groupJson){
-        GroupEntity group = groupRepository.getGroupEntityByNameAndParent_Id(groupJson.name,groupJson.parent);
-//        log.debug("[api/deleteGroup] id : " + group.getId());
+        GroupEntity group = groupRepository.getGroupEntityByNameAndParent(groupJson.name,groupRepository.getGroupEntityById(groupJson.parent));
+        log.debug("[api/deleteGroup] id : " + group.getId() + ", parent : " + groupRepository.getGroupEntityById(groupJson.parent));
         groupRepository.delete(group);
         if(groupJson.parent == -1)
-            return new DeleteGroupJson(group.getId()/*,group.getName(), -1*/);
+            return new DeleteGroupJson(group.getId(),group.getName(), -1);
         else
-            return new DeleteGroupJson(group.getId()/*,group.getName(), group.getParent().getId()*/);
+            return new DeleteGroupJson(group.getId(),group.getName(), group.getParent().getId());
     }
 
     //TODO
@@ -50,14 +50,15 @@ public class ApiController {
      */
     @PostMapping(value = {"/addGroup"})
     public GroupJson addGroup(@RequestBody GroupJson groupJson){
-        System.out.println(groupJson.name + " " + groupJson.parent);
         GroupEntity newGroup = new GroupEntity();
-        if (groupRepository.getGroupEntityByNameAndParent_Id(groupJson.name, groupJson.parent) == null){
+        log.debug(groupRepository.getGroupEntityByNameAndParent(groupJson.name, groupRepository.getGroupEntityById(groupJson.parent)));
+        if (groupRepository.getGroupEntityByNameAndParent(groupJson.name, groupRepository.getGroupEntityById(groupJson.parent)) == null){
             newGroup.setName(groupJson.name);
             if(groupJson.parent == -1)
                 newGroup.setParent(null);
-            else
+            else{
                 newGroup.setParent(groupRepository.getGroupEntityById(groupJson.parent));
+            }
             newGroup.getScreenList().clear();
             newGroup.getChildrens().clear();
         }
@@ -66,6 +67,9 @@ public class ApiController {
             //Gestion erreur
             log.info("[api/addGroup] this group is already create");
         }
+        groupRepository.save(newGroup);
+        GroupEntity groupNeedToChange = groupRepository.getGroupEntityById(groupJson.parent);
+        groupNeedToChange.getChildrens().add(newGroup);
         groupRepository.save(newGroup);
         if(newGroup.getParent() == null)
             return new GroupJson(newGroup.getName(),-1);
