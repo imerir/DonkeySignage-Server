@@ -8,17 +8,17 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
-public class UserTools {
+public class ScreenTools {
     private Logger log = LogManager.getLogger();
 
-    private static UserTools INSTANCE;
+    private static ScreenTools INSTANCE;
 
-    private UserTools(){
+    private ScreenTools(){
 
     }
 
-    public static UserTools getInstance(){
-        return (INSTANCE == null) ? new UserTools() : INSTANCE;
+    public static ScreenTools getInstance(){
+        return (INSTANCE == null) ? new ScreenTools() : INSTANCE;
     }
 
     /**

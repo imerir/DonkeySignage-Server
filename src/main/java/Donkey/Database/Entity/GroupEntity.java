@@ -24,7 +24,6 @@ public class GroupEntity {
     @JsonIgnore
     private List <GroupEntity> childrens= new ArrayList<>();
 
-    //TODO
     public GroupEntity(){
 
     }

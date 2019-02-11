@@ -1,5 +1,6 @@
 package Donkey.Api;
 
+import Donkey.Api.JSON.DeleteGroupJson;
 import Donkey.Api.JSON.GroupJson;
 import Donkey.Database.Entity.GroupEntity;
 import Donkey.Database.Entity.ScreenEntity;
@@ -25,6 +26,23 @@ public class ApiController {
 
     }
 
+    @DeleteMapping(value = {"/deleteGroup"})
+    public DeleteGroupJson deleteGroup(@RequestBody GroupJson groupJson){
+        GroupEntity group = groupRepository.getGroupEntityByNameAndParent_Id(groupJson.name,groupJson.parent);
+//        log.debug("[api/deleteGroup] id : " + group.getId());
+        groupRepository.delete(group);
+        if(groupJson.parent == -1)
+            return new DeleteGroupJson(group.getId()/*,group.getName(), -1*/);
+        else
+            return new DeleteGroupJson(group.getId()/*,group.getName(), group.getParent().getId()*/);
+    }
+
+    //TODO
+    @PostMapping(value = {"/modifyGroup"})
+    public GroupJson modifyGroup (){
+        return new GroupJson();
+    }
+
     /**
      * Create and adding a group in database
      * @param groupJson
@@ -35,7 +53,6 @@ public class ApiController {
         System.out.println(groupJson.name + " " + groupJson.parent);
         GroupEntity newGroup = new GroupEntity();
         if (groupRepository.getGroupEntityByNameAndParent_Id(groupJson.name, groupJson.parent) == null){
-            //TODO
             newGroup.setName(groupJson.name);
             if(groupJson.parent == -1)
                 newGroup.setParent(null);
