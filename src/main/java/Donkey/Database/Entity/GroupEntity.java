@@ -78,4 +78,23 @@ public class GroupEntity {
     public void setId(int id) {
         this.id = id;
     }
+
+    public String toString(){
+        String str;
+
+        if(getParent() == null)
+            str = "GroupEntity id : " + this.getId() + ", Name : " + getName() + ", Parent id : " + null;
+        else
+            str = "GroupEntity id : " + this.getId() + ", Name : " + getName() + ", Parent id : " + getParent().getId();
+
+        for(int i = 0 ; i < getChildrens().size() ; i++){
+            str = ", Children id : " + getChildrens().get(i);
+        }
+
+        for(int i = 0 ; i < getScreenList().size() ; i++){
+            str = ", Screen id : " + getScreenList().get(i);
+        }
+
+        return str;
+    }
 }

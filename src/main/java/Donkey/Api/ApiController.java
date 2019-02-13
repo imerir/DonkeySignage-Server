@@ -2,6 +2,7 @@ package Donkey.Api;
 
 import Donkey.Api.JSON.DeleteGroupJson;
 import Donkey.Api.JSON.GroupJson;
+import Donkey.Api.JSON.ModifyGroupJson;
 import Donkey.Database.Entity.GroupEntity;
 import Donkey.Database.Entity.ScreenEntity;
 import Donkey.Database.Repository.GroupRepository;
@@ -26,6 +27,11 @@ public class ApiController {
 
     }
 
+    /**
+     * Drop a row group in database
+     * @param groupJson
+     * @return DeleteGroupJson
+     */
     @PostMapping(value = {"/deleteGroup"})
     public DeleteGroupJson deleteGroup(@RequestBody GroupJson groupJson){
         GroupEntity group = groupRepository.getGroupEntityByNameAndParent(groupJson.name,groupRepository.getGroupEntityById(groupJson.parent));
@@ -37,9 +43,37 @@ public class ApiController {
             return new DeleteGroupJson(group.getId(),group.getName(), group.getParent().getId());
     }
 
-    //TODO
+    /**
+     * Modify a group with a json
+     * @param modifyGroupJson
+     * @return GroupJson
+     */
     @PostMapping(value = {"/modifyGroup"})
-    public GroupJson modifyGroup (){
+    public GroupJson modifyGroup(@RequestBody ModifyGroupJson modifyGroupJson){
+        GroupEntity groupNeedModification = groupRepository.getGroupEntityByNameAndParent(modifyGroupJson.oldName, groupRepository.getGroupEntityById(modifyGroupJson.oldParentId));
+        if(groupNeedModification != null){
+            if(modifyGroupJson.newParentId == -1){
+                GroupEntity grpOldParent = groupRepository.getGroupEntityById(modifyGroupJson.oldParentId);
+                grpOldParent.getChildrens().remove(groupNeedModification);
+                groupNeedModification.setParent(null);
+                groupRepository.save(grpOldParent);
+                return new GroupJson(groupNeedModification.getName(),-1);
+            }else{
+                GroupEntity grpOldParent = groupRepository.getGroupEntityById(modifyGroupJson.oldParentId);
+                grpOldParent.getChildrens().remove(groupNeedModification);
+                GroupEntity grpNewParent = groupRepository.getGroupEntityById(modifyGroupJson.newParentId);
+                groupNeedModification.setName(modifyGroupJson.newName);
+                groupNeedModification.setParent(groupRepository.getGroupEntityById(modifyGroupJson.newParentId));
+                grpNewParent.getChildrens().add(groupNeedModification);
+                groupRepository.save(grpOldParent);
+                groupRepository.save(grpNewParent);
+                groupRepository.save(groupNeedModification);
+                return new GroupJson(groupNeedModification.getName(),groupNeedModification.getParent().getId());
+            }
+        }else{
+            //TODO
+            log.debug("[api/modifyGroup] Group not exist ");
+        }
         return new GroupJson();
     }
 
