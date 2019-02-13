@@ -20,9 +20,9 @@ public class GroupEntity {
     @JsonIgnore
     private GroupEntity parent;
 
-    @OneToMany
+    @OneToMany (mappedBy = "parent", cascade = CascadeType.PERSIST)
     @JsonIgnore
-    private List <GroupEntity> childrens= new ArrayList<>();
+    private List <GroupEntity> childrens = new ArrayList<>();
 
     public GroupEntity(){
 
