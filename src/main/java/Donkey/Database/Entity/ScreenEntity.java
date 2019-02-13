@@ -14,8 +14,8 @@ public class ScreenEntity {
     private String uuid;
     private String name;
 
-    @ManyToOne
-    @JoinColumn(nullable = true)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "group_id")
     @JsonIgnore
     private GroupEntity group;
 

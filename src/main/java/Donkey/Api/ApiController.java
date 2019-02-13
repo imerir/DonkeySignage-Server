@@ -101,13 +101,13 @@ public class ApiController {
 //    }
     @PostMapping(value = {"/modifyGroup"})
     public GroupJson modifyGroup(@RequestBody ModifyGroupJson modifyGroupJson) {
+
+        //TODO if name "" or null
+
         GroupEntity groupNeedModification = groupRepository.getGroupEntityById(modifyGroupJson.id);
         if (groupNeedModification != null) {
             if (modifyGroupJson.parentId == -1) {
-                //TODO gare au -1
-                GroupEntity grpOldParent = groupNeedModification.getParent();
-                grpOldParent.getChildrens().remove(groupNeedModification);
-                groupRepository.save(grpOldParent);
+
                 groupNeedModification.setName(modifyGroupJson.name);
                 groupNeedModification.setParent(null);
                 groupRepository.save(groupNeedModification);
@@ -119,11 +119,6 @@ public class ApiController {
                 groupNeedModification.setName(modifyGroupJson.name);
                 groupNeedModification.setParent(newGrpParent);
                 groupNeedModification = groupRepository.save(groupNeedModification);
-
-                //                if(groupNeedModification.getParent() == null){
-                newGrpParent.getChildrens().add(groupNeedModification);
-                newGrpParent = groupRepository.save(newGrpParent);
-//                }
 
                 return new GroupJson(groupNeedModification.getName(), -1);
             }
@@ -189,8 +184,13 @@ public class ApiController {
 
     @RequestMapping("/test")
     public GroupEntity test(@RequestParam(value = "id") String id) {
-        ScreenEntity screen = screenRepository.getScreenEntityById(Integer.parseInt(id));
-        return screen.getGroup();
+//        ScreenEntity screen = screenRepository.getScreenEntityById(Integer.parseInt(id));
+//        return screen.getGroup();
+        GroupEntity groupEntity = groupRepository.getGroupEntityById(Integer.parseInt(id));
+        for(GroupEntity groupEntity1 : groupEntity.getChildrens()){
+            log.debug(groupEntity1.getName());
+        }
+        return null;
 
 
 //        GroupEntity group = groupRepository.getGroupEntityById(Integer.parseInt(id));

@@ -4,6 +4,7 @@ public class GroupJson {
     public String name;
     public int parent;
 
+
     public GroupJson(){
 
     }

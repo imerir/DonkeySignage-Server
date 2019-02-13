@@ -13,15 +13,16 @@ public class GroupEntity {
     private int id;
     private String name;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "group")
     private List<ScreenEntity> screen = new ArrayList<>();
 
-    @ManyToOne
     @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_id")
     private GroupEntity parent;
 
-    @OneToMany (mappedBy = "parent", cascade = CascadeType.PERSIST)
     @JsonIgnore
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "parent")
     private List <GroupEntity> childrens = new ArrayList<>();
 
     public GroupEntity(){
