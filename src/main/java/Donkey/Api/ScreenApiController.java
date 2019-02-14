@@ -88,6 +88,11 @@ public class ScreenApiController {
         }
     }
 
+    /**
+     * Add screen to the database
+     * @param screenJson
+     * @return ScreenJson
+     */
     @PostMapping(value = {"/addScreen"})
     public ScreenJson addScreen (@RequestBody ScreenJson screenJson){
         if(screenJson.uuid != null && !screenJson.uuid.isEmpty()){
@@ -118,5 +123,24 @@ public class ScreenApiController {
         }else{
             return new ScreenJson(null,null,null,null,-1,"This uuid is not registered");
         }
+    }
+
+    //TODO ModifyScreen
+    //TODO DeleteScreen
+    @PostMapping(value = {"/modifyGroup"})
+    public ScreenJson modifyScreen(@RequestBody ModifyScreenJson modifyScreenJson){
+
+        return new ScreenJson();
+    }
+
+    /**
+     * Send name and id of parent's group
+     *
+     * @param id
+     * @return GroupJson
+     */
+    @RequestMapping(value = {"/getGroup"}, method = RequestMethod.GET)
+    public GroupJson getGroup(@RequestParam(name = "id") int id) {
+        return new GroupJson(grpRep.getGroupEntityById(screenRegisterRep.getScreenEntityById(id).getGroup().getId()).getName(), grpRep.getGroupEntityById(screenRegisterRep.getScreenEntityById(id).getGroup().getId()).getId(), "");
     }
 }

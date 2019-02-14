@@ -2,6 +2,7 @@ package Donkey.Api;
 
 
 import Donkey.Api.JSON.DeleteGroupJson;
+import Donkey.Api.JSON.DeleteScreenJson;
 import Donkey.Api.JSON.GroupJson;
 import Donkey.Api.JSON.ModifyGroupJson;
 import Donkey.Database.Entity.GroupEntity;
@@ -36,14 +37,15 @@ public class GroupApiController {
      * @return DeleteGroupJson
      */
     @PostMapping(value = {"/deleteGroup"})
-    public DeleteGroupJson deleteGroup(@RequestBody GroupJson groupJson) {
-        GroupEntity group = groupRepository.getGroupEntityByNameAndParent(groupJson.name, groupRepository.getGroupEntityById(groupJson.parent));
-        log.debug("[api/deleteGroup] id : " + group.getId() + ", parent : " + groupRepository.getGroupEntityById(groupJson.parent));
-        groupRepository.delete(group);
-        if (groupJson.parent == -1)
-            return new DeleteGroupJson(group.getId(), group.getName(), -1, "");
-        else
-            return new DeleteGroupJson(group.getId(), group.getName(), group.getParent().getId(), "");
+    public DeleteScreenJson deleteGroup(@RequestBody GroupJson groupJson) {
+//        GroupEntity group = groupRepository.getGroupEntityByNameAndPareo5nt(groupJson.name, groupRepository.getGroupEntityById(groupJson.parent));
+//        log.debug("[api/deleteGroup] id : " + group.getId() + ", parent : " + groupRepository.getGroupEntityById(groupJson.parent));
+//        groupRepository.delete(group);
+//        if (groupJson.parent == -1)
+//            return new DeleteGroupJson(group.getId(), group.getName(), -1, "");
+//        else
+//            return new DeleteGroupJson(group.getId(), group.getName(), group.getParent().getId(), "");
+        return new DeleteScreenJson();
     }
 
     /**
