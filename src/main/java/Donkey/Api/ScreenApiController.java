@@ -50,7 +50,7 @@ public class ScreenApiController {
     @PostMapping(value = {"/getToken"})
     public TemporalRegisterJson getToken(HttpServletRequest request, @RequestBody UuidJson uuid){
         TemporalScreenEntity newTmpRegister;
-        log.debug("Post on getToken, value of uuid : " + uuid.getUuid());
+        //log.debug("Post on getToken, value of uuid : " + uuid.getUuid());
         if(tmpRegisterRep.getTemporalRegisterByUuid(uuid.getUuid()) == null){
             newTmpRegister = new TemporalScreenEntity(request.getRemoteAddr(), ScreenTools.getInstance().generateCheckToken(),uuid.getUuid(), ScreenTools.getInstance().generateExpirationDateLocalDate());
         }else
@@ -60,7 +60,7 @@ public class ScreenApiController {
             newTmpRegister.setExpirationDate(ScreenTools.getInstance().generateExpirationDateLocalDate());
         }
         tmpRegisterRep.save(newTmpRegister);
-        return new TemporalRegisterJson(newTmpRegister.getTempToken(),newTmpRegister.getUuid(), ScreenTools.getInstance().generateExpirationDateStr());
+        return new TemporalRegisterJson(newTmpRegister.getTempToken(),newTmpRegister.getUuid(), ScreenTools.getInstance().generateExpirationDateStr(), "");
     }
 
     /**
@@ -70,20 +70,20 @@ public class ScreenApiController {
      */
     @RequestMapping(value = {"/isRegistered"}, method = RequestMethod.GET)
     public ResponseEntity<ScreenRegisterJson> isRegistered (@CookieValue(value = "uuid")String uuid){
-        log.debug("Uuid send by cookie : " + uuid);
+        log.trace("Uuid send by cookie : " + uuid);
         if(uuid != null && !uuid.equals("")){
             ScreenEntity newScreenRegister = screenRegisterRep.getScreenRegisterByUuid(uuid);
-            log.debug("ScreenRegister get in db: " + newScreenRegister);
+            log.trace("ScreenRegister get in db: " + newScreenRegister);
             if(newScreenRegister != null){
-                ScreenRegisterJson newScreenRegisterJson = new ScreenRegisterJson(newScreenRegister.getToken(), newScreenRegister.getUuid());
-                log.debug("Send Json " + newScreenRegisterJson);
+                ScreenRegisterJson newScreenRegisterJson = new ScreenRegisterJson(newScreenRegister.getToken(), newScreenRegister.getUuid(), "");
+                log.trace("Send Json " + newScreenRegisterJson);
                 return new ResponseEntity<>(newScreenRegisterJson, HttpStatus.OK);
             }else{
                 log.debug("ScreenRegister not in db");
                 return new ResponseEntity<>(HttpStatus.FORBIDDEN);
             }
         }else{
-            log.debug("Bad Cookie");
+            log.trace("Bad Cookie");
             return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
         }
     }
@@ -114,9 +114,9 @@ public class ScreenApiController {
             groupNeedChange.getScreenList().add(newEntry);
             //Maybe erase before add
             grpRep.save(groupNeedChange);
-            return new ScreenJson(newEntry.getIp(),newEntry.getToken(),newEntry.getUuid(),newEntry.getName(),newEntry.getGroup().getId());
+            return new ScreenJson(newEntry.getIp(),newEntry.getToken(),newEntry.getUuid(),newEntry.getName(),newEntry.getGroup().getId(), "");
         }else{
-            return new ScreenJson();
+            return new ScreenJson(null,null,null,null,-1,"This uuid is not registered");
         }
     }
 }
