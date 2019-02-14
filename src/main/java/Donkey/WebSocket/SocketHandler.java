@@ -5,6 +5,8 @@ import Donkey.Tools.Exception.TokenNotMatch;
 import Donkey.Tools.Exception.UnknownUUID;
 import Donkey.Tools.ScreenTools;
 import Donkey.WebSocket.Data.WebSocketData;
+import Donkey.Widgets.WidgetInterface;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,9 +30,11 @@ import java.util.Map;
 public class SocketHandler extends TextWebSocketHandler {
 
     private Logger logger = LogManager.getLogger();
+    private ObjectMapper objectMapper = new ObjectMapper();
 
     /**
      * When coonection is Established, register the screen
+     *
      * @param session
      * @throws Exception
      */
@@ -44,8 +48,8 @@ public class SocketHandler extends TextWebSocketHandler {
     }
 
     @Override
-    protected void handleTextMessage(WebSocketSession session, TextMessage message){
-        ObjectMapper objectMapper = new ObjectMapper();
+    protected void handleTextMessage(WebSocketSession session, TextMessage message) {
+
         WebSocketData data = null;
 
         WebSocketData response = new WebSocketData();
@@ -58,37 +62,35 @@ public class SocketHandler extends TextWebSocketHandler {
             logger.debug("Receive message on websocket: ");
             logger.debug("Type: " + data.type);
             logger.debug("Data: " + data.data);
-            if(data.type.equals("AUTH")){
+            if (data.type.equals("AUTH")) {
                 response.type = "AUTH";
-                ScreenEntity entity = ScreenTools.getInstance().screenLogin(data.data.get("uuid").toString(), data.data.get("token").toString());
-                logger.info("WebSocket auth success for " + entity.getName());
-                tmpMap.put("status", "ok");
-                response.data = tmpMap;
-                SocketState states = SocketState.getINSTANCE();
-                SocketState.Info noLoggedState = states.getNotLoggedBySocket(session);
-                noLoggedState.uuid = entity.getUuid();
-                noLoggedState.connectionDate = LocalDate.now();
-                states.logged.put(entity.getUuid(), noLoggedState);
-                states.notLogged.remove(noLoggedState);
+                try {
+                    ScreenEntity entity = ScreenTools.getInstance().screenLogin(data.data.get("uuid").toString(), data.data.get("token").toString());
+                    logger.info("WebSocket auth success for " + entity.getName());
+                    tmpMap.put("status", "ok");
+                    response.data = tmpMap;
+                    SocketState states = SocketState.getINSTANCE();
+                    SocketState.Info noLoggedState = states.getNotLoggedBySocket(session);
+                    noLoggedState.uuid = entity.getUuid();
+                    noLoggedState.connectionDate = LocalDate.now();
+                    states.logged.put(entity.getUuid(), noLoggedState);
+                    states.notLogged.remove(noLoggedState);
+                } catch (TokenNotMatch tokenNotMatch) {
+                    logger.warn("Websocket login, token not match for " + data.data.get("uuid"));
+                    tmpMap.put("status", "TOKEN_NOT_MATCH");
 
+                } catch (UnknownUUID unknownUUID) {
+                    logger.warn("Websocket login, Unknown UUID for " + data.data.get("uuid"));
+                    tmpMap.put("status", "UNKNOWN_UUID");
+                }
+                response.data = tmpMap;
+                session.sendMessage(new TextMessage(objectMapper.writeValueAsString(response)));
+                sendWidgetManifest(session);
 
 
             }
         } catch (IOException e) {
-            e.printStackTrace();
-        } catch (TokenNotMatch tokenNotMatch) {
-            logger.warn("Websocket login, token not match for " + data.data.get("uuid"));
-            tmpMap.put("status", "TOKEN_NOT_MATCH");
-
-        } catch (UnknownUUID unknownUUID) {
-            logger.warn("Websocket login, Unknown UUID for " + data.data.get("uuid"));
-            tmpMap.put("status", "UNKNOWN_UUID");
-        }
-        response.data = tmpMap;
-        try {
-            session.sendMessage(new TextMessage(objectMapper.writeValueAsString(response)));
-        } catch (IOException e) {
-            e.printStackTrace();
+            logger.catching(e);
         }
 
 
@@ -96,6 +98,36 @@ public class SocketHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+        logger.debug("Socket disconnect !");
+        SocketState states = SocketState.getINSTANCE();
+        SocketState.Info nLogged = states.getNotLoggedBySocket(session);
+        if (nLogged != null) {
+            logger.debug("Socket found on notLogged list");
+            states.notLogged.remove(nLogged);
+        } else {
+            SocketState.Info logged = states.getLoggedBySocket(session);
+            if (logged != null) {
+                logger.debug("Socket found on logged list");
+                states.logged.values().remove(logged);
+            } else {
+                logger.error("Can't remove Socket from lists, socket can't be found !");
+            }
+
+        }
+
+
+    }
+
+
+    private void sendWidgetManifest(WebSocketSession session) throws IOException {
+        HashMap<String, WidgetInterface> widgets = WebSocketUtils.getINSTANCE().getWidgets();
+        WebSocketData webSocketData = new WebSocketData();
+        webSocketData.type = "MANIFEST";
+        webSocketData.data = new HashMap<>();
+        webSocketData.data.put("list", widgets.values());
+        String strWidget = objectMapper.writeValueAsString(webSocketData);
+        session.sendMessage(new TextMessage(strWidget));
+
 
     }
 }
