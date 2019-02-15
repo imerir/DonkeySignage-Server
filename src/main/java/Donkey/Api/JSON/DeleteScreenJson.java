@@ -2,21 +2,21 @@ package Donkey.Api.JSON;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-public class DeleteGroupJson {
+public class DeleteScreenJson {
     public int id;
     public String name;
-    public int parentId;
+    public int groupId;
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public String message;
 
-    public DeleteGroupJson(){
+    public DeleteScreenJson(){
 
     }
 
-    public DeleteGroupJson(int id, String name, int parentId, String message){
+    public DeleteScreenJson(int id, String name, int groupId, String message){
         this.id = id;
         this.name = name;
-        this.parentId = parentId;
+        this.groupId = groupId;
         this.message = message;
     }
 }

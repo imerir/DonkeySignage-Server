@@ -3,23 +3,18 @@ package Donkey.Api.JSON;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-public class ScreenJson {
-    public String ip;
-    public String token;
-    public String uuid;
+public class ModifyScreenJson {
+    public int id;
     public String name;
     public int groupId;
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public String message;
 
-    public ScreenJson(){
+    public ModifyScreenJson(){
 
     }
 
-    public ScreenJson(String ip, String token, String uuid, String name, int groupId, String message){
-        this.ip = ip;
-        this.token = token;
-        this.uuid = uuid;
+    public ModifyScreenJson(String name, int groupId, String message) {
         this.name = name;
         this.groupId = groupId;
         this.message = message;

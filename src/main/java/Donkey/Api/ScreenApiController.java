@@ -88,6 +88,11 @@ public class ScreenApiController {
         }
     }
 
+    /**
+     * Add screen to the database
+     * @param screenJson
+     * @return ScreenJson
+     */
     @PostMapping(value = {"/addScreen"})
     public ScreenJson addScreen (@RequestBody ScreenJson screenJson){
         if(screenJson.uuid != null && !screenJson.uuid.isEmpty()){
@@ -118,5 +123,64 @@ public class ScreenApiController {
         }else{
             return new ScreenJson(null,null,null,null,-1,"This uuid is not registered");
         }
+    }
+
+    /**
+     * Delete a screen in a database
+     * @param deleteScreenJson
+     * @return DeleteScreenJson
+     */
+    @PostMapping(value = {"/deleteScreen"})
+    public DeleteScreenJson deleteScreen(@RequestBody DeleteScreenJson deleteScreenJson){
+        ScreenEntity screenToDelete = screenRegisterRep.getScreenEntityById(deleteScreenJson.id);
+        if(screenToDelete != null){
+            screenRegisterRep.delete(screenToDelete);
+            if(deleteScreenJson.groupId != -1){
+                return new DeleteScreenJson(screenToDelete.getId(),screenToDelete.getName(),screenToDelete.getGroup().getId(),"");
+            }else{
+                return new DeleteScreenJson(screenToDelete.getId(),screenToDelete.getName(),-1,"");
+            }
+        }else{
+            return new DeleteScreenJson(-1,"",-1,"The screen with id : " + deleteScreenJson.id + "doesn't exist");
+        }
+    }
+
+    @PostMapping(value = {"/modifyScreen"})
+    public ScreenJson modifyScreen(@RequestBody ModifyScreenJson modifyScreenJson){
+        ScreenEntity screenNeedModification = screenRegisterRep.getScreenEntityById(modifyScreenJson.id);
+        log.debug("Id screen : " + screenNeedModification.getIp());
+        if (screenNeedModification != null) {
+            if (modifyScreenJson.groupId == -1) {
+                if(modifyScreenJson.name != null && !modifyScreenJson.name.isEmpty())
+                    screenNeedModification.setName(modifyScreenJson.name);
+                screenNeedModification.setGroup(null);
+                screenRegisterRep.save(screenNeedModification);
+                return new ScreenJson(screenNeedModification.getIp(),screenNeedModification.getToken(),screenNeedModification.getUuid(),screenNeedModification.getName(),screenNeedModification.getGroup().getId(),"");
+            } else {
+                GroupEntity newGrpParent = grpRep.getGroupEntityById(modifyScreenJson.groupId);
+                if(modifyScreenJson.name != null && !modifyScreenJson.name.isEmpty())
+                    screenNeedModification.setName(modifyScreenJson.name);
+                screenNeedModification.setGroup(newGrpParent);
+                screenNeedModification = screenRegisterRep.save(screenNeedModification);
+                return new ScreenJson(screenNeedModification.getIp(),screenNeedModification.getToken(),screenNeedModification.getUuid(),screenNeedModification.getName(),screenNeedModification.getGroup().getId(),"");
+            }
+        } else {
+            return new ScreenJson("","","","",-1,"Group not exist");
+        }
+    }
+
+    /**
+     * Send name and id of parent's group
+     *
+     * @param id
+     * @return GroupJson
+     */
+    @RequestMapping(value = {"/getGroup"}, method = RequestMethod.GET)
+    public GroupJson getGroup(@RequestParam(name = "id") int id) {
+        if(id != -1 )
+            return new GroupJson(grpRep.getGroupEntityById(screenRegisterRep.getScreenEntityById(id).getGroup().getId()).getName(), grpRep.getGroupEntityById(screenRegisterRep.getScreenEntityById(id).getGroup().getId()).getId(), "");
+        else
+            return new GroupJson("", -1, "This screen have no parent");
+
     }
 }
