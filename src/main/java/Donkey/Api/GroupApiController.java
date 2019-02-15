@@ -33,19 +33,58 @@ public class GroupApiController {
     /**
      * Drop a row group in database
      *
-     * @param groupJson
+     * @param deleteGroupJson
      * @return DeleteGroupJson
      */
+    //TODO faire le test pour se retrouver avec un ecran sans groupe
     @PostMapping(value = {"/deleteGroup"})
-    public DeleteScreenJson deleteGroup(@RequestBody GroupJson groupJson) {
-//        GroupEntity group = groupRepository.getGroupEntityByNameAndPareo5nt(groupJson.name, groupRepository.getGroupEntityById(groupJson.parent));
-//        log.debug("[api/deleteGroup] id : " + group.getId() + ", parent : " + groupRepository.getGroupEntityById(groupJson.parent));
-//        groupRepository.delete(group);
-//        if (groupJson.parent == -1)
-//            return new DeleteGroupJson(group.getId(), group.getName(), -1, "");
-//        else
-//            return new DeleteGroupJson(group.getId(), group.getName(), group.getParent().getId(), "");
-        return new DeleteScreenJson();
+    public DeleteGroupJson deleteGroup(@RequestBody DeleteGroupJson deleteGroupJson) {
+        GroupEntity grpToDelete = groupRepository.getGroupEntityById(deleteGroupJson.id);
+        if(grpToDelete != null){
+            if(grpToDelete.getParent() != null){
+                if(grpToDelete.getScreenList().size() != 0){
+                    //Deplacer les ecrans au groupe parent
+                    GroupEntity newParentForScreen = groupRepository.getGroupEntityById(deleteGroupJson.parentId);
+                    for(int i = 0 ; i < grpToDelete.getScreenList().size() ; i++){
+                        ScreenEntity screenWithNewParent = grpToDelete.getScreenList().get(i);
+                        screenWithNewParent.setGroup(newParentForScreen);
+                        screenRepository.save(screenWithNewParent);
+                    }
+                }
+                if(grpToDelete.getChildrens().size() != 0){
+                    GroupEntity newParentForScreen = groupRepository.getGroupEntityById(deleteGroupJson.parentId);
+                    for(int i = 0 ; i < grpToDelete.getChildrens().size() ; i++){
+                        GroupEntity grpWithNewParent = grpToDelete.getChildrens().get(i);
+                        grpWithNewParent.setParent(newParentForScreen);
+                        groupRepository.save(grpWithNewParent);
+                    }
+                }
+                groupRepository.delete(grpToDelete);
+            }else{
+                if(grpToDelete.getScreenList().size() != 0){
+                    for(int i = 0 ; i < grpToDelete.getScreenList().size() ; i++){
+                        ScreenEntity screenWithNewParent = grpToDelete.getScreenList().get(i);
+                        screenWithNewParent.setGroup(null);
+                        screenRepository.save(screenWithNewParent);
+                    }
+                }
+                if(grpToDelete.getChildrens().size() != 0){
+                    for(int i = 0 ; i < grpToDelete.getChildrens().size() ; i++){
+                        GroupEntity grpWithNewParent = grpToDelete.getChildrens().get(i);
+                        grpWithNewParent.setParent(null);
+                        groupRepository.save(grpWithNewParent);
+                    }
+                }
+                groupRepository.delete(grpToDelete);
+            }
+
+            if(grpToDelete.getParent() == null)
+                return new DeleteGroupJson(grpToDelete.getId(),grpToDelete.getName(),-1,"");
+            else
+                return new DeleteGroupJson(grpToDelete.getId(),grpToDelete.getName(),grpToDelete.getParent().getId(),"");
+        }else{
+            return new DeleteGroupJson(-1,"",-1,"This Group, with id : " + deleteGroupJson.id + " doesn't exist");
+        }
     }
 
     /**
@@ -54,55 +93,6 @@ public class GroupApiController {
      * @param modifyGroupJson
      * @return GroupJson
      */
- /*   @PostMapping(value = {"/modifyGroup"})
-    public GroupJson modifyGroup(@RequestBody ModifyGroupJson modifyGroupJson){
-        GroupEntity groupNeedModification = groupRepository.getGroupEntityByNameAndParent(modifyGroupJson.oldName, groupRepository.getGroupEntityById(modifyGroupJson.oldParentId));
-        if(groupNeedModification != null){
-            if(modifyGroupJson.oldParentId == -1){
-                if(modifyGroupJson.newParentId == -1){
-                    groupNeedModification.setName(modifyGroupJson.newName);
-                    groupNeedModification.setParent(null);
-                    groupRepository.save(groupNeedModification);
-                    return new GroupJson(groupNeedModification.getName(),-1);
-                }else{
-                    groupNeedModification.setName(modifyGroupJson.newName);
-                    groupNeedModification.setParent(groupRepository.getGroupEntityById(modifyGroupJson.newParentId));
-                    groupRepository.save(groupNeedModification);
-                    GroupEntity grpNewParent = groupRepository.getGroupEntityById(modifyGroupJson.newParentId);
-                    grpNewParent.getChildrens().add(groupNeedModification);
-                    groupRepository.save(grpNewParent);
-                    return new GroupJson(groupNeedModification.getName(),groupNeedModification.getParent().getId());
-                }
-            }else{
-                if(modifyGroupJson.newParentId == -1){
-                    GroupEntity grpOldParent = groupRepository.getGroupEntityById(modifyGroupJson.oldParentId);
-                    grpOldParent.getChildrens().remove(groupNeedModification);
-                    groupRepository.save(grpOldParent);
-                    groupNeedModification.setName(modifyGroupJson.newName);
-                    groupNeedModification.setParent(null);
-                    groupRepository.save(groupNeedModification);
-                    return new GroupJson(groupNeedModification.getName(),-1);
-                }else{
-                    GroupEntity grpOldParent = groupRepository.getGroupEntityById(modifyGroupJson.oldParentId);
-                    grpOldParent.getChildrens().remove(groupNeedModification);
-                    groupRepository.save(grpOldParent);
-                    groupNeedModification.setName(modifyGroupJson.newName);
-                    groupNeedModification.setParent(null);
-                    groupRepository.save(groupNeedModification);
-                    GroupEntity grpNewParent = groupRepository.getGroupEntityById(modifyGroupJson.newParentId);
-                    grpNewParent.getChildrens().add(groupNeedModification);
-                    groupRepository.save(grpNewParent);
-                    return new GroupJson(groupNeedModification.getName(),groupNeedModification.getParent().getId());
-                }
-            }
-        }else{
-            //TODO
-            log.debug("[api/modifyGroup] Group not exist ");
-        }
-        return new GroupJson();
-    }*/
-
-
     @PostMapping(value = {"/modifyGroup"})
     public GroupJson modifyGroup(@RequestBody ModifyGroupJson modifyGroupJson) {
         GroupEntity groupNeedModification = groupRepository.getGroupEntityById(modifyGroupJson.id);

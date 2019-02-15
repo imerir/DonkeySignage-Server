@@ -1,5 +1,6 @@
 package Donkey.Api.JSON;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 public class ScreenJson {
@@ -8,7 +9,7 @@ public class ScreenJson {
     public String uuid;
     public String name;
     public int groupId;
-    @JsonSerialize(include = JsonSerialize.Inclusion.NON_EMPTY)
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public String message;
 
     public ScreenJson(){

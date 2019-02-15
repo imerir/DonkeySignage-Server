@@ -1,12 +1,12 @@
 package Donkey.Api.JSON;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 public class DeleteGroupJson {
     public int id;
     public String name;
     public int parentId;
-    @JsonSerialize(include = JsonSerialize.Inclusion.NON_EMPTY)
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public String message;
 
     public DeleteGroupJson(){
