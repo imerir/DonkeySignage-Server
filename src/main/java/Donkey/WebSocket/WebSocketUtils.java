@@ -24,6 +24,10 @@ public class WebSocketUtils {
     private HashMap<String, WidgetInterface> widgets = new HashMap<>();
 
 
+    /**
+     * List all class that implement {@link WidgetInterface WidgetInterface}.
+     * @return Map of widget where the key is the id of the widget.
+     */
     public HashMap<String, WidgetInterface> getWidgets(){
         if(widgets.isEmpty()){
             widgets.clear();
@@ -40,7 +44,6 @@ public class WebSocketUtils {
                 } catch (IllegalAccessException | InstantiationException | NoSuchMethodException | InvocationTargetException | ClassNotFoundException e) {
                     logger.catching(e);
                 }
-                System.out.println(bean.getBeanClassName());
             }
         }
         return widgets;

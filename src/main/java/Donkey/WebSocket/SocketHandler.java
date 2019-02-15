@@ -62,30 +62,42 @@ public class SocketHandler extends TextWebSocketHandler {
             logger.debug("Receive message on websocket: ");
             logger.debug("Type: " + data.type);
             logger.debug("Data: " + data.data);
-            if (data.type.equals("AUTH")) {
-                response.type = "AUTH";
-                try {
-                    ScreenEntity entity = ScreenTools.getInstance().screenLogin(data.data.get("uuid").toString(), data.data.get("token").toString());
-                    logger.info("WebSocket auth success for " + entity.getName());
-                    tmpMap.put("status", "ok");
-                    response.data = tmpMap;
-                    SocketState states = SocketState.getINSTANCE();
-                    SocketState.Info noLoggedState = states.getNotLoggedBySocket(session);
-                    noLoggedState.uuid = entity.getUuid();
-                    noLoggedState.connectionDate = LocalDate.now();
-                    states.logged.put(entity.getUuid(), noLoggedState);
-                    states.notLogged.remove(noLoggedState);
-                } catch (TokenNotMatch tokenNotMatch) {
-                    logger.warn("Websocket login, token not match for " + data.data.get("uuid"));
-                    tmpMap.put("status", "TOKEN_NOT_MATCH");
+            switch (data.type){
+                case "AUTH":
+                    response.type = "AUTH";
+                    try {
+                        ScreenEntity entity = ScreenTools.getInstance().screenLogin(data.data.get("uuid").toString(), data.data.get("token").toString());
+                        logger.info("WebSocket auth success for " + entity.getName());
+                        tmpMap.put("status", "ok");
+                        response.data = tmpMap;
+                        SocketState states = SocketState.getINSTANCE();
+                        SocketState.Info noLoggedState = states.getNotLoggedBySocket(session);
+                        noLoggedState.uuid = entity.getUuid();
+                        noLoggedState.connectionDate = LocalDate.now();
+                        states.logged.put(entity.getUuid(), noLoggedState);
+                        states.notLogged.remove(noLoggedState);
+                    } catch (TokenNotMatch tokenNotMatch) {
+                        logger.warn("Websocket login, token not match for " + data.data.get("uuid"));
+                        tmpMap.put("status", "TOKEN_NOT_MATCH");
 
-                } catch (UnknownUUID unknownUUID) {
-                    logger.warn("Websocket login, Unknown UUID for " + data.data.get("uuid"));
-                    tmpMap.put("status", "UNKNOWN_UUID");
-                }
-                response.data = tmpMap;
-                session.sendMessage(new TextMessage(objectMapper.writeValueAsString(response)));
-                sendWidgetManifest(session);
+                    } catch (UnknownUUID unknownUUID) {
+                        logger.warn("Websocket login, Unknown UUID for " + data.data.get("uuid"));
+                        tmpMap.put("status", "UNKNOWN_UUID");
+                    }
+                    response.data = tmpMap;
+                    session.sendMessage(new TextMessage(objectMapper.writeValueAsString(response)));
+                    sendWidgetManifest(session);
+                    break;
+
+                case "CONFIG":
+
+
+
+                    break;
+
+            }
+            if (data.type.equals("AUTH")) {
+
 
 
             }

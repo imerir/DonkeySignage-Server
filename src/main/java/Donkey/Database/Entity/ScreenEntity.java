@@ -19,6 +19,10 @@ public class ScreenEntity {
     @JsonIgnore
     private GroupEntity group;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "template_id")
+    private Template template;
+
     public ScreenEntity(){
 
     }
