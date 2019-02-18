@@ -1,6 +1,7 @@
 package Donkey.Api;
 
 
+import Donkey.Api.JSON.Error;
 import Donkey.Api.JSON.Group.DeleteGroupJson;
 import Donkey.Api.JSON.Group.GroupJson;
 import Donkey.Api.JSON.Group.ModifyGroupJson;
@@ -15,8 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.swing.text.html.parser.Entity;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/")
@@ -86,7 +85,7 @@ public class GroupApiController {
             else
                 return new ResponseEntity<>(new DeleteGroupJson(grpToDelete.getId(),grpToDelete.getName(),grpToDelete.getParent().getId()),HttpStatus.OK);
         }else{
-            return new ResponseEntity<>(new Error("No Group with id : " + deleteGroupJson.id), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new Error("No Group with id : " + deleteGroupJson.id , "ID_NOT_FOUND"), HttpStatus.NOT_FOUND);
         }
     }
 
@@ -116,7 +115,7 @@ public class GroupApiController {
                 return new ResponseEntity<>(new GroupJson(groupNeedModification.getName(), -1), HttpStatus.OK);
             }
         } else {
-            return new ResponseEntity<>(new Error("No Group with id : " + modifyGroupJson.id), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new Error("No Group with id : " + modifyGroupJson.id,"ID_NOT_FOUND"), HttpStatus.NOT_FOUND);
         }
     }
 
@@ -140,7 +139,7 @@ public class GroupApiController {
             newGroup.getScreenList().clear();
             newGroup.getChildrens().clear();
         } else {
-            return new ResponseEntity<>(new Error("This Group is already create"), HttpStatus.CONFLICT);
+            return new ResponseEntity<>(new Error("This Group is already create","ID_ALREADY_USE"), HttpStatus.CONFLICT);
         }
         groupRepository.save(newGroup);
         if (newGroup.getParent() == null)
@@ -164,7 +163,7 @@ public class GroupApiController {
         if(groupRepository.getGroupEntityById(id) != null)
             return new ResponseEntity<>(new GroupJson(groupRepository.getGroupEntityById(id).getName(), groupRepository.getGroupEntityById(id).getId()), HttpStatus.OK);
         else
-            return new ResponseEntity<>(new Error("No group with id : " + id), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new Error("No group with id : " + id,"ID_ALREADY_USE"), HttpStatus.NOT_FOUND);
 
     }
 
@@ -179,7 +178,7 @@ public class GroupApiController {
         if(groupRepository.getGroupEntityById(id) != null)
             return new ResponseEntity<>(groupRepository.getGroupEntityById(id).getChildrens(), HttpStatus.OK);
         else
-            return new ResponseEntity<>(new Error("No group with id : " + id), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new Error("No group with id : " + id,"ID_ALREADY_USE"), HttpStatus.NOT_FOUND);
 
     }
 
@@ -193,7 +192,7 @@ public class GroupApiController {
         if(groupRepository.getGroupEntityById(id) != null)
             return new ResponseEntity<>(groupRepository.getGroupEntityById(id).getScreenList(), HttpStatus.OK);
         else
-            return new ResponseEntity<>(new Error("No group with id : " + id), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new Error("No group with id : " + id,"ID_ALREADY_USE"), HttpStatus.NOT_FOUND);
     }
 
     @RequestMapping("/test")

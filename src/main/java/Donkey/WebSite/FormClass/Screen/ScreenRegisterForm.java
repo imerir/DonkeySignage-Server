@@ -1,4 +1,4 @@
-package Donkey.WebSite.FormClass;
+package Donkey.WebSite.FormClass.Screen;
 
 public class ScreenRegisterForm {
 

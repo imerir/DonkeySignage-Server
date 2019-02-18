@@ -1,13 +1,15 @@
 package Donkey.WebSite;
 
+import Donkey.Database.Entity.GroupEntity;
 import Donkey.Database.Entity.ScreenEntity;
 import Donkey.Database.Entity.TemporalScreenEntity;
 import Donkey.Database.Repository.GroupRepository;
 import Donkey.Database.Repository.ScreenRepository;
 import Donkey.Database.Repository.TemporalScreenRepository;
 import Donkey.Tools.ScreenTools;
-import Donkey.WebSite.FormClass.ScreenRegisterForm;
-import Donkey.WebSite.FormClass.TmpTokenForm;
+import Donkey.WebSite.FormClass.Group.AddGroupForm;
+import Donkey.WebSite.FormClass.Screen.ScreenRegisterForm;
+import Donkey.WebSite.FormClass.Screen.TmpTokenForm;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
@@ -99,6 +101,41 @@ public class WebController {
         }else{
             return "Uuid null or empty";
         }
+    }
 
+    @RequestMapping(value="/getScreen", method = RequestMethod.GET)
+    public String getScreen(Model model, @RequestParam(name = "id")int id){
+        if(screenRegRep.getScreenEntityById(id) != null){
+            ScreenEntity theScreen =  screenRegRep.getScreenEntityById(id);
+            model.addAttribute("screen",theScreen);
+            return "Screen/getScreen";
+        }else{
+            return "Error";
+        }
+    }
+
+    @RequestMapping(value="/addGroup", method = RequestMethod.GET)
+    public String addGroup(Model model){
+        model.addAttribute("addGroupForm", new AddGroupForm());
+        return "Group/addGroup";
+    }
+
+    @PostMapping(value = "/addGroup")
+    public String addGroup(Model model, @ModelAttribute AddGroupForm groupForm){
+        if(groupForm.getName() != null && ! groupForm.getName().isEmpty()){
+            model.addAttribute("groupForm",groupForm);
+            GroupEntity newEntry = new GroupEntity();
+            newEntry.setName(groupForm.getName());
+            if(groupForm.getParentId() != -1)
+                newEntry.setParent(grpRep.getGroupEntityById(groupForm.getParentId()));
+            else
+                newEntry.setParent(null);
+            newEntry.getChildrens().clear();
+            newEntry.getScreenList().clear();
+            grpRep.save(newEntry);
+            return "Ok";
+        }else{
+            return "error";
+        }
     }
 }

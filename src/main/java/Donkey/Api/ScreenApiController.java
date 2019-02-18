@@ -1,6 +1,7 @@
 package Donkey.Api;
 
 import Donkey.Api.JSON.*;
+import Donkey.Api.JSON.Error;
 import Donkey.Api.JSON.Group.GroupJson;
 import Donkey.Api.JSON.Screen.*;
 import Donkey.Database.Entity.GroupEntity;
@@ -50,7 +51,7 @@ public class ScreenApiController {
      * @return TemporalRegisterJson, json who contains all informations of screen
      */
     @PostMapping(value = {"/getToken"})
-    public TemporalRegisterJson getToken(HttpServletRequest request, @RequestBody UuidJson uuid){
+    public ResponseEntity<?> getToken(HttpServletRequest request, @RequestBody UuidJson uuid){
         TemporalScreenEntity newTmpRegister;
         //log.debug("Post on getToken, value of uuid : " + uuid.getUuid());
         if(tmpRegisterRep.getTemporalRegisterByUuid(uuid.getUuid()) == null){
@@ -62,7 +63,7 @@ public class ScreenApiController {
             newTmpRegister.setExpirationDate(ScreenTools.getInstance().generateExpirationDateLocalDate());
         }
         tmpRegisterRep.save(newTmpRegister);
-        return new TemporalRegisterJson(newTmpRegister.getTempToken(),newTmpRegister.getUuid(), ScreenTools.getInstance().generateExpirationDateStr());
+        return new ResponseEntity<>(new TemporalRegisterJson(newTmpRegister.getTempToken(),newTmpRegister.getUuid(), ScreenTools.getInstance().generateExpirationDateStr()),HttpStatus.OK);
     }
 
     /**
@@ -96,7 +97,7 @@ public class ScreenApiController {
      * @return ScreenJson
      */
     @PostMapping(value = {"/addScreen"})
-    public ScreenJson addScreen (@RequestBody ScreenJson screenJson){
+    public ResponseEntity<?> addScreen (@RequestBody ScreenJson screenJson){
         if(screenJson.uuid != null && !screenJson.uuid.isEmpty()){
             ScreenEntity newEntry = new ScreenEntity();
             if(screenRegisterRep.getScreenRegisterByUuid(screenJson.uuid) == null){
@@ -121,9 +122,9 @@ public class ScreenApiController {
             groupNeedChange.getScreenList().add(newEntry);
             //Maybe erase before add
             grpRep.save(groupNeedChange);
-            return new ScreenJson(newEntry.getIp(),newEntry.getToken(),newEntry.getUuid(),newEntry.getName(),newEntry.getGroup().getId());
+            return new ResponseEntity<>(new ScreenJson(newEntry.getIp(),newEntry.getToken(),newEntry.getUuid(),newEntry.getName(),newEntry.getGroup().getId()),HttpStatus.OK );
         }else{
-            return new ScreenJson(null,null,null,null,-1);
+            return new ResponseEntity<>(new Error("Uuid send is null or empty !","UUID_EMPTY_OR_NULL"),HttpStatus.NOT_FOUND);
         }
     }
 
@@ -132,25 +133,25 @@ public class ScreenApiController {
      * @param deleteScreenJson
      * @return DeleteScreenJson
      */
-    @PostMapping(value = {"/deleteScreen"})
+    @DeleteMapping(value = {"/deleteScreen"})
     //TODO HTTP delete
-    public DeleteScreenJson deleteScreen(@RequestBody DeleteScreenJson deleteScreenJson){
+    public ResponseEntity<?> deleteScreen(@RequestBody DeleteScreenJson deleteScreenJson){
         ScreenEntity screenToDelete = screenRegisterRep.getScreenEntityById(deleteScreenJson.id);
         if(screenToDelete != null){
             screenRegisterRep.delete(screenToDelete);
             if(deleteScreenJson.groupId != -1){
-                return new DeleteScreenJson(screenToDelete.getId(),screenToDelete.getName(),screenToDelete.getGroup().getId());
+                return new ResponseEntity<>(new  DeleteScreenJson(screenToDelete.getId(),screenToDelete.getName(),screenToDelete.getGroup().getId()),HttpStatus.OK);
             }else{
-                return new DeleteScreenJson(screenToDelete.getId(),screenToDelete.getName(),-1);
+                return new ResponseEntity<>(new DeleteScreenJson(screenToDelete.getId(),screenToDelete.getName(),-1),HttpStatus.OK);
             }
         }else{
-            return new DeleteScreenJson(-1,"",-1);
+            return new ResponseEntity<>(new Error("Screen with id : " + deleteScreenJson.id + " not exist ! ", "SCREEN_NOT_FOUND"),HttpStatus.NOT_FOUND);
         }
     }
 
-    @PostMapping(value = {"/modifyScreen"})
+    @PutMapping(value = {"/modifyScreen"})
     //TODO HTTP put
-    public ScreenJson modifyScreen(@RequestBody ModifyScreenJson modifyScreenJson){
+    public ResponseEntity<?> modifyScreen(@RequestBody ModifyScreenJson modifyScreenJson){
         ScreenEntity screenNeedModification = screenRegisterRep.getScreenEntityById(modifyScreenJson.id);
         if (screenNeedModification != null) {
             if (modifyScreenJson.groupId == -1) {
@@ -158,17 +159,18 @@ public class ScreenApiController {
                     screenNeedModification.setName(modifyScreenJson.name);
                 screenNeedModification.setGroup(null);
                 screenRegisterRep.save(screenNeedModification);
-                return new ScreenJson(screenNeedModification.getIp(),screenNeedModification.getToken(),screenNeedModification.getUuid(),screenNeedModification.getName(),screenNeedModification.getGroup().getId());
+                return new ResponseEntity<>(new ScreenJson(screenNeedModification.getIp(),screenNeedModification.getToken(),screenNeedModification.getUuid(),screenNeedModification.getName(),screenNeedModification.getGroup().getId()),HttpStatus.OK);
             } else {
                 GroupEntity newGrpParent = grpRep.getGroupEntityById(modifyScreenJson.groupId);
                 if(modifyScreenJson.name != null && !modifyScreenJson.name.isEmpty())
                     screenNeedModification.setName(modifyScreenJson.name);
                 screenNeedModification.setGroup(newGrpParent);
                 screenNeedModification = screenRegisterRep.save(screenNeedModification);
-                return new ScreenJson(screenNeedModification.getIp(),screenNeedModification.getToken(),screenNeedModification.getUuid(),screenNeedModification.getName(),screenNeedModification.getGroup().getId());
+                return new ResponseEntity<>(new ScreenJson(screenNeedModification.getIp(),screenNeedModification.getToken(),screenNeedModification.getUuid(),screenNeedModification.getName(),screenNeedModification.getGroup().getId()),HttpStatus.OK);
+
             }
         } else {
-            return new ScreenJson("","","","",-1);
+            return new ResponseEntity<>(new Error("No Screen with id : " + modifyScreenJson.id,"ID_NOT_FOUND"), HttpStatus.NOT_FOUND);
         }
     }
 
@@ -179,11 +181,15 @@ public class ScreenApiController {
      * @return GroupJson
      */
     @RequestMapping(value = {"/getGroup"}, method = RequestMethod.GET)
-    public GroupJson getGroup(@RequestParam(name = "id") int id) {
-        if(id != -1 )
-            return new GroupJson(grpRep.getGroupEntityById(screenRegisterRep.getScreenEntityById(id).getGroup().getId()).getName(), grpRep.getGroupEntityById(screenRegisterRep.getScreenEntityById(id).getGroup().getId()).getId());
-        else
-            return new GroupJson("", -1);
+    public ResponseEntity<?> getGroup(@RequestParam(name = "id") int id) {
+        if(screenRegisterRep.getScreenEntityById(id) != null){
+            if(id != -1 )
+                return new ResponseEntity<>(new GroupJson(grpRep.getGroupEntityById(screenRegisterRep.getScreenEntityById(id).getGroup().getId()).getName(), grpRep.getGroupEntityById(screenRegisterRep.getScreenEntityById(id).getGroup().getId()).getId()), HttpStatus.OK);
+            else
+                return new ResponseEntity<>(new GroupJson("", -1), HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(new Error("No Screen with id : " + id,"ID_NOT_FOUND"), HttpStatus.NOT_FOUND);
+        }
 
     }
 }
