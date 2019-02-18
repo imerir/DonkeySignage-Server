@@ -2,6 +2,7 @@ package Donkey.WebSite;
 
 import Donkey.Database.Entity.ScreenEntity;
 import Donkey.Database.Entity.TemporalScreenEntity;
+import Donkey.Database.Repository.GroupRepository;
 import Donkey.Database.Repository.ScreenRepository;
 import Donkey.Database.Repository.TemporalScreenRepository;
 import Donkey.Tools.ScreenTools;
@@ -17,12 +18,14 @@ import org.springframework.web.bind.annotation.*;
 public class WebController {
     private final ScreenRepository screenRegRep;
     private final TemporalScreenRepository tmpRegisterRep;
+    private final GroupRepository grpRep;
 
     private Logger log = LogManager.getLogger();
 
-    public WebController(ScreenRepository screenRegRep, TemporalScreenRepository tmpRegisterRep){
+    public WebController(ScreenRepository screenRegRep, TemporalScreenRepository tmpRegisterRep, GroupRepository grpRep){
         this.screenRegRep = screenRegRep;
         this.tmpRegisterRep = tmpRegisterRep;
+        this.grpRep = grpRep;
     }
 
     /**
@@ -81,18 +84,20 @@ public class WebController {
                 newEntry.setUuid(tmpReg.getUuid());
                 newEntry.setName(screenRegisterForm.getName());
                 newEntry.setToken(ScreenTools.getInstance().generateUuid());
+                newEntry.setGroup(grpRep.getGroupEntityById(screenRegisterForm.getGroupId()));
             }else{
                 ScreenEntity tmpScreen = screenRegRep.getScreenRegisterByUuid(screenRegisterForm.getUuid());
                 newEntry.setName(tmpScreen.getName());
                 newEntry.setUuid(tmpScreen.getUuid());
                 newEntry.setIp(tmpScreen.getIp());
                 newEntry.setToken(ScreenTools.getInstance().generateUuid());
+                newEntry.setGroup(grpRep.getGroupEntityById(screenRegisterForm.getGroupId()));
             }
             screenRegRep.save(newEntry);
             tmpRegisterRep.delete(tmpRegisterRep.getTemporalRegisterByUuid(screenRegisterForm.getUuid()));
             return "index";
         }else{
-            return "Error";
+            return "Uuid null or empty";
         }
 
     }
