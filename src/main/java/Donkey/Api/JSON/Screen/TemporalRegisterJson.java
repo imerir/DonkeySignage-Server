@@ -1,9 +1,6 @@
-package Donkey.Api.JSON;
+package Donkey.Api.JSON.Screen;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
-import java.time.LocalDate;
 
 public class TemporalRegisterJson {
     public String tempToken;

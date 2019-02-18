@@ -1,20 +1,19 @@
-package Donkey.Api.JSON;
+package Donkey.Api.JSON.Screen;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-public class DeleteScreenJson {
+public class ModifyScreenJson {
     public int id;
     public String name;
     public int groupId;
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public String message;
 
-    public DeleteScreenJson(){
+    public ModifyScreenJson(){
 
     }
 
-    public DeleteScreenJson(int id, String name, int groupId, String message){
-        this.id = id;
+    public ModifyScreenJson(String name, int groupId, String message) {
         this.name = name;
         this.groupId = groupId;
         this.message = message;

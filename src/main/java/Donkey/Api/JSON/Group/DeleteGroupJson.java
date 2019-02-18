@@ -1,4 +1,4 @@
-package Donkey.Api.JSON;
+package Donkey.Api.JSON.Group;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
