@@ -1,10 +1,9 @@
 package Donkey.Api;
 
 
-import Donkey.Api.JSON.DeleteGroupJson;
-import Donkey.Api.JSON.DeleteScreenJson;
-import Donkey.Api.JSON.GroupJson;
-import Donkey.Api.JSON.ModifyGroupJson;
+import Donkey.Api.JSON.Group.DeleteGroupJson;
+import Donkey.Api.JSON.Group.GroupJson;
+import Donkey.Api.JSON.Group.ModifyGroupJson;
 import Donkey.Database.Entity.GroupEntity;
 import Donkey.Database.Entity.ScreenEntity;
 import Donkey.Database.Repository.GroupRepository;
@@ -37,6 +36,7 @@ public class GroupApiController {
      * @return DeleteGroupJson
      */
     //TODO faire le test pour se retrouver avec un ecran sans groupe
+    //TODO HTTP delete
     @PostMapping(value = {"/deleteGroup"})
     public DeleteGroupJson deleteGroup(@RequestBody DeleteGroupJson deleteGroupJson) {
         GroupEntity grpToDelete = groupRepository.getGroupEntityById(deleteGroupJson.id);
@@ -94,6 +94,7 @@ public class GroupApiController {
      * @return GroupJson
      */
     @PostMapping(value = {"/modifyGroup"})
+    //TODO HTTP put
     public GroupJson modifyGroup(@RequestBody ModifyGroupJson modifyGroupJson) {
         GroupEntity groupNeedModification = groupRepository.getGroupEntityById(modifyGroupJson.id);
         if (groupNeedModification != null) {

@@ -1,6 +1,8 @@
 package Donkey.Api;
 
 import Donkey.Api.JSON.*;
+import Donkey.Api.JSON.Group.GroupJson;
+import Donkey.Api.JSON.Screen.*;
 import Donkey.Database.Entity.GroupEntity;
 import Donkey.Database.Entity.ScreenEntity;
 import Donkey.Database.Entity.TemporalScreenEntity;
@@ -131,6 +133,7 @@ public class ScreenApiController {
      * @return DeleteScreenJson
      */
     @PostMapping(value = {"/deleteScreen"})
+    //TODO HTTP delete
     public DeleteScreenJson deleteScreen(@RequestBody DeleteScreenJson deleteScreenJson){
         ScreenEntity screenToDelete = screenRegisterRep.getScreenEntityById(deleteScreenJson.id);
         if(screenToDelete != null){
@@ -146,6 +149,7 @@ public class ScreenApiController {
     }
 
     @PostMapping(value = {"/modifyScreen"})
+    //TODO HTTP put
     public ScreenJson modifyScreen(@RequestBody ModifyScreenJson modifyScreenJson){
         ScreenEntity screenNeedModification = screenRegisterRep.getScreenEntityById(modifyScreenJson.id);
         if (screenNeedModification != null) {

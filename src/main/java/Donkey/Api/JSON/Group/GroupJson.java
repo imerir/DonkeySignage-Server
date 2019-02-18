@@ -1,22 +1,22 @@
-package Donkey.Api.JSON;
+package Donkey.Api.JSON.Group;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-public class ModifyScreenJson {
-    public int id;
+public class GroupJson {
     public String name;
-    public int groupId;
+    public int parent;
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public String message;
 
-    public ModifyScreenJson(){
+
+    public GroupJson(){
 
     }
 
-    public ModifyScreenJson(String name, int groupId, String message) {
+    public GroupJson(String name, int parent,String message){
         this.name = name;
-        this.groupId = groupId;
+        this.parent = parent;
         this.message = message;
     }
 }
