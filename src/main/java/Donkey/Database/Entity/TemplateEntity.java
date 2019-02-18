@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-public class Template {
+public class TemplateEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
@@ -21,7 +21,7 @@ public class Template {
 
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "template")
-    private List<WidgetConfig> widgetConfigs = new ArrayList<>();
+    private List<WidgetConfigEntity> widgetConfigs = new ArrayList<>();
 
 
     public int getId() {
@@ -48,11 +48,11 @@ public class Template {
         this.screen = screen;
     }
 
-    public List<WidgetConfig> getWidgetConfigs() {
+    public List<WidgetConfigEntity> getWidgetConfigs() {
         return widgetConfigs;
     }
 
-    public void setWidgetConfigs(List<WidgetConfig> widgetConfigs) {
+    public void setWidgetConfigs(List<WidgetConfigEntity> widgetConfigs) {
         this.widgetConfigs = widgetConfigs;
     }
 }

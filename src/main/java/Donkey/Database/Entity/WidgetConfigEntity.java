@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.*;
 
 @Entity
-public class WidgetConfig {
+public class WidgetConfigEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
@@ -14,12 +14,12 @@ public class WidgetConfig {
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "template_id")
-    private Template template;
+    private TemplateEntity template;
 
     private int posX;
     private int posY;
     private int sizeWidth;
-    private int sizeHight;
+    private int sizeHeight;
 
     private String param;
 
@@ -32,11 +32,11 @@ public class WidgetConfig {
         this.id = id;
     }
 
-    public Template getTemplate() {
+    public TemplateEntity getTemplate() {
         return template;
     }
 
-    public void setTemplate(Template template) {
+    public void setTemplate(TemplateEntity template) {
         this.template = template;
     }
 
@@ -64,12 +64,12 @@ public class WidgetConfig {
         this.sizeWidth = sizeWidth;
     }
 
-    public int getSizeHight() {
-        return sizeHight;
+    public int getSizeHeight() {
+        return sizeHeight;
     }
 
-    public void setSizeHight(int sizeHight) {
-        this.sizeHight = sizeHight;
+    public void setSizeHeight(int sizeHeight) {
+        this.sizeHeight = sizeHeight;
     }
 
     public String getParam() {
