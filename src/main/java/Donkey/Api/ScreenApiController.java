@@ -148,7 +148,6 @@ public class ScreenApiController {
     @PostMapping(value = {"/modifyScreen"})
     public ScreenJson modifyScreen(@RequestBody ModifyScreenJson modifyScreenJson){
         ScreenEntity screenNeedModification = screenRegisterRep.getScreenEntityById(modifyScreenJson.id);
-        log.debug("Id screen : " + screenNeedModification.getIp());
         if (screenNeedModification != null) {
             if (modifyScreenJson.groupId == -1) {
                 if(modifyScreenJson.name != null && !modifyScreenJson.name.isEmpty())

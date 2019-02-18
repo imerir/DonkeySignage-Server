@@ -4,7 +4,7 @@ public class ScreenRegisterForm {
 
     public String name;
     public String uuid;
-    //private GroupEntity groupe;
+    private int groupId;
 
     public String getUuid() {
         return uuid;
@@ -20,5 +20,13 @@ public class ScreenRegisterForm {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(int groupId) {
+        this.groupId = groupId;
     }
 }
