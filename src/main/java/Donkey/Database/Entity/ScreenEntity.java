@@ -21,7 +21,7 @@ public class ScreenEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "template_id")
-    private Template template;
+    private TemplateEntity template;
 
     public ScreenEntity(){
 
