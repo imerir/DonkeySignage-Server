@@ -1,1 +1,13 @@
-<h1>$message</h1>
+<div id="$id">
+    <h1>$message</h1>
+</div>
+
+<script>
+    var id = $id;
+    var paramStr = '$param';
+    var param = JSON.parse(paramStr);
+    $("#"+id).each(function(){
+        $(this)[0].innerHTML = $(this)[0].innerHTML.replace(/\$message/g, param.message);
+    });
+
+</script>

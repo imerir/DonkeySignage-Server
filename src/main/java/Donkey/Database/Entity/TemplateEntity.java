@@ -20,7 +20,7 @@ public class TemplateEntity {
     private List<ScreenEntity> screen = new ArrayList<>();
 
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "template")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "template")
     private List<WidgetConfigEntity> widgetConfigs = new ArrayList<>();
 
 

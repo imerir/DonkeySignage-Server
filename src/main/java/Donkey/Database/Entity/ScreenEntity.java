@@ -19,7 +19,7 @@ public class ScreenEntity {
     @JsonIgnore
     private GroupEntity group;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "template_id")
     private TemplateEntity template;
 
@@ -76,6 +76,14 @@ public class ScreenEntity {
 
     public GroupEntity getGroup() {
         return group;
+    }
+
+    public TemplateEntity getTemplate() {
+        return template;
+    }
+
+    public void setTemplate(TemplateEntity template) {
+        this.template = template;
     }
 
     public void setGroup(GroupEntity group) {

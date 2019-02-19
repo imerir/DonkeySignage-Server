@@ -1,6 +1,8 @@
 package Donkey.WebSocket;
 
 import Donkey.Database.Entity.ScreenEntity;
+import Donkey.Database.Repository.ScreenRepository;
+import Donkey.SpringContext;
 import Donkey.Tools.Exception.TokenNotMatch;
 import Donkey.Tools.Exception.UnknownUUID;
 import Donkey.Tools.ScreenTools;
@@ -10,6 +12,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -32,8 +35,16 @@ public class SocketHandler extends TextWebSocketHandler {
     private Logger logger = LogManager.getLogger();
     private ObjectMapper objectMapper = new ObjectMapper();
 
+    private ScreenRepository screenRepository;
+
+    public SocketHandler(){
+        ApplicationContext context = SpringContext.getAppContext();
+        screenRepository = (ScreenRepository) context.getBean("screenRepository");
+    }
+
+
     /**
-     * When coonection is Established, register the screen
+     * When connection is Established, register the screen
      *
      * @param session
      * @throws Exception
@@ -91,14 +102,9 @@ public class SocketHandler extends TextWebSocketHandler {
 
                 case "CONFIG":
 
-
+                    sendConfig(session);
 
                     break;
-
-            }
-            if (data.type.equals("AUTH")) {
-
-
 
             }
         } catch (IOException e) {
@@ -132,14 +138,35 @@ public class SocketHandler extends TextWebSocketHandler {
 
 
     private void sendWidgetManifest(WebSocketSession session) throws IOException {
-        HashMap<String, WidgetInterface> widgets = WebSocketUtils.getINSTANCE().getWidgets();
-        WebSocketData webSocketData = new WebSocketData();
-        webSocketData.type = "MANIFEST";
-        webSocketData.data = new HashMap<>();
-        webSocketData.data.put("list", widgets.values());
-        String strWidget = objectMapper.writeValueAsString(webSocketData);
-        session.sendMessage(new TextMessage(strWidget));
+        SocketState states = SocketState.getINSTANCE();
+        SocketState.Info state = states.getLoggedBySocket(session);
+        if(state != null){
+            HashMap<String, WidgetInterface> widgets = WebSocketUtils.getINSTANCE().getWidgets();
+            WebSocketData webSocketData = new WebSocketData();
+            webSocketData.type = "MANIFEST";
+            webSocketData.data = new HashMap<>();
+            webSocketData.data.put("list", widgets.values());
+            String strWidget = objectMapper.writeValueAsString(webSocketData);
+            session.sendMessage(new TextMessage(strWidget));
+        }
 
 
+
+    }
+
+
+    private void sendConfig(WebSocketSession session) throws IOException {
+        SocketState states = SocketState.getINSTANCE();
+        SocketState.Info state = states.getLoggedBySocket(session);
+        if(state != null){
+            WebSocketData webSocketData = new WebSocketData();
+            webSocketData.type = "CONFIG";
+            webSocketData.data = new HashMap<>();
+
+            ScreenEntity screen = screenRepository.getScreenRegisterByUuid(state.uuid);
+            webSocketData.data.put("template", screen.getTemplate());
+            String screenStr = objectMapper.writeValueAsString(webSocketData);
+            session.sendMessage(new TextMessage(screenStr));
+        }
     }
 }
