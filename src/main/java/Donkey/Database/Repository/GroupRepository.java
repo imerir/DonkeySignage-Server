@@ -8,6 +8,8 @@ import java.util.List;
 public interface GroupRepository extends CrudRepository<GroupEntity,Integer> {
     GroupEntity getGroupEntityById(int id);
     GroupEntity getGroupEntityByNameAndParent(String name, GroupEntity parent);
+    List<GroupEntity> getGroupEntityByParentNull();
+    List<GroupEntity> getGroupEntityByParent_Id(int id);
 
     void delete(GroupEntity group);
 }

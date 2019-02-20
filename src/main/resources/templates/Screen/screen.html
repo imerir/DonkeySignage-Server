@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Screen</title>
+</head>
+<body>
+    <h2 th:utext="'Screen name : ' + ${screen.name}">...</h2>
+    <div>
+        <h3>Ip : </h3>
+        <h4 th:utext="${screen.ip}">...</h4>
+        <h3>Token : </h3>
+        <h4 th:utext="${screen.token}">...</h4>
+        <h3>Uuid : </h3>
+        <h4 th:utext="${screen.uuid}">...</h4>
+        <th:block th:if="${groupId} != -1">
+            <h3>Group : </h3>
+            <h4><a th:utext="${groupName}" th:href="${'/group?id=' + groupId}">...</a></h4>
+        </th:block>
+        <th:block th:if="${groupId} == -1">
+            <h3>Group : </h3>
+            <h4>No Affectation</h4>
+        </th:block>
+    </div>
+</body>
+</html>

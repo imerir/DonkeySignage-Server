@@ -16,6 +16,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Controller
 public class WebController {
     private final ScreenRepository screenRegRep;
@@ -42,11 +44,11 @@ public class WebController {
         if (!uuid.isEmpty() && tmpReg!= null) {
             model.addAttribute("uuid",uuid);
             model.addAttribute("screenRegisterForm",new ScreenRegisterForm());
-            return "formScreenRegister";
+            return "Screen/formScreenRegister";
         } else {
             TmpTokenForm form = new TmpTokenForm();
             model.addAttribute("tmpTokenForm", form);
-            return "screenRegister";
+            return "Screen/screenRegister";
         }
     }
 
@@ -97,18 +99,24 @@ public class WebController {
             }
             screenRegRep.save(newEntry);
             tmpRegisterRep.delete(tmpRegisterRep.getTemporalRegisterByUuid(screenRegisterForm.getUuid()));
-            return "index";
+            return "redirect:/getScreen?id="+newEntry.getId();
         }else{
             return "Uuid null or empty";
         }
     }
 
-    @RequestMapping(value="/getScreen", method = RequestMethod.GET)
+    @RequestMapping(value="/screen", method = RequestMethod.GET)
     public String getScreen(Model model, @RequestParam(name = "id")int id){
         if(screenRegRep.getScreenEntityById(id) != null){
             ScreenEntity theScreen =  screenRegRep.getScreenEntityById(id);
+            if(theScreen.getGroup() != null){
+                model.addAttribute("groupId",theScreen.getGroup().getId());
+                model.addAttribute("groupName",theScreen.getGroup().getName());
+            }
+            else
+                model.addAttribute("groupId",-1);
             model.addAttribute("screen",theScreen);
-            return "Screen/getScreen";
+            return "Screen/screen";
         }else{
             return "Error";
         }
@@ -133,9 +141,33 @@ public class WebController {
             newEntry.getChildrens().clear();
             newEntry.getScreenList().clear();
             grpRep.save(newEntry);
-            return "Ok";
+            return "redirect:/getGroup?id="+newEntry.getId();
         }else{
             return "error";
+        }
+    }
+
+    @RequestMapping(value = "/group")
+    public String showGroup(Model model, @RequestParam(name = "id", defaultValue = "-1")int id){
+        if(id == -1){
+            List<GroupEntity> groupList = grpRep.getGroupEntityByParentNull();
+            List<ScreenEntity> screenList = screenRegRep.getScreenByGroupNull();
+            model.addAttribute("groupList",groupList);
+            model.addAttribute("screenList", screenList);
+            model.addAttribute("getWithId",0);
+            return "Group/group";
+        }
+        if(grpRep.getGroupEntityById(id) != null){
+            GroupEntity group =  grpRep.getGroupEntityById(id);
+            List<ScreenEntity> screenList = screenRegRep.getScreenEntityByGroupId(id);
+            List<GroupEntity> childrenList = grpRep.getGroupEntityByParent_Id(id);
+            model.addAttribute("group",group);
+            model.addAttribute("screenList" , screenList);
+            model.addAttribute("childrenList" , childrenList);
+            model.addAttribute("getWithId",1);
+            return "Group/group";
+        }else{
+            return "Error";
         }
     }
 }

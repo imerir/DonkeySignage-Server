@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:form="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Group</title>
+</head>
+<body>
+    <th:block th:if="${getWithId} == 0">
+        <h2>Group : </h2>
+        <div>
+            <table border="1">
+                <tr>
+                    <th>Name</th>
+                </tr>
+                <tr th:each ="groupItem : ${groupList}">
+                    <td >
+                        <a th:utext="${groupItem.name}" th:href="${'/group?id=' + groupItem.id}"></a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <h2>Screen : </h2>
+        <div>
+            <table border="1">
+                <tr>
+                    <th>Name</th>
+                </tr>
+                <tr th:each ="screenItem : ${screenList}">
+                    <td>
+                        <a th:utext="${screenItem.name}" th:href="${'/screen?id=' + screenItem.id}"></a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </th:block>
+    <th:block th:if="${getWithId} == 1">
+        <h2 th:utext="'Group name : ' + ${group.name}">...</h2>
+        <h2> Group : </h2>
+        <div>
+            <table border="1">
+                <tr>
+                    <th>Name</th>
+                </tr>
+                <tr th:each ="childrenItem : ${childrenList}">
+                    <td>
+                        <a th:utext="${childrenItem.name}" th:href="${'/group?id=' + childrenItem.id}"></a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <h2> Screen : </h2>
+        <div>
+            <table border="1">
+            <tr>
+                <th>Name</th>
+            </tr>
+            <tr th:each ="screenItem : ${screenList}">
+                <td>
+                    <a th:utext="${screenItem.name}" th:href="${'/screen?id=' + screenItem.id}"></a>
+                </td>
+            </tr>
+        </table>
+        </div>
+    </th:block>
+</body>
+</html>
