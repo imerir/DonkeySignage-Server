@@ -37,16 +37,14 @@ public class GroupApiController {
      * @param deleteGroupJson
      * @return DeleteGroupJson
      */
-    //TODO faire le test pour se retrouver avec un ecran sans groupe
-    //TODO HTTP delete
     @DeleteMapping(value = {"/deleteGroup"})
-    public ResponseEntity<?> deleteGroup(@RequestBody DeleteGroupJson deleteGroupJson) {
-        GroupEntity grpToDelete = groupRepository.getGroupEntityById(deleteGroupJson.id);
+    public ResponseEntity<?> deleteGroup(@RequestParam (name = "id") int id ) {
+        GroupEntity grpToDelete = groupRepository.getGroupEntityById(id);
         if(grpToDelete != null){
             if(grpToDelete.getParent() != null){
                 if(grpToDelete.getScreenList().size() != 0){
                     //Deplacer les ecrans au groupe parent
-                    GroupEntity newParentForScreen = groupRepository.getGroupEntityById(deleteGroupJson.parentId);
+                    GroupEntity newParentForScreen = groupRepository.getGroupEntityById(groupRepository.getGroupEntityById(id).getParent().getId());
                     for(int i = 0 ; i < grpToDelete.getScreenList().size() ; i++){
                         ScreenEntity screenWithNewParent = grpToDelete.getScreenList().get(i);
                         screenWithNewParent.setGroup(newParentForScreen);
@@ -54,7 +52,7 @@ public class GroupApiController {
                     }
                 }
                 if(grpToDelete.getChildrens().size() != 0){
-                    GroupEntity newParentForScreen = groupRepository.getGroupEntityById(deleteGroupJson.parentId);
+                    GroupEntity newParentForScreen = groupRepository.getGroupEntityById(groupRepository.getGroupEntityById(id).getParent().getId());
                     for(int i = 0 ; i < grpToDelete.getChildrens().size() ; i++){
                         GroupEntity grpWithNewParent = grpToDelete.getChildrens().get(i);
                         grpWithNewParent.setParent(newParentForScreen);
@@ -81,11 +79,11 @@ public class GroupApiController {
             }
 
             if(grpToDelete.getParent() == null)
-                return new ResponseEntity<>(new DeleteGroupJson(grpToDelete.getId(),grpToDelete.getName(),-1),HttpStatus.OK);
+                return new ResponseEntity<>(new DeleteGroupJson(grpToDelete.getId(),grpToDelete.getName(),-1),HttpStatus.NO_CONTENT);
             else
-                return new ResponseEntity<>(new DeleteGroupJson(grpToDelete.getId(),grpToDelete.getName(),grpToDelete.getParent().getId()),HttpStatus.OK);
+                return new ResponseEntity<>(new DeleteGroupJson(grpToDelete.getId(),grpToDelete.getName(),grpToDelete.getParent().getId()),HttpStatus.NO_CONTENT);
         }else{
-            return new ResponseEntity<>(new Error("No Group with id : " + deleteGroupJson.id , "ID_NOT_FOUND"), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 

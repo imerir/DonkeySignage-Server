@@ -1,5 +1,7 @@
 package Donkey.WebSite;
 
+import Donkey.Api.GroupApiController;
+import Donkey.Api.JSON.Group.GroupJson;
 import Donkey.Database.Entity.GroupEntity;
 import Donkey.Database.Entity.ScreenEntity;
 import Donkey.Database.Entity.TemporalScreenEntity;
@@ -18,18 +20,24 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+
+//TODO
+//Remplacer les methodes POST par du js directement dans html #JSAWARE
+
 @Controller
 public class WebController {
     private final ScreenRepository screenRegRep;
     private final TemporalScreenRepository tmpRegisterRep;
     private final GroupRepository grpRep;
+    private final GroupApiController groupApi;
 
     private Logger log = LogManager.getLogger();
 
-    public WebController(ScreenRepository screenRegRep, TemporalScreenRepository tmpRegisterRep, GroupRepository grpRep){
+    public WebController(ScreenRepository screenRegRep, TemporalScreenRepository tmpRegisterRep, GroupRepository grpRep, GroupApiController groupApi){
         this.screenRegRep = screenRegRep;
         this.tmpRegisterRep = tmpRegisterRep;
         this.grpRep = grpRep;
+        this.groupApi = groupApi;
     }
 
     /**
@@ -99,7 +107,7 @@ public class WebController {
             }
             screenRegRep.save(newEntry);
             tmpRegisterRep.delete(tmpRegisterRep.getTemporalRegisterByUuid(screenRegisterForm.getUuid()));
-            return "redirect:/getScreen?id="+newEntry.getId();
+            return "redirect:/screen?id="+newEntry.getId();
         }else{
             return "Uuid null or empty";
         }
@@ -132,16 +140,24 @@ public class WebController {
     public String addGroup(Model model, @ModelAttribute AddGroupForm groupForm){
         if(groupForm.getName() != null && ! groupForm.getName().isEmpty()){
             model.addAttribute("groupForm",groupForm);
-            GroupEntity newEntry = new GroupEntity();
-            newEntry.setName(groupForm.getName());
+            GroupJson newEntry = new GroupJson();
+//            GroupEntity newEntry = new GroupEntity();
+//            newEntry.setName(groupForm.getName());
+            newEntry.name = groupForm.getName();
             if(groupForm.getParentId() != -1)
-                newEntry.setParent(grpRep.getGroupEntityById(groupForm.getParentId()));
+                newEntry.parent = groupForm.getParentId();
+//                newEntry.parent = groupForm.getParentId();
             else
-                newEntry.setParent(null);
-            newEntry.getChildrens().clear();
-            newEntry.getScreenList().clear();
-            grpRep.save(newEntry);
-            return "redirect:/getGroup?id="+newEntry.getId();
+//                newEntry.setParent(null);
+                newEntry.parent = -1;
+//            newEntry.getChildrens().clear();
+//            newEntry.getScreenList().clear();
+//            grpRep.save(newEntry);
+            groupApi.addGroup(newEntry);
+            if(groupForm.getParentId() != -1)
+                return "redirect:/group?id="+grpRep.getGroupEntityByNameAndParent(groupForm.getName(),grpRep.getGroupEntityById(groupForm.getParentId())).getId();
+            else
+                return "redirect:/group?id="+grpRep.getGroupEntityByNameAndParent(groupForm.getName(),null).getId();
         }else{
             return "error";
         }
