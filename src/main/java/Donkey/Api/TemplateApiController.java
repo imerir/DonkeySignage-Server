@@ -19,6 +19,8 @@ import java.util.List;
 @RequestMapping("/api/")
 public class TemplateApiController {
 
+    //TODO Javadoc
+
     private Logger logger = LogManager.getLogger();
     private final TemplateRepository templateRepository;
     private final WidgetConfigRepository widgetConfigRepository;

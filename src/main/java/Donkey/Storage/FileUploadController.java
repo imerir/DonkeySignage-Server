@@ -3,7 +3,7 @@ package Donkey.Storage;
 import java.io.IOException;
 import java.util.stream.Collectors;
 
-import Donkey.Storage.Exception.StorageFileNotFoundException;
+import Donkey.Tools.Exception.StorageFileNotFoundException;
 import Donkey.Storage.Service.StorageService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,6 +34,12 @@ public class FileUploadController {
         this.storageService = storageService;
     }
 
+    /**
+     * show all media upload in server, and you can upload a media here
+     * @param model
+     * @return
+     * @throws IOException
+     */
     @GetMapping("/media")
     public String listUploadedFiles(Model model) throws IOException {
 
@@ -44,6 +50,11 @@ public class FileUploadController {
         return "uploadForm";
     }
 
+    /**
+     * Download the file
+     * @param filename
+     * @return
+     */
     @GetMapping("/files/{filename:.+}")
     @ResponseBody
     public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
@@ -54,6 +65,12 @@ public class FileUploadController {
                 "attachment; filename=\"" + file.getFilename() + "\"").body(file);
     }
 
+    /**
+     * Add Media in server's storage
+     * @param file
+     * @param redirectAttributes
+     * @return
+     */
     @PostMapping("/addMedia")
     public String handleFileUpload(@RequestParam("file") MultipartFile file,
                                    RedirectAttributes redirectAttributes) {

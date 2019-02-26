@@ -9,8 +9,8 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.stream.Stream;
 
-import Donkey.Storage.Exception.StorageException;
-import Donkey.Storage.Exception.StorageFileNotFoundException;
+import Donkey.Tools.Exception.StorageException;
+import Donkey.Tools.Exception.StorageFileNotFoundException;
 import Donkey.Storage.StorageProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -30,6 +30,10 @@ public class FileSystemStorageService implements StorageService {
         this.rootLocation = Paths.get(properties.getLocation());
     }
 
+    /**
+     * Store a file
+     * @param file
+     */
     @Override
     public void store(MultipartFile file) {
         String filename = StringUtils.cleanPath(file.getOriginalFilename());
@@ -53,6 +57,10 @@ public class FileSystemStorageService implements StorageService {
         }
     }
 
+    /**
+     * Load all file
+     * @return all file's path
+     */
     @Override
     public Stream<Path> loadAll() {
         try {
@@ -66,11 +74,21 @@ public class FileSystemStorageService implements StorageService {
 
     }
 
+    /**
+     * Get a path
+     * @param filename
+     * @return file's path
+     */
     @Override
     public Path load(String filename) {
         return rootLocation.resolve(filename);
     }
 
+    /**
+     * Load a file
+     * @param filename
+     * @return Resource
+     */
     @Override
     public Resource loadAsResource(String filename) {
         try {
@@ -90,11 +108,17 @@ public class FileSystemStorageService implements StorageService {
         }
     }
 
+    /**
+     * Delete all file
+     */
     @Override
     public void deleteAll() {
         FileSystemUtils.deleteRecursively(rootLocation.toFile());
     }
 
+    /**
+     * Init storage system
+     */
     @Override
     public void init() {
         try {

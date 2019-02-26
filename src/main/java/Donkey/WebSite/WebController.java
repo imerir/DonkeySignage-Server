@@ -113,6 +113,12 @@ public class WebController {
         }
     }
 
+    /**
+     * Show a screen, with some information
+     * @param model
+     * @param id
+     * @return
+     */
     @RequestMapping(value="/screen", method = RequestMethod.GET)
     public String getScreen(Model model, @RequestParam(name = "id")int id){
         if(screenRegRep.getScreenEntityById(id) != null){
@@ -130,12 +136,23 @@ public class WebController {
         }
     }
 
+    /**
+     * Show form for adding a group in db
+     * @param model
+     * @return
+     */
     @RequestMapping(value="/addGroup", method = RequestMethod.GET)
     public String addGroup(Model model){
         model.addAttribute("addGroupForm", new AddGroupForm());
         return "Group/addGroup";
     }
 
+    /**
+     * Add group in db
+     * @param model
+     * @param groupForm
+     * @return
+     */
     @PostMapping(value = "/addGroup")
     public String addGroup(Model model, @ModelAttribute AddGroupForm groupForm){
         if(groupForm.getName() != null && ! groupForm.getName().isEmpty()){
@@ -163,6 +180,12 @@ public class WebController {
         }
     }
 
+    /**
+     * Show a unique group (with a request with id) or all group with parentId == null
+     * @param model
+     * @param id
+     * @return
+     */
     @RequestMapping(value = "/group")
     public String showGroup(Model model, @RequestParam(name = "id", defaultValue = "-1")int id){
         if(id == -1){

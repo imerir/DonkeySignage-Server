@@ -1,4 +1,4 @@
-package Donkey.Storage.Exception;
+package Donkey.Tools.Exception;
 
 public class StorageException extends RuntimeException {
 
