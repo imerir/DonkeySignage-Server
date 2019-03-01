@@ -1,8 +1,11 @@
 package Donkey.Database.Entity;
 
+import Donkey.Database.Entity.UserAndPrivileges.UserScreenPrivilege;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class ScreenEntity {
@@ -22,6 +25,14 @@ public class ScreenEntity {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "template_id")
     private TemplateEntity template;
+
+    @OneToMany(
+            mappedBy = "screenEntity",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<UserScreenPrivilege> userPrivilege = new ArrayList<>();
+
 
     public ScreenEntity(){
 
@@ -88,5 +99,13 @@ public class ScreenEntity {
 
     public void setGroup(GroupEntity group) {
         this.group = group;
+    }
+
+    public List<UserScreenPrivilege> getUserPrivilege() {
+        return userPrivilege;
+    }
+
+    public void setUserPrivilege(List<UserScreenPrivilege> userPrivilege) {
+        this.userPrivilege = userPrivilege;
     }
 }

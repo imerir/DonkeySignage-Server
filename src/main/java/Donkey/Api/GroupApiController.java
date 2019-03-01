@@ -34,7 +34,7 @@ public class GroupApiController {
     /**
      * Drop a row group in database
      *
-     * @param deleteGroupJson
+     * @param id
      * @return DeleteGroupJson
      */
     @DeleteMapping(value = {"/deleteGroup"})

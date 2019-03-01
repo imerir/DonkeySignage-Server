@@ -6,6 +6,7 @@ import Donkey.Api.JSON.Group.GroupJson;
 import Donkey.Api.JSON.Screen.*;
 import Donkey.Database.Entity.GroupEntity;
 import Donkey.Database.Entity.ScreenEntity;
+import Donkey.Database.Entity.TemplateEntity;
 import Donkey.Database.Entity.TemporalScreenEntity;
 import Donkey.Database.Repository.GroupRepository;
 import Donkey.Database.Repository.ScreenRepository;
@@ -17,9 +18,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  *
@@ -91,12 +94,29 @@ public class ScreenApiController {
         }
     }
 
+
+    @PostAuthorize("hasPermission(returnObject, 'read')")
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public ResponseEntity<?> getScreen(@RequestParam(name = "id", defaultValue = "-1") int id){
+        if(id == -1){
+            List<ScreenEntity> screenEntityList = screenRegisterRep.getAllBy();
+            return new ResponseEntity<>(screenEntityList, HttpStatus.OK);
+        }
+        ScreenEntity screen = screenRegisterRep.getScreenEntityById(id);
+        if(screen == null){
+            log.info("[api/screen GET] Template not found");
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(screen, HttpStatus.OK);
+    }
+
     /**
      * Add screen to the database
      * @param screenJson
      * @return ScreenJson
      */
-    @PostMapping(value = {"/addScreen"})
+    @PostMapping(value = {"/"})
     public ResponseEntity<?> addScreen (@RequestBody ScreenJson screenJson){
         if(screenJson.uuid != null && !screenJson.uuid.isEmpty()){
             ScreenEntity newEntry = new ScreenEntity();
@@ -133,7 +153,7 @@ public class ScreenApiController {
      * @param deleteScreenJson
      * @return DeleteScreenJson
      */
-    @DeleteMapping(value = {"/deleteScreen"})
+    @DeleteMapping(value = {"/"})
     public ResponseEntity<?> deleteScreen(@RequestBody DeleteScreenJson deleteScreenJson){
         ScreenEntity screenToDelete = screenRegisterRep.getScreenEntityById(deleteScreenJson.id);
         if(screenToDelete != null){
@@ -153,7 +173,7 @@ public class ScreenApiController {
      * @param modifyScreenJson
      * @return ResponseEntity
      */
-    @PutMapping(value = {"/modifyScreen"})
+    @PutMapping(value = {"/"})
     public ResponseEntity<?> modifyScreen(@RequestBody ModifyScreenJson modifyScreenJson){
         ScreenEntity screenNeedModification = screenRegisterRep.getScreenEntityById(modifyScreenJson.id);
         if (screenNeedModification != null) {
