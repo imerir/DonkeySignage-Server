@@ -40,6 +40,11 @@ public class WebController {
         this.groupApi = groupApi;
     }
 
+    @RequestMapping(value ={"/index"},method = RequestMethod.GET)
+    public String index(){
+        return "index";
+    }
+
     /**
      * Display screenRegister.html for gettigng temporary token of the screen
      * @param model
