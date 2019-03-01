@@ -1,31 +1,81 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8"/>
-    <title>Media</title>
-</head>
-<body>
+    <head>
+        <meta charset="UTF-8"/>
+        <title>Media</title>
+    </head>
+    <!--<body onload="updateSize();">-->
+    <body>
+        <div th:if="${message}">
+            <h2 th:text="${message}"/>
+        </div>
 
-<div th:if="${message}">
-    <h2 th:text="${message}"/>
-</div>
+        <div>
+            <form method="POST" enctype="multipart/form-data" action="/addMedia">
+                <table>
+                    <tr>
+                        <td>File to upload:</td>
+                        <td><input type="file" name="file" /></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td><input type="submit" value="Upload" /></td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+        <div>
+            <ul>
+                <li th:each="file : ${files}">
+                    <a th:href="${file}" th:text="${file}">...</a>
+                </li>
+            </ul>
+        </div>
+        <script th:inline="javascript">
+            /*<![CDATA[*/
+            /*function updateSize() {
+                console.log("Begin UpdateSize");
+                var nBytes = 0;
+                var oFiles = document.getElementById("fileInput").files;
+                var nFiles = oFiles.length;
+                for (var nFileId = 0; nFileId < nFiles; nFileId++) {
+                    nBytes += oFiles[nFileId].size;
+                }
+                console.log("nBytes : " + nBytes + " , nFiles : " + nFiles);
+                var sOutput = nBytes + " bytes";
+                // optional code for multiples approximation
+                for (var aMultiples = ["KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"], nMultiple = 0, nApprox = nBytes / 1024; nApprox > 1; nApprox /= 1024, nMultiple++) {
+                    sOutput = nApprox.toFixed(3) + " " + aMultiples[nMultiple] + " (" + nBytes + " bytes)";
+                }
+                // end of optional code
 
-<div>
-    <form method="POST" enctype="multipart/form-data" action="/addMedia">
-        <table>
-            <tr><td>File to upload:</td><td><input type="file" name="file" /></td></tr>
-            <tr><td></td><td><input type="submit" value="Upload" /></td></tr>
-        </table>
-    </form>
-</div>
+                document.getElementById("fileNum").innerHTML = nFiles;
+                document.getElementById("fileSize").innerHTML = sOutput;
+                console.log("End UpdateSize");
+            }
 
-<div>
-    <ul>
-        <li th:each="file : ${files}">
-            <a th:href="${file}" th:text="${file}" />
-        </li>
-    </ul>
-</div>
+            function addFile (){
+                var newTr = document.createElement("tr");
+                document.getElementById("JsAddFile").appendChild(newTr);
 
-</body>
+                var firstTd = document.createElement("td");
+                var node = document.createTextNode("File to upload:");
+                firstTd.appendChild(node);
+                newTr.appendChild(firstTd);
+
+                var secondTd = document.createElement("td");
+                var firstInput = document.createElement("INPUT");
+                firstInput.setAttribute("id","fileInput");
+                firstInput.setAttribute("type","file");
+                firstInput.setAttribute("name","file");
+                firstInput.setAttribute("onchange","updateSize();");;
+                firstInput.setAttribute("multiple","multiple();");
+                secondTd.appendChild(firstInput);
+                newTr.appendChild(secondTd);
+
+            }*/
+            /*]]>*/
+
+        </script>
+    </body>
 </html>

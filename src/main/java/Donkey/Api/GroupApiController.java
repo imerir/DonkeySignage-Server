@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
+//TODO /api/group
+//TODO tout mettre en RequestMapping(value={}, method = Request.
 @RequestMapping("/api/")
 public class GroupApiController {
     private Logger log = LogManager.getLogger();
