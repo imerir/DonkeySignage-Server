@@ -11,4 +11,5 @@ public interface ScreenRepository extends CrudRepository<ScreenEntity,Integer> {
     List<ScreenEntity> getScreenByGroupNull();
     List<ScreenEntity> getScreenEntityByGroupId(int id);
     List<ScreenEntity> getAllBy();
+
 }

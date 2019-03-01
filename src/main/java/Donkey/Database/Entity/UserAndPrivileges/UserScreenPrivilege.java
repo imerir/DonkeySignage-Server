@@ -20,4 +20,35 @@ public class UserScreenPrivilege {
 
     private String privilege;
 
+    public UserEntity getUserEntity() {
+        return userEntity;
+    }
+
+    public void setUserEntity(UserEntity userEntity) {
+        this.userEntity = userEntity;
+    }
+
+    public ScreenEntity getScreenEntity() {
+        return screenEntity;
+    }
+
+    public void setScreenEntity(ScreenEntity screenEntity) {
+        this.screenEntity = screenEntity;
+    }
+
+    public String getPrivilege() {
+        return privilege;
+    }
+
+    public void setPrivilege(String privilege) {
+        this.privilege = privilege;
+    }
+
+    public UserScreenPrivilegeId getId() {
+        return id;
+    }
+
+    public void setId(UserScreenPrivilegeId id) {
+        this.id = id;
+    }
 }

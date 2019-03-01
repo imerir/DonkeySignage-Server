@@ -31,6 +31,7 @@ public class ScreenEntity {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
+    @JsonIgnore
     private List<UserScreenPrivilege> userPrivilege = new ArrayList<>();
 
 

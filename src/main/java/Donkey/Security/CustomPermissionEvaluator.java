@@ -1,20 +1,28 @@
 package Donkey.Security;
 
 import Donkey.Database.Entity.ScreenEntity;
-import Donkey.Database.Entity.TemplateEntity;
 import Donkey.Database.Entity.UserAndPrivileges.UserEntity;
+import Donkey.Database.Entity.UserAndPrivileges.UserScreenPrivilege;
+import Donkey.Database.Repository.ScreenRepository;
+import Donkey.Database.Repository.UserScreenPrivilegeRepository;
+import Donkey.SpringContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 public class CustomPermissionEvaluator implements PermissionEvaluator {
     private Logger logger = LogManager.getLogger();
+
+    private UserScreenPrivilegeRepository userScreenPrivilegeRepository;
+
+
     /**
      * @param authentication     represents the user in question. Should not be null.
      * @param targetDomainObject the domain object for which permissions should be
@@ -26,6 +34,13 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
      */
     @Override
     public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permission) {
+        if(userScreenPrivilegeRepository == null){
+            ApplicationContext context = SpringContext.getAppContext();
+            userScreenPrivilegeRepository = (UserScreenPrivilegeRepository) context.getBean("userScreenPrivilegeRepository");
+        }
+
+
+
         if(targetDomainObject instanceof ResponseEntity<?>)
         {
             ResponseEntity<?> responseEntity = (ResponseEntity<?>) targetDomainObject;
@@ -36,10 +51,15 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
                 else{
                     if(body.get(0) instanceof ScreenEntity){
                         for(Object screen : body){
-                            hasScreenPermision((ScreenEntity) screen, (String) permission, (UserEntity) authentication.getPrincipal());
+                            if(!hasScreenPermission((ScreenEntity) screen, (String) permission, (UserEntity) authentication.getPrincipal()))
+                                return false;
                         }
+                        return true;
                     }
                 }
+            }
+            else if (responseEntity.getBody() instanceof ScreenEntity){
+                return hasScreenPermission((ScreenEntity) responseEntity.getBody(), (String) permission, (UserEntity) authentication.getPrincipal());
             }
         }
         return false;
@@ -63,7 +83,8 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
         return false;
     }
 
-    private boolean hasScreenPermision(ScreenEntity screenEntity, String permission, UserEntity userEntity){
-        return false;
+    private boolean hasScreenPermission(ScreenEntity screenEntity, String permission, UserEntity userEntity){;
+        List<UserScreenPrivilege> privileges = userScreenPrivilegeRepository.getByUserEntityAndScreenEntity(userEntity, screenEntity);
+        return privileges.size() != 0;
     }
 }
