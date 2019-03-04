@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -83,21 +84,27 @@ public class UserApiController {
     }
 
     @RequestMapping (value = {"/user"}, method = RequestMethod.PUT)
-    public ResponseEntity<?> modifyUser (@RequestBody ModifyUserJson modifyUserJson , @RequestParam (name = "id") int id){
-        UserEntity user = userRepository.getUserEntityById(id);
-        if(user != null){
-            if(modifyUserJson.username == null || modifyUserJson.username.isEmpty() ||
-                    (userRepository.getUserEntityByUsername(modifyUserJson.username) != null && (userRepository.getUserEntityById(id).getUsername().compareTo(modifyUserJson.username) != 0))){
-                logger.debug("[api/user PUT] username already use or empty or null");
-                return new ResponseEntity<>(new Error("username already use or empty or null","USER_CONFLICT"),HttpStatus.CONFLICT);
+    public ResponseEntity<?> modifyUser (@RequestBody ModifyUserJson modifyUserJson , @RequestParam (name = "id") int id, Authentication authentication){
+        UserEntity loggedUser = (UserEntity) authentication.getPrincipal();
+        if(loggedUser.isAdmin() || loggedUser.getId() == id){
+            UserEntity user = userRepository.getUserEntityById(id);
+            if(user != null){
+                if(modifyUserJson.username == null || modifyUserJson.username.isEmpty() ||
+                        (userRepository.getUserEntityByUsername(modifyUserJson.username) != null && (userRepository.getUserEntityById(id).getUsername().compareTo(modifyUserJson.username) != 0))){
+                    logger.debug("[api/user PUT] username already use or empty or null");
+                    return new ResponseEntity<>(new Error("username already use or empty or null","USER_CONFLICT"),HttpStatus.CONFLICT);
+                }else{
+                    user.setUsername(modifyUserJson.username);
+                    userRepository.save(user);
+                    return new ResponseEntity<>(user, HttpStatus.OK);
+                }
             }else{
-                user.setUsername(modifyUserJson.username);
-                userRepository.save(user);
-                return new ResponseEntity<>(user, HttpStatus.OK);
+                logger.info("[api/user PUT] User not found");
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
         }else{
-            logger.info("[api/user PUT] User not found");
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            logger.info("[api/user PUT] You don't have the permission");
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
     }
 
