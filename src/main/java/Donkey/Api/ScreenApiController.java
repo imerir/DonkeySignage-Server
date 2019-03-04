@@ -116,7 +116,7 @@ public class ScreenApiController {
      * @param screenJson
      * @return ScreenJson
      */
-    @PostMapping(value = {"/"})
+    @RequestMapping(value = {"/"}, method = RequestMethod.POST)
     public ResponseEntity<?> addScreen (@RequestBody ScreenJson screenJson){
         if(screenJson.uuid != null && !screenJson.uuid.isEmpty()){
             ScreenEntity newEntry = new ScreenEntity();
@@ -153,7 +153,7 @@ public class ScreenApiController {
      * @param deleteScreenJson
      * @return DeleteScreenJson
      */
-    @DeleteMapping(value = {"/"})
+    @RequestMapping(value = {"/"}, method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteScreen(@RequestBody DeleteScreenJson deleteScreenJson){
         ScreenEntity screenToDelete = screenRegisterRep.getScreenEntityById(deleteScreenJson.id);
         if(screenToDelete != null){
@@ -173,7 +173,7 @@ public class ScreenApiController {
      * @param modifyScreenJson
      * @return ResponseEntity
      */
-    @PutMapping(value = {"/"})
+    @RequestMapping(value = {"/"}, method = RequestMethod.PUT)
     public ResponseEntity<?> modifyScreen(@RequestBody ModifyScreenJson modifyScreenJson){
         ScreenEntity screenNeedModification = screenRegisterRep.getScreenEntityById(modifyScreenJson.id);
         if (screenNeedModification != null) {
