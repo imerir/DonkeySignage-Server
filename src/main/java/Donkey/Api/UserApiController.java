@@ -99,11 +99,11 @@ public class UserApiController {
                     return new ResponseEntity<>(user, HttpStatus.OK);
                 }
             }else{
-                logger.info("[api/user PUT] User not found");
+                logger.info("[api/user PUT] User with id : " + id + " not found");
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
         }else{
-            logger.info("[api/user PUT] You don't have the permission");
+            logger.info("[api/user PUT]" + loggedUser.getUsername() + " access denied !");
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
     }

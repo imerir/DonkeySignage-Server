@@ -7,24 +7,21 @@ import java.util.Objects;
 
 @Embeddable
 public class UserScreenPrivilegeId implements Serializable {
-    @Column(name = "user_id")
-    private int userId;
-
-    @Column(name = "screen_id")
-    private int screenId;
+    private int userEntity;
+    private int screenEntity;
 
     public UserScreenPrivilegeId() {
     }
 
-    public UserScreenPrivilegeId(int userId, int screenId) {
-        this.userId = userId;
-        this.screenId = screenId;
-    }
 
+    public UserScreenPrivilegeId(int userEntity, int screenEntity) {
+        this.userEntity = userEntity;
+        this.screenEntity = screenEntity;
+    }
 
     @Override
     public int hashCode() {
-        return Objects.hash(userId, screenId);
+        return Objects.hash(userEntity, screenEntity);
     }
 
     @Override
@@ -35,22 +32,22 @@ public class UserScreenPrivilegeId implements Serializable {
             return false;
 
         UserScreenPrivilegeId that = (UserScreenPrivilegeId) obj;
-        return Objects.equals(userId, that.userId) && Objects.equals(screenId, that.screenId);
+        return Objects.equals(userEntity, that.userEntity) && Objects.equals(screenEntity, that.screenEntity);
     }
 
-    public int getUserId() {
-        return userId;
+    public int getUserEntity() {
+        return userEntity;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public void setUserEntity(int userEntity) {
+        this.userEntity = userEntity;
     }
 
-    public int getScreenId() {
-        return screenId;
+    public int getScreenEntity() {
+        return screenEntity;
     }
 
-    public void setScreenId(int screenId) {
-        this.screenId = screenId;
+    public void setScreenEntity(int screenEntity) {
+        this.screenEntity = screenEntity;
     }
 }

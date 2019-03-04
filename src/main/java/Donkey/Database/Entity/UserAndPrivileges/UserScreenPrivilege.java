@@ -3,19 +3,24 @@ package Donkey.Database.Entity.UserAndPrivileges;
 import Donkey.Database.Entity.ScreenEntity;
 
 import javax.persistence.*;
+import java.io.Serializable;
+import java.util.Objects;
 
 @Entity
-public class UserScreenPrivilege {
+@IdClass(UserScreenPrivilegeId.class)
+public class UserScreenPrivilege{
 
-    @EmbeddedId
-    private UserScreenPrivilegeId id;
+//    @EmbeddedId //Don't Touch that Bro
+//    private UserScreenPrivilegeId id;
 
+    @Id
     @ManyToOne(fetch = FetchType.EAGER)
-    @MapsId("userId")
+    @JoinColumn
     private UserEntity userEntity;
 
+    @Id
     @ManyToOne(fetch = FetchType.EAGER)
-    @MapsId("screenId")
+    @JoinColumn
     private ScreenEntity screenEntity;
 
     private String privilege;
@@ -44,11 +49,11 @@ public class UserScreenPrivilege {
         this.privilege = privilege;
     }
 
-    public UserScreenPrivilegeId getId() {
-        return id;
-    }
-
-    public void setId(UserScreenPrivilegeId id) {
-        this.id = id;
-    }
+//    public UserScreenPrivilegeId getId() {
+//        return id;
+//    }
+//
+//    public void setId(UserScreenPrivilegeId id) {
+//        this.id = id;
+//    }
 }
