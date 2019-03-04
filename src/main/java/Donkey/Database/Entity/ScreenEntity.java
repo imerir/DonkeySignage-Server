@@ -2,6 +2,7 @@ package Donkey.Database.Entity;
 
 import Donkey.Database.Entity.UserAndPrivileges.UserScreenPrivilege;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -13,6 +14,8 @@ public class ScreenEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
     private String ip;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String token;
     private String uuid;
     private String name;

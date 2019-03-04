@@ -4,6 +4,7 @@ import Donkey.Database.Entity.ScreenEntity;
 import Donkey.Database.Entity.UserAndPrivileges.UserEntity;
 import Donkey.Database.Entity.UserAndPrivileges.UserScreenPrivilege;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.security.core.userdetails.User;
 
 import java.util.List;
 

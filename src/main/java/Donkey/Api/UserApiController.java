@@ -1,6 +1,5 @@
 package Donkey.Api;
 
-
 import Donkey.Api.JSON.Error;
 import Donkey.Api.JSON.User.ModifyUserJson;
 import Donkey.Database.Entity.UserAndPrivileges.RolesEntity;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/")
@@ -50,6 +48,7 @@ public class UserApiController {
         if(userRepository.getUserEntityByUsername(userEntity.getUsername()) != null){
             return new ResponseEntity<>(new Error("Username already exist", "USER_EXIST"), HttpStatus.CONFLICT);
         }
+        userEntity.setPassword(encoder.encode(userEntity.getPassword()));
 
         RolesEntity userRole = roleRepository.getRolesEntityByName("ROLE_USER");
         userEntity.setRoles(Collections.singletonList(userRole));
@@ -59,15 +58,23 @@ public class UserApiController {
 
 
     @RequestMapping(value = "/user", method = RequestMethod.GET)
-    public ResponseEntity<?> getUser(@RequestParam(name = "id", defaultValue = "-1") int id){
-
-        if(id == -1){
+    public ResponseEntity<?> getUser(@RequestParam(name = "id", defaultValue = "-1") int id, Authentication authentication){
+        UserEntity loggedUser = (UserEntity) authentication.getPrincipal();
+        if(id == -1 && loggedUser.isAdmin()){
             List<UserEntity> users = userRepository.getAllBy();
             return new ResponseEntity<>(users, HttpStatus.OK);
         }
+
+        if(loggedUser.getId() == id || id == -1)
+            return new ResponseEntity<>(loggedUser, HttpStatus.OK);
+
+        if(!loggedUser.isAdmin()){
+            logger.info("[api/user GET] " + loggedUser.getUsername() + " access denied");
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
         UserEntity user = userRepository.getUserEntityById(id);
         if(user == null){
-            logger.info("[api/user GET] User not found");
+            logger.info("[api/user GET] User not found " + id);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 

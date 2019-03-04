@@ -3,12 +3,10 @@ package Donkey.Security;
 import Donkey.Database.Entity.ScreenEntity;
 import Donkey.Database.Entity.UserAndPrivileges.UserEntity;
 import Donkey.Database.Entity.UserAndPrivileges.UserScreenPrivilege;
-import Donkey.Database.Repository.ScreenRepository;
 import Donkey.Database.Repository.UserScreenPrivilegeRepository;
 import Donkey.SpringContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.PermissionEvaluator;
@@ -24,6 +22,7 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
 
 
     /**
+     * Check if the user have the permission to do this.
      * @param authentication     represents the user in question. Should not be null.
      * @param targetDomainObject the domain object for which permissions should be
      *                           checked. May be null in which case implementations should return false, as the null
@@ -38,6 +37,9 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
             ApplicationContext context = SpringContext.getAppContext();
             userScreenPrivilegeRepository = (UserScreenPrivilegeRepository) context.getBean("userScreenPrivilegeRepository");
         }
+        UserEntity loggedUser =  (UserEntity) authentication.getPrincipal();
+        if(loggedUser.isAdmin())
+            return true;
 
 
 
@@ -51,7 +53,7 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
                 else{
                     if(body.get(0) instanceof ScreenEntity){
                         for(Object screen : body){
-                            if(!hasScreenPermission((ScreenEntity) screen, (String) permission, (UserEntity) authentication.getPrincipal()))
+                            if(!hasScreenPermission((ScreenEntity) screen, (String) permission, loggedUser))
                                 return false;
                         }
                         return true;
@@ -59,7 +61,7 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
                 }
             }
             else if (responseEntity.getBody() instanceof ScreenEntity){
-                return hasScreenPermission((ScreenEntity) responseEntity.getBody(), (String) permission, (UserEntity) authentication.getPrincipal());
+                return hasScreenPermission((ScreenEntity) responseEntity.getBody(), (String) permission, loggedUser);
             }
         }
         return false;

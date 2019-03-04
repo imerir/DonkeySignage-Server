@@ -14,6 +14,7 @@ import Donkey.WebSite.FormClass.Screen.ScreenRegisterForm;
 import Donkey.WebSite.FormClass.Screen.TmpTokenForm;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -52,6 +53,7 @@ public class WebController {
      * @param uuid
      * @return String
      */
+    @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = {"/screenRegister"}, method = RequestMethod.GET)
     public String registerScreenGet(Model model, @RequestParam(value = "uuid", defaultValue = "")String uuid) {
         TemporalScreenEntity tmpReg = tmpRegisterRep.getTemporalRegisterByUuid(uuid);
@@ -72,6 +74,7 @@ public class WebController {
      * @param tokenForm
      * @return String
      */
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(value = {"/screenRegister"})
     public String registerScreenPost(Model model, @ModelAttribute TmpTokenForm tokenForm){
         TemporalScreenEntity tmpReg = tmpRegisterRep.getTemporalRegisterByTempToken(tokenForm.getTempToken());
@@ -91,6 +94,7 @@ public class WebController {
      * @param screenRegisterForm
      * @return String
      */
+    @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = {"/formScreenRegister"}, method = RequestMethod.POST)
     public String formScreenRegister(Model model, @ModelAttribute ScreenRegisterForm screenRegisterForm){
         if(screenRegisterForm.getUuid() != null && !screenRegisterForm.getUuid().isEmpty()){
