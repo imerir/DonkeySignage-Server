@@ -7,6 +7,8 @@ import Donkey.Api.JSON.Group.GroupJson;
 import Donkey.Api.JSON.Group.ModifyGroupJson;
 import Donkey.Database.Entity.GroupEntity;
 import Donkey.Database.Entity.ScreenEntity;
+import Donkey.Database.Entity.UserAndPrivileges.UserEntity;
+import Donkey.Database.Entity.UserAndPrivileges.UserScreenPrivilege;
 import Donkey.Database.Repository.GroupRepository;
 import Donkey.Database.Repository.ScreenRepository;
 import org.apache.logging.log4j.LogManager;
@@ -14,7 +16,12 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 @RestController
@@ -31,13 +38,30 @@ public class GroupApiController {
 
     }
 
+
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public ResponseEntity<?> getGroups(@RequestParam(name = "id", defaultValue = "-1") int id){
+        if(id == -1){
+
+            return new ResponseEntity<>(groupRepository.getAllBy(), HttpStatus.OK);
+        }
+        GroupEntity groupEntity = groupRepository.getGroupEntityById(id);
+        if(groupEntity == null){
+            log.info("[api/group GET] Group " + id + " not found");
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(groupEntity, HttpStatus.OK);
+    }
+
+
     /**
      * Drop a row group in database
      *
      * @param id
      * @return DeleteGroupJson
      */
-    @RequestMapping(value = {"/group"}, method = RequestMethod.DELETE)
+    @PostAuthorize("hasRole('ADMIN')")
+    @RequestMapping(value = "", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteGroup(@RequestParam (name = "id") int id ) {
         GroupEntity grpToDelete = groupRepository.getGroupEntityById(id);
         if(grpToDelete != null){
@@ -93,7 +117,8 @@ public class GroupApiController {
      * @param modifyGroupJson
      * @return GroupJson
      */
-    @RequestMapping(value = {"/group"}, method = RequestMethod.PUT)
+    @PostAuthorize("hasRole('ADMIN')")
+    @RequestMapping(value = "", method = RequestMethod.PUT)
     public ResponseEntity<?> modifyGroup(@RequestBody ModifyGroupJson modifyGroupJson) {
         GroupEntity groupNeedModification = groupRepository.getGroupEntityById(modifyGroupJson.id);
         if (groupNeedModification != null) {
@@ -122,7 +147,7 @@ public class GroupApiController {
      * @param groupJson
      * @return ResponseEntity with GroupJson
      */
-    @RequestMapping(value = {"/group"}, method = RequestMethod.POST)
+    @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseEntity<?> addGroup(@RequestBody GroupJson groupJson) {
         GroupEntity newGroup = new GroupEntity();
         //log.debug(groupRepository.getGroupEntityByNameAndParent(groupJson.name, groupRepository.getGroupEntityById(groupJson.parent)));
@@ -155,7 +180,7 @@ public class GroupApiController {
      * @param id
      * @return ResponseEntity with GroupJson
      */
-    @RequestMapping(value = {"/getParent"}, method = RequestMethod.GET)
+    @RequestMapping(value = "/getParent", method = RequestMethod.GET)
     public ResponseEntity<?>  getParent(@RequestParam(name = "id") int id) {
         if(groupRepository.getGroupEntityById(id) != null)
             return new ResponseEntity<>(new GroupJson(groupRepository.getGroupEntityById(id).getName(), groupRepository.getGroupEntityById(id).getId()), HttpStatus.OK);
@@ -170,7 +195,7 @@ public class GroupApiController {
      * @param id
      * @return ResponseEntity with list of children
      */
-    @RequestMapping(value = {"/getChildren"}, method = RequestMethod.GET)
+    @RequestMapping(value = "/getChildren", method = RequestMethod.GET)
     public ResponseEntity<?> getChildren(@RequestParam(name = "id") int id) {
         if(groupRepository.getGroupEntityById(id) != null)
             return new ResponseEntity<>(groupRepository.getGroupEntityById(id).getChildrens(), HttpStatus.OK);
@@ -184,7 +209,7 @@ public class GroupApiController {
      * @param id
      * @return ResponseEntity with List of screen
      */
-    @RequestMapping(value={"/getScreen"},method = RequestMethod.GET)
+    @RequestMapping(value="/getScreen",method = RequestMethod.GET)
     public ResponseEntity<?> getScreen(@RequestParam(name = "id") int id){
         if(groupRepository.getGroupEntityById(id) != null)
             return new ResponseEntity<>(groupRepository.getGroupEntityById(id).getScreenList(), HttpStatus.OK);

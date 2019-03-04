@@ -29,7 +29,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/", "/api/screen/getToken", "/api/screen/isRegistered", "/ws").permitAll()
-                .antMatchers("/screenRegister").hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()

@@ -1,16 +1,18 @@
 package Donkey.Api;
 
-import Donkey.Api.JSON.*;
 import Donkey.Api.JSON.Error;
 import Donkey.Api.JSON.Group.GroupJson;
 import Donkey.Api.JSON.Screen.*;
+import Donkey.Api.JSON.UuidJson;
 import Donkey.Database.Entity.GroupEntity;
 import Donkey.Database.Entity.ScreenEntity;
-import Donkey.Database.Entity.TemplateEntity;
 import Donkey.Database.Entity.TemporalScreenEntity;
+import Donkey.Database.Entity.UserAndPrivileges.UserEntity;
+import Donkey.Database.Entity.UserAndPrivileges.UserScreenPrivilege;
 import Donkey.Database.Repository.GroupRepository;
 import Donkey.Database.Repository.ScreenRepository;
 import Donkey.Database.Repository.TemporalScreenRepository;
+import Donkey.Database.Repository.UserScreenPrivilegeRepository;
 import Donkey.Tools.IpTools;
 import Donkey.Tools.ScreenTools;
 import org.apache.logging.log4j.LogManager;
@@ -19,9 +21,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -33,13 +38,15 @@ public class ScreenApiController {
     private final ScreenRepository screenRegisterRep;
     private final TemporalScreenRepository tmpRegisterRep;
     private final GroupRepository grpRep;
+    private final UserScreenPrivilegeRepository userScreenPrivilegeRepository;
     private Logger log = LogManager.getLogger();
 
     @Autowired
-    public ScreenApiController(TemporalScreenRepository tmpRegisterRep, ScreenRepository screenRegisterRep, GroupRepository grpRep) {
+    public ScreenApiController(TemporalScreenRepository tmpRegisterRep, ScreenRepository screenRegisterRep, GroupRepository grpRep, UserScreenPrivilegeRepository userScreenPrivilegeRepository) {
         this.tmpRegisterRep = tmpRegisterRep;
         this.screenRegisterRep = screenRegisterRep;
         this.grpRep = grpRep;
+        this.userScreenPrivilegeRepository = userScreenPrivilegeRepository;
     }
 
     @RequestMapping(value = {"/test"},method = RequestMethod.GET)
@@ -53,7 +60,7 @@ public class ScreenApiController {
      * @param uuid, uniq for every screen
      * @return TemporalRegisterJson, json who contains all informations of screen
      */
-    @PostMapping(value = {"/getToken"})
+    @PostMapping(value = "/getToken")
     public ResponseEntity<?> getToken(HttpServletRequest request, @RequestBody UuidJson uuid){
         TemporalScreenEntity newTmpRegister;
         //log.debug("Post on getToken, value of uuid : " + uuid.getUuid());
@@ -74,7 +81,7 @@ public class ScreenApiController {
      * @param uuid
      * @return ResponseEntity, send a json and HTTP 200 if add, and 403 if not
      */
-    @RequestMapping(value = {"/isRegistered"}, method = RequestMethod.GET)
+    @RequestMapping(value = "/isRegistered", method = RequestMethod.GET)
     public ResponseEntity<ScreenRegisterJson> isRegistered (@CookieValue(value = "uuid")String uuid){
         log.trace("Uuid send by cookie : " + uuid);
         if(uuid != null && !uuid.equals("")){
@@ -95,19 +102,33 @@ public class ScreenApiController {
     }
 
 
+
     @PostAuthorize("hasPermission(returnObject, 'read')")
-    @RequestMapping(value = "/", method = RequestMethod.GET)
-    public ResponseEntity<?> getScreen(@RequestParam(name = "id", defaultValue = "-1") int id){
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public ResponseEntity<?> getScreen(@RequestParam(name = "id", defaultValue = "-1") int id, Authentication authentication){
+        UserEntity loggedUser = (UserEntity) authentication.getPrincipal();
         if(id == -1){
-            List<ScreenEntity> screenEntityList = screenRegisterRep.getAllBy();
+            List<ScreenEntity> screenEntityList = new ArrayList<>();
+            if(loggedUser.isAdmin())
+                screenEntityList = screenRegisterRep.getAllBy();
+            else{
+                List<UserScreenPrivilege> privileges = userScreenPrivilegeRepository.getByUserEntity(loggedUser);
+                for(UserScreenPrivilege privilege : privileges){
+                    ScreenEntity screenEntity = privilege.getScreenEntity();
+                    screenEntity.setToken(null);
+                    screenEntityList.add(screenEntity);
+                }
+            }
+
             return new ResponseEntity<>(screenEntityList, HttpStatus.OK);
         }
         ScreenEntity screen = screenRegisterRep.getScreenEntityById(id);
         if(screen == null){
-            log.info("[api/screen GET] Template not found");
+            log.info("[api/screen GET] Screen not found");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
+        screen.setToken(null);
         return new ResponseEntity<>(screen, HttpStatus.OK);
     }
 
@@ -116,7 +137,8 @@ public class ScreenApiController {
      * @param screenJson
      * @return ScreenJson
      */
-    @RequestMapping(value = {"/"}, method = RequestMethod.POST)
+    @RequestMapping(value = "", method = RequestMethod.POST)
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> addScreen (@RequestBody ScreenJson screenJson){
         if(screenJson.uuid != null && !screenJson.uuid.isEmpty()){
             ScreenEntity newEntry = new ScreenEntity();
@@ -153,7 +175,8 @@ public class ScreenApiController {
      * @param deleteScreenJson
      * @return DeleteScreenJson
      */
-    @RequestMapping(value = {"/"}, method = RequestMethod.DELETE)
+    @RequestMapping(value = "", method = RequestMethod.DELETE)
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deleteScreen(@RequestBody DeleteScreenJson deleteScreenJson){
         ScreenEntity screenToDelete = screenRegisterRep.getScreenEntityById(deleteScreenJson.id);
         if(screenToDelete != null){
@@ -173,7 +196,8 @@ public class ScreenApiController {
      * @param modifyScreenJson
      * @return ResponseEntity
      */
-    @RequestMapping(value = {"/"}, method = RequestMethod.PUT)
+    @PreAuthorize("hasRole('ADMIN')")
+    @RequestMapping(value = "", method = RequestMethod.PUT)
     public ResponseEntity<?> modifyScreen(@RequestBody ModifyScreenJson modifyScreenJson){
         ScreenEntity screenNeedModification = screenRegisterRep.getScreenEntityById(modifyScreenJson.id);
         if (screenNeedModification != null) {
@@ -203,7 +227,7 @@ public class ScreenApiController {
      * @param id
      * @return GroupJson
      */
-    @RequestMapping(value = {"/getGroup"}, method = RequestMethod.GET)
+    @RequestMapping(value = "/getGroup", method = RequestMethod.GET)
     public ResponseEntity<?> getGroup(@RequestParam(name = "id") int id) {
         if(screenRegisterRep.getScreenEntityById(id) != null){
             if(id != -1 )

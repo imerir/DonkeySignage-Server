@@ -10,6 +10,7 @@ public interface GroupRepository extends CrudRepository<GroupEntity,Integer> {
     GroupEntity getGroupEntityByNameAndParent(String name, GroupEntity parent);
     List<GroupEntity> getGroupEntityByParentNull();
     List<GroupEntity> getGroupEntityByParent_Id(int id);
+    List<GroupEntity> getAllBy();
 
     void delete(GroupEntity group);
 }
