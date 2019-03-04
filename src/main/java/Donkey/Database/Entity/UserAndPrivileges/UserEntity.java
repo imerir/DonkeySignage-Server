@@ -146,4 +146,11 @@ public class UserEntity implements UserDetails {
     public void setScreenPrivileges(List<UserScreenPrivilege> screenPrivileges) {
         this.screenPrivileges = screenPrivileges;
     }
+
+    public boolean isAdmin(){
+        for(RolesEntity role : roles){
+            if(role.getName().equals("ROLE_ADMIN")) return true;
+        }
+        return false;
+    }
 }
