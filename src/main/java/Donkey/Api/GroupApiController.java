@@ -18,9 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-//TODO /api/group
-//TODO tout mettre en RequestMapping(value={}, method = Request.
-@RequestMapping("/api/")
+@RequestMapping("/api/group")
 public class GroupApiController {
     private Logger log = LogManager.getLogger();
     private final GroupRepository groupRepository;
@@ -39,7 +37,7 @@ public class GroupApiController {
      * @param id
      * @return DeleteGroupJson
      */
-    @DeleteMapping(value = {"/deleteGroup"})
+    @RequestMapping(value = {"/group"}, method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteGroup(@RequestParam (name = "id") int id ) {
         GroupEntity grpToDelete = groupRepository.getGroupEntityById(id);
         if(grpToDelete != null){
@@ -95,8 +93,7 @@ public class GroupApiController {
      * @param modifyGroupJson
      * @return GroupJson
      */
-    @PutMapping(value = {"/modifyGroup"})
-    //TODO HTTP put
+    @RequestMapping(value = {"/group"}, method = RequestMethod.PUT)
     public ResponseEntity<?> modifyGroup(@RequestBody ModifyGroupJson modifyGroupJson) {
         GroupEntity groupNeedModification = groupRepository.getGroupEntityById(modifyGroupJson.id);
         if (groupNeedModification != null) {
@@ -125,7 +122,7 @@ public class GroupApiController {
      * @param groupJson
      * @return ResponseEntity with GroupJson
      */
-    @PostMapping(value = {"/addGroup"})
+    @RequestMapping(value = {"/group"}, method = RequestMethod.POST)
     public ResponseEntity<?> addGroup(@RequestBody GroupJson groupJson) {
         GroupEntity newGroup = new GroupEntity();
         //log.debug(groupRepository.getGroupEntityByNameAndParent(groupJson.name, groupRepository.getGroupEntityById(groupJson.parent)));

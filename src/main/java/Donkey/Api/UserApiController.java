@@ -2,6 +2,7 @@ package Donkey.Api;
 
 
 import Donkey.Api.JSON.Error;
+import Donkey.Api.JSON.User.ModifyUserJson;
 import Donkey.Database.Entity.UserAndPrivileges.RolesEntity;
 import Donkey.Database.Entity.UserAndPrivileges.UserEntity;
 import Donkey.Database.Repository.RoleRepository;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/")
@@ -80,6 +82,23 @@ public class UserApiController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    //TODO PUT editUser
+    @RequestMapping (value = {"/user"}, method = RequestMethod.PUT)
+    public ResponseEntity<?> modifyUser (@RequestBody ModifyUserJson modifyUserJson , @RequestParam (name = "id") int id){
+        UserEntity user = userRepository.getUserEntityById(id);
+        if(user != null){
+            if(modifyUserJson.username == null || modifyUserJson.username.isEmpty() ||
+                    (userRepository.getUserEntityByUsername(modifyUserJson.username) != null && (userRepository.getUserEntityById(id).getUsername().compareTo(modifyUserJson.username) != 0))){
+                logger.debug("[api/user PUT] username already use or empty or null");
+                return new ResponseEntity<>(new Error("username already use or empty or null","USER_CONFLICT"),HttpStatus.CONFLICT);
+            }else{
+                user.setUsername(modifyUserJson.username);
+                userRepository.save(user);
+                return new ResponseEntity<>(user, HttpStatus.OK);
+            }
+        }else{
+            logger.info("[api/user PUT] User not found");
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 
 }

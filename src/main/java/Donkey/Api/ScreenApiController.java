@@ -96,7 +96,7 @@ public class ScreenApiController {
 
 
     @PostAuthorize("hasPermission(returnObject, 'read')")
-    @RequestMapping(value = "", method = RequestMethod.GET)
+    @RequestMapping(value = "/", method = RequestMethod.GET)
     public ResponseEntity<?> getScreen(@RequestParam(name = "id", defaultValue = "-1") int id){
         if(id == -1){
             List<ScreenEntity> screenEntityList = screenRegisterRep.getAllBy();
