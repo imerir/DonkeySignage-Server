@@ -1,6 +1,6 @@
 package Donkey.Api;
 
-import Donkey.Api.JSON.AddUserScreenPrivilegeJson;
+import Donkey.Api.JSON.UserScreenPrivilege.UserScreenPrivilegeJson;
 import Donkey.Database.Entity.ScreenEntity;
 import Donkey.Database.Entity.UserAndPrivileges.UserEntity;
 import Donkey.Database.Entity.UserAndPrivileges.UserScreenPrivilege;
@@ -31,27 +31,26 @@ public class UserScreenPrivilegeApiController {
     }
 
     @RequestMapping(value = "" , method = RequestMethod.GET)
-    public ResponseEntity<?> getPrivileges (@RequestParam(name="screenId", defaultValue = "-1") int screenId,
-                                                    @RequestParam(name="userId", defaultValue = "-1") int userId){
-        if(screenId != -1 && userId != -1){
-            if(userRepository.getUserEntityById(userId) != null && screenRepository.getScreenEntityById(screenId) != null){
-                return new ResponseEntity<>(userScreenPrivilegeRepository.getByUserEntityAndScreenEntity(userRepository.getUserEntityById(userId),screenRepository.getScreenEntityById(screenId)), HttpStatus.OK);
+    public ResponseEntity<?> getPrivileges (@RequestBody UserScreenPrivilegeJson usrScreenPrivilegeJson){
+        if(usrScreenPrivilegeJson.screenId != null && usrScreenPrivilegeJson.userId != null){
+            if(userRepository.getUserEntityById(usrScreenPrivilegeJson.userId) != null && screenRepository.getScreenEntityById(usrScreenPrivilegeJson.screenId) != null){
+                return new ResponseEntity<>(userScreenPrivilegeRepository.getByUserEntityAndScreenEntity(userRepository.getUserEntityById(usrScreenPrivilegeJson.userId),screenRepository.getScreenEntityById(usrScreenPrivilegeJson.screenId)), HttpStatus.OK);
             }else{
-                log.info("[/api/UserScreenPrivilege GET] No screen with id : " + screenId + ", or no user with id : " + userId);
+                log.info("[/api/UserScreenPrivilege GET] No screen with id : " + usrScreenPrivilegeJson.screenId + ", or no user with id : " + usrScreenPrivilegeJson.userId);
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
-        }else if(screenId != -1 && userId == -1){
-            if(screenRepository.getScreenEntityById(screenId) != null){
-                return new ResponseEntity<>(userScreenPrivilegeRepository.getByScreenEntity(screenRepository.getScreenEntityById(screenId)),HttpStatus.OK);
+        }else if(usrScreenPrivilegeJson.screenId != null && usrScreenPrivilegeJson.userId == null){
+            if(screenRepository.getScreenEntityById(usrScreenPrivilegeJson.screenId) != null){
+                return new ResponseEntity<>(userScreenPrivilegeRepository.getByScreenEntity(screenRepository.getScreenEntityById(usrScreenPrivilegeJson.screenId)),HttpStatus.OK);
             }else{
-                log.info("[/api/UserScreenPrivilege GET] No screen with id : " + screenId);
+                log.info("[/api/UserScreenPrivilege GET] No screen with id : " + usrScreenPrivilegeJson.screenId);
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
-        }else if(screenId == -1 && userId != -1){
-            if(userRepository.getUserEntityById(userId) != null){
-                return new ResponseEntity<>(userScreenPrivilegeRepository.getByUserEntity(userRepository.getUserEntityById(userId)),HttpStatus.OK);
+        }else if(usrScreenPrivilegeJson.screenId == null && usrScreenPrivilegeJson.userId != null){
+            if(userRepository.getUserEntityById(usrScreenPrivilegeJson.userId) != null){
+                return new ResponseEntity<>(userScreenPrivilegeRepository.getByUserEntity(userRepository.getUserEntityById(usrScreenPrivilegeJson.userId)),HttpStatus.OK);
             }else{
-                log.info("[/api/UserScreenPrivilege GET] No user with id : " + userId);
+                log.info("[/api/UserScreenPrivilege GET] No user with id : " + usrScreenPrivilegeJson.userId);
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
         }else{
@@ -61,39 +60,36 @@ public class UserScreenPrivilegeApiController {
     }
 
     @RequestMapping(value = "" , method = RequestMethod.DELETE)
-    public ResponseEntity<?> deleteUserPrivilegeOnScreen (@RequestParam(name="screenId", defaultValue = "-1") int screenId,
-                                                  @RequestParam(name="userId", defaultValue = "-1") int userId){
-        if(screenId != -1 && userId != -1
-                && screenRepository.getScreenEntityById(screenId) != null
-                && userRepository.getUserEntityById(userId) != null){
-            userScreenPrivilegeRepository.deleteUserScreenPrivilegeByUserEntityAndScreenEntity(userRepository.getUserEntityById(userId),screenRepository.getScreenEntityById(screenId));
+    public ResponseEntity<?> deleteUserPrivilegeOnScreen (@RequestBody UserScreenPrivilegeJson usrScreenPrivilegeJson){
+        if(usrScreenPrivilegeJson.screenId != null && usrScreenPrivilegeJson.userId != null
+                && screenRepository.getScreenEntityById(usrScreenPrivilegeJson.screenId) != null
+                && userRepository.getUserEntityById(usrScreenPrivilegeJson.userId) != null){
+            userScreenPrivilegeRepository.deleteUserScreenPrivilegeByUserEntityAndScreenEntityAndPrivilege(userRepository.getUserEntityById(usrScreenPrivilegeJson.userId),screenRepository.getScreenEntityById(usrScreenPrivilegeJson.screenId),usrScreenPrivilegeJson.privilege);
             return new ResponseEntity<>(HttpStatus.OK);
         }else{
-            log.info("[/api/UserScreenPrivilege PUT] no user with id : " + userId + ", or no screen with id : " + screenId);
+            log.info("[/api/UserScreenPrivilege PUT] no user with id : " + usrScreenPrivilegeJson.userId + ", or no screen with id : " + usrScreenPrivilegeJson.screenId);
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
     }
 
     @RequestMapping(value = "" , method = RequestMethod.POST)
-    public ResponseEntity<?> addUserPriviligeOnScreen (@RequestParam(name="screenId", defaultValue = "-1") int screenId,
-                                                       @RequestParam(name="userId", defaultValue = "-1") int userId,
-                                                       @RequestBody AddUserScreenPrivilegeJson addUserScreenPrivilegeJson){
-        if(screenId != -1 && userId != -1
-                && screenRepository.getScreenEntityById(screenId) != null
-                && userRepository.getUserEntityById(userId) != null){
-            log.info("[/api/UserScreenPrivilege PUT] user with id : " + userId + ", screen with id : " + screenId + " privilege add : " + addUserScreenPrivilegeJson.privilege);
-            log.info("[/api/UserScreenPrivilege PUT] user entity " + userRepository.getUserEntityById(userId) + ", screen entity: " + screenRepository.getScreenEntityById(screenId));
+    public ResponseEntity<?> addUserPriviligeOnScreen (@RequestBody UserScreenPrivilegeJson usrScreenPrivilegeJson){
+        if(usrScreenPrivilegeJson.screenId != null && usrScreenPrivilegeJson.userId != null
+                && screenRepository.getScreenEntityById(usrScreenPrivilegeJson.screenId) != null
+                && userRepository.getUserEntityById(usrScreenPrivilegeJson.userId) != null){
+            log.info("[/api/UserScreenPrivilege PUT] user with id : " + usrScreenPrivilegeJson.userId + ", screen with id : " + usrScreenPrivilegeJson.screenId + " privilege add : " + usrScreenPrivilegeJson.privilege);
+            log.info("[/api/UserScreenPrivilege PUT] user entity " + userRepository.getUserEntityById(usrScreenPrivilegeJson.userId) + ", screen entity: " + screenRepository.getScreenEntityById(usrScreenPrivilegeJson.screenId));
             UserScreenPrivilege newPrivilege = new UserScreenPrivilege();
-            UserEntity user = userRepository.getUserEntityById(userId);
-            ScreenEntity screen = screenRepository.getScreenEntityById(screenId);
+            UserEntity user = userRepository.getUserEntityById(usrScreenPrivilegeJson.userId);
+            ScreenEntity screen = screenRepository.getScreenEntityById(usrScreenPrivilegeJson.screenId);
             newPrivilege.setScreenEntity(screen);
             newPrivilege.setUserEntity(user);
-            newPrivilege.setPrivilege(addUserScreenPrivilegeJson.privilege);
+            newPrivilege.setPrivilege(usrScreenPrivilegeJson.privilege);
             user.getScreenPrivileges().add(newPrivilege);
             userRepository.save(user);
             return new ResponseEntity<>(newPrivilege,HttpStatus.OK);
         }else{
-            log.info("[/api/UserScreenPrivilege PUT] no user with id : " + userId + ", or no screen with id : " + screenId);
+            log.info("[/api/UserScreenPrivilege PUT] no user with id : " + usrScreenPrivilegeJson.userId + ", or no screen with id : " + usrScreenPrivilegeJson.screenId);
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
     }
