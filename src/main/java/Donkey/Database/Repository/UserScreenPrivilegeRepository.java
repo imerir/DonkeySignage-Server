@@ -5,6 +5,7 @@ import Donkey.Database.Entity.UserAndPrivileges.UserEntity;
 import Donkey.Database.Entity.UserAndPrivileges.UserScreenPrivilege;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -13,5 +14,8 @@ public interface UserScreenPrivilegeRepository extends CrudRepository<UserScreen
     List<UserScreenPrivilege> getByUserEntity(UserEntity userEntity);
     List<UserScreenPrivilege> getByScreenEntity(ScreenEntity screenEntity);
     List<UserScreenPrivilege> getAllBy();
-    void deleteUserScreenPrivilegeByUserEntityAndScreenEntity(UserEntity userEntity, ScreenEntity screenEntity);
+    UserScreenPrivilege getByScreenEntityAndUserEntityAndPrivilege(UserEntity userEntity, ScreenEntity screenEntity, String privilege);
+
+    @Transactional
+    void deleteUserScreenPrivilegeByUserEntityAndScreenEntityAndPrivilege(UserEntity userEntity, ScreenEntity screenEntity, String privilege);
 }
