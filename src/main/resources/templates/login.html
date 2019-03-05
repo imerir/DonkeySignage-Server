@@ -1,21 +1,70 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Spring Security Example </title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+    <!--TODO <meta name="description" content=""/>-->
+    <title>Donkey Signage</title>
+    <link rel="icon"
+          type="image/x-icon"
+          href="/favicon.png"/>
+
+    <!-- CSS  -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+    <link href="/css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+    <style>
+
+
+    </style>
+
+
 </head>
-<body>
-<div th:if="${param.error}">
-    Invalid username and password.
-</div>
-<div th:if="${param.logout}">
-    You have been logged out.
-</div>
-<form th:action="@{/login}" method="post">
-    <div><label> User Name : <input type="text" name="username"/> </label></div>
-    <div><label> Password: <input type="password" name="password"/> </label></div>
-    <div><label> Remember me: <input type="checkbox" name="remember-me"/> </label></div>
-    <div><input type="submit" value="Sign In"/></div>
-</form>
+
+<body class="blue-grey lighten-5">
+<header>
+    <div th:replace="navbar :: navbar ('login')"></div>
+</header>
+
+<main class="container">
+
+    <div class="card-panel">
+        <h2 class="center" th:text="#{login.login}"></h2>
+        <form th:action="@{/login}" method="post">
+            <div class="row">
+                <div class="input-field col s12">
+                    <input type="text" name="username" id="username"/>
+                    <label for="username" th:text="#{login.username}"></label>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="input-field col s12">
+                    <input type="password" name="password" id="password"/>
+                    <label for="password" th:text="#{login.password}"></label>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="center">
+                    <label>
+                        <input type="checkbox" name="remember-me" class="filled-in"/>
+                        <span th:text="#{login.remember_me}"></span>
+                    </label>
+                </div>
+            </div>
+            <div class="center"><input type="submit" th:value="#{login.sign_in}" class="btn"/></div>
+        </form>
+    </div>
+
+</main>
+
+<footer class="page-footer" style="padding: 0">
+    <!--<div th:replace="footer :: footer">...</div>-->
+</footer>
+<!--  Scripts-->
+<script th:src="@{/js/materialize.js}"></script>
+
+
 </body>
 </html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Title</title>
+</head>
+<body>
+
+
+<div th:fragment="navbar (page)">
+    <header>
+
+        <th:block th:if="${page != 'login'}">
+            <style>
+                .sidenav {
+                    margin-top: 65px;
+                }
+
+                main {
+                    margin-left: 300px !important;
+                }
+            </style>
+        </th:block>
+
+
+        <nav class="blue darken-3 darken-4 z-depth-3" role="navigation">
+            <div class="nav-wrapper container">
+                <a href="/" class="brand-logo" style="white-space: nowrap">Donkey Signage</a>
+                <ul class="right hide-on-med-and-down">
+                    <li id="nav-bar-account">
+                        <a class="dropdown-account dropdown-trigger" data-target="dropdown_connected"><i
+                                class="material-icons">account_box</i></a>
+                    </li>
+                </ul>
+                <a href="#" data-target="side_nav" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+            </div>
+        </nav>
+
+        <th:block th:if="${page != 'login'}">s
+            <ul id="side_nav" class="sidenav sidenav-fixed">
+
+            </ul>
+        </th:block>
+
+
+        <!-- Dropdown connected -->
+        <ul id="dropdown_connected" class="dropdown-content ">
+            <li>
+                <a class="center blue-grey-text text-darken-4 tooltipped" data-position="left" data-delay="50"
+                   data-tooltip="It's you !" id="nav-name" style="font-weight: bold"></a>
+            </li>
+            <li class="divider"></li>
+            <li>
+                <a class="center tooltipped" data-position="left" data-delay="50" data-tooltip="Under Development!">My
+                    Account</a>
+            </li>
+            <li class="divider"></li>
+
+            <li><a class="center red-text nav-disconnect" style="font-weight: bold">Disconnect</a></li>
+        </ul>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                var elems = document.querySelectorAll('.sidenav');
+                var instances = M.Sidenav.init(elems);
+                var elem = document.querySelector('#side_nav');
+                var instance = M.Sidenav.getInstance(elem);
+
+            });
+
+
+        </script>
+
+    </header>
+
+
+</div>
+
+
+</body>
+</html>
