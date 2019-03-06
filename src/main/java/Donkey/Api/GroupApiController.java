@@ -2,13 +2,10 @@ package Donkey.Api;
 
 
 import Donkey.Api.JSON.Error;
-import Donkey.Api.JSON.Group.DeleteGroupJson;
 import Donkey.Api.JSON.Group.GroupJson;
-import Donkey.Api.JSON.Group.ModifyGroupJson;
+import Donkey.Api.JSON.Group.AddGroupJson;
 import Donkey.Database.Entity.GroupEntity;
 import Donkey.Database.Entity.ScreenEntity;
-import Donkey.Database.Entity.UserAndPrivileges.UserEntity;
-import Donkey.Database.Entity.UserAndPrivileges.UserScreenPrivilege;
 import Donkey.Database.Repository.GroupRepository;
 import Donkey.Database.Repository.ScreenRepository;
 import org.apache.logging.log4j.LogManager;
@@ -17,11 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 @RestController
@@ -103,9 +96,9 @@ public class GroupApiController {
             }
 
             if(grpToDelete.getParent() == null)
-                return new ResponseEntity<>(new DeleteGroupJson(grpToDelete.getId(),grpToDelete.getName(),-1),HttpStatus.NO_CONTENT);
+                return new ResponseEntity<>(new GroupJson(grpToDelete.getId(),grpToDelete.getName(),-1),HttpStatus.NO_CONTENT);
             else
-                return new ResponseEntity<>(new DeleteGroupJson(grpToDelete.getId(),grpToDelete.getName(),grpToDelete.getParent().getId()),HttpStatus.NO_CONTENT);
+                return new ResponseEntity<>(new GroupJson(grpToDelete.getId(),grpToDelete.getName(),grpToDelete.getParent().getId()),HttpStatus.NO_CONTENT);
         }else{
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -115,11 +108,11 @@ public class GroupApiController {
      * Modify a group with a json
      *
      * @param modifyGroupJson
-     * @return GroupJson
+     * @return AddGroupJson
      */
     @PostAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "", method = RequestMethod.PUT)
-    public ResponseEntity<?> modifyGroup(@RequestBody ModifyGroupJson modifyGroupJson) {
+    public ResponseEntity<?> modifyGroup(@RequestBody GroupJson modifyGroupJson) {
         GroupEntity groupNeedModification = groupRepository.getGroupEntityById(modifyGroupJson.id);
         if (groupNeedModification != null) {
             if (modifyGroupJson.parentId == -1) {
@@ -127,14 +120,14 @@ public class GroupApiController {
                     groupNeedModification.setName(modifyGroupJson.name);
                 groupNeedModification.setParent(null);
                 groupRepository.save(groupNeedModification);
-                return new ResponseEntity<>(new GroupJson(groupNeedModification.getName(), -1), HttpStatus.OK);
+                return new ResponseEntity<>(new AddGroupJson(groupNeedModification.getName(), -1), HttpStatus.OK);
             } else {
                 GroupEntity newGrpParent = groupRepository.getGroupEntityById(modifyGroupJson.parentId);
                 if(modifyGroupJson.name != null && !modifyGroupJson.name.isEmpty())
                     groupNeedModification.setName(modifyGroupJson.name);
                 groupNeedModification.setParent(newGrpParent);
                 groupNeedModification = groupRepository.save(groupNeedModification);
-                return new ResponseEntity<>(new GroupJson(groupNeedModification.getName(), -1), HttpStatus.OK);
+                return new ResponseEntity<>(new AddGroupJson(groupNeedModification.getName(), -1), HttpStatus.OK);
             }
         } else {
             return new ResponseEntity<>(new Error("No Group with id : " + modifyGroupJson.id,"ID_NOT_FOUND"), HttpStatus.NOT_FOUND);
@@ -144,19 +137,19 @@ public class GroupApiController {
     /**
      * Create and adding a group in database
      *
-     * @param groupJson
-     * @return ResponseEntity with GroupJson
+     * @param addGroupJson
+     * @return ResponseEntity with AddGroupJson
      */
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public ResponseEntity<?> addGroup(@RequestBody GroupJson groupJson) {
+    public ResponseEntity<?> addGroup(@RequestBody AddGroupJson addGroupJson) {
         GroupEntity newGroup = new GroupEntity();
-        //log.debug(groupRepository.getGroupEntityByNameAndParent(groupJson.name, groupRepository.getGroupEntityById(groupJson.parent)));
-        if (groupRepository.getGroupEntityByNameAndParent(groupJson.name, groupRepository.getGroupEntityById(groupJson.parent)) == null) {
-            newGroup.setName(groupJson.name);
-            if (groupJson.parent == -1)
+        //log.debug(groupRepository.getGroupEntityByNameAndParent(addGroupJson.name, groupRepository.getGroupEntityById(addGroupJson.parent)));
+        if (groupRepository.getGroupEntityByNameAndParent(addGroupJson.name, groupRepository.getGroupEntityById(addGroupJson.parent)) == null) {
+            newGroup.setName(addGroupJson.name);
+            if (addGroupJson.parent == -1)
                 newGroup.setParent(null);
             else {
-                newGroup.setParent(groupRepository.getGroupEntityById(groupJson.parent));
+                newGroup.setParent(groupRepository.getGroupEntityById(addGroupJson.parent));
             }
             newGroup.getScreenList().clear();
             newGroup.getChildrens().clear();
@@ -165,12 +158,12 @@ public class GroupApiController {
         }
         groupRepository.save(newGroup);
         if (newGroup.getParent() == null)
-            return new ResponseEntity<>(new GroupJson(newGroup.getName(), -1), HttpStatus.OK);
+            return new ResponseEntity<>(new AddGroupJson(newGroup.getName(), -1), HttpStatus.OK);
         else{
-            GroupEntity groupNeedToChange = groupRepository.getGroupEntityById(groupJson.parent);
+            GroupEntity groupNeedToChange = groupRepository.getGroupEntityById(addGroupJson.parent);
             groupNeedToChange.getChildrens().add(newGroup);
             groupRepository.save(newGroup);
-            return new ResponseEntity<>(new GroupJson(newGroup.getName(), newGroup.getParent().getId()), HttpStatus.OK);
+            return new ResponseEntity<>(new AddGroupJson(newGroup.getName(), newGroup.getParent().getId()), HttpStatus.OK);
         }
     }
 
@@ -178,12 +171,12 @@ public class GroupApiController {
      * Send name and id of parent's group
      *
      * @param id
-     * @return ResponseEntity with GroupJson
+     * @return ResponseEntity with AddGroupJson
      */
     @RequestMapping(value = "/getParent", method = RequestMethod.GET)
     public ResponseEntity<?>  getParent(@RequestParam(name = "id") int id) {
         if(groupRepository.getGroupEntityById(id) != null)
-            return new ResponseEntity<>(new GroupJson(groupRepository.getGroupEntityById(id).getName(), groupRepository.getGroupEntityById(id).getId()), HttpStatus.OK);
+            return new ResponseEntity<>(new AddGroupJson(groupRepository.getGroupEntityById(id).getName(), groupRepository.getGroupEntityById(id).getId()), HttpStatus.OK);
         else
             return new ResponseEntity<>(new Error("No group with id : " + id,"ID_ALREADY_USE"), HttpStatus.NOT_FOUND);
 

@@ -1,7 +1,7 @@
 package Donkey.WebSite;
 
 import Donkey.Api.GroupApiController;
-import Donkey.Api.JSON.Group.GroupJson;
+import Donkey.Api.JSON.Group.AddGroupJson;
 import Donkey.Database.Entity.GroupEntity;
 import Donkey.Database.Entity.ScreenEntity;
 import Donkey.Database.Entity.TemporalScreenEntity;
@@ -26,7 +26,6 @@ import java.util.List;
 
 //TODO
 //Remplacer les methodes POST par du js directement dans html #JSAWARE
-//
 
 @Controller
 public class WebController {
@@ -171,7 +170,7 @@ public class WebController {
     public String addGroup(Model model, @ModelAttribute AddGroupForm groupForm){
         if(groupForm.getName() != null && ! groupForm.getName().isEmpty()){
             model.addAttribute("groupForm",groupForm);
-            GroupJson newEntry = new GroupJson();
+            AddGroupJson newEntry = new AddGroupJson();
 //            GroupEntity newEntry = new GroupEntity();
 //            newEntry.setName(groupForm.getName());
             newEntry.name = groupForm.getName();

@@ -1,9 +1,7 @@
 package Donkey.Api.JSON.Screen;
 
 public class ScreenJson {
-    public String ip;
-    public String token;
-    public String uuid;
+    public int id;
     public String name;
     public int groupId;
 
@@ -11,10 +9,8 @@ public class ScreenJson {
 
     }
 
-    public ScreenJson(String ip, String token, String uuid, String name, int groupId){
-        this.ip = ip;
-        this.token = token;
-        this.uuid = uuid;
+    public ScreenJson(int id, String name, int groupId){
+        this.id = id;
         this.name = name;
         this.groupId = groupId;
     }
