@@ -1,4 +1,4 @@
-#DonkeySignage-Server
+# DonkeySignage-Server
 
 Jenkins Build:<br/>
 [![Build Status](https://jenkins.donkeysignage.imerir.org/buildStatus/icon?job=DonkeySignage-Server%2Fmaster)](https://jenkins.donkeysignage.imerir.org/job/DonkeySignage-Server/job/master/)
