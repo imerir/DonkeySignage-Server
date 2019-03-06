@@ -5,6 +5,7 @@ import Donkey.Api.JSON.Group.GroupJson;
 import Donkey.Database.Entity.GroupEntity;
 import Donkey.Database.Entity.ScreenEntity;
 import Donkey.Database.Entity.TemporalScreenEntity;
+import Donkey.Database.Entity.UserAndPrivileges.UserEntity;
 import Donkey.Database.Repository.GroupRepository;
 import Donkey.Database.Repository.ScreenRepository;
 import Donkey.Database.Repository.TemporalScreenRepository;
@@ -15,6 +16,7 @@ import Donkey.WebSite.FormClass.Screen.TmpTokenForm;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -43,7 +45,9 @@ public class WebController {
     }
 
     @RequestMapping(value ="/",method = RequestMethod.GET)
-    public String index(){
+    public String index(Model model, Authentication authentication){
+        UserEntity userEntity = (UserEntity) authentication.getPrincipal();
+        model.addAttribute("user", userEntity);
         return "index";
     }
 

@@ -6,7 +6,7 @@
 </head>
 <body>
 
-
+<!--/*@thymesVar id="user" type="Donkey.Database.Entity.UserAndPrivileges.UserEntity"*/-->
 <div th:fragment="navbar (page)">
     <header>
 
@@ -17,18 +17,19 @@
                 }
 
                 main {
-                    margin-left: 300px !important;
+                    padding-left: 300px !important;
                 }
             </style>
         </th:block>
+
 
 
         <nav class="blue darken-3 darken-4 z-depth-3" role="navigation">
             <div class="nav-wrapper container">
                 <a href="/" class="brand-logo" style="white-space: nowrap">Donkey Signage</a>
                 <ul class="right hide-on-med-and-down">
-                    <li id="nav-bar-account">
-                        <a class="dropdown-account dropdown-trigger" data-target="dropdown_connected"><i
+                    <li id="nav-bar-account" th:if="${user}">
+                        <a class="dropdown-account dropdown-trigger green-text" data-target="dropdown_connected"><i
                                 class="material-icons">account_box</i></a>
                     </li>
                 </ul>
@@ -44,10 +45,11 @@
 
 
         <!-- Dropdown connected -->
-        <ul id="dropdown_connected" class="dropdown-content ">
+        <ul id="dropdown_connected" class="dropdown-content">
             <li>
+
                 <a class="center blue-grey-text text-darken-4 tooltipped" data-position="left" data-delay="50"
-                   data-tooltip="It's you !" id="nav-name" style="font-weight: bold"></a>
+                   data-tooltip="It's you !" style="font-weight: bold" th:text="${#strings.capitalize(user?.getUsername())}"></a>
             </li>
             <li class="divider"></li>
             <li>
@@ -56,15 +58,15 @@
             </li>
             <li class="divider"></li>
 
-            <li><a class="center red-text nav-disconnect" style="font-weight: bold">Disconnect</a></li>
+            <li><a class="center red-text nav-disconnect" style="font-weight: bold" href="/logout">Disconnect</a></li>
         </ul>
 
         <script>
             document.addEventListener('DOMContentLoaded', function () {
-                var elems = document.querySelectorAll('.sidenav');
-                var instances = M.Sidenav.init(elems);
-                var elem = document.querySelector('#side_nav');
-                var instance = M.Sidenav.getInstance(elem);
+                var side = document.querySelectorAll('.sidenav');
+                M.Sidenav.init(side);
+                var drops = document.querySelectorAll('.dropdown-trigger');
+                M.Dropdown.init(drops, {constrainWidth: false, coverTrigger : false});
 
             });
 

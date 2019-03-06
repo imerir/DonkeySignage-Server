@@ -22,12 +22,10 @@
 
 <body class="blue-grey lighten-5">
 <header>
-    <div th:replace="navbar :: navbar ('home')"></div>
+    <div th:replace="navbar :: navbar ('home')" th:with="user=${user}"></div>
 </header>
 
 <main class="container">
-    <h1 th:text="${#locale}"></h1>
-    <h1 th:text="#{login.sign_in}"></h1>
 </main>
 
 <footer class="page-footer" style="padding: 0">
