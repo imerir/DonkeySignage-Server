@@ -2,8 +2,6 @@ pipeline {
     agent any
     options {
         buildDiscarder(logRotator(numToKeepStr: '20'))
-        [[$class: 'HudsonNotificationProperty', endpoints: [[buildNotes: '', urlInfo: [urlOrId: 'https://webhook.site/f02282c4-f339-4299-818d-faff2f3214fb', urlType: 'PUBLIC']]]]]
-
     }
 
 
@@ -81,10 +79,10 @@ pipeline {
                 sh 'docker image prune -f'
             }
         }
-        stage('Restart Docker prod') {
+        stage('Webhook') {
             steps {
                 script {
-                    sh "bash /root/docker/donkey/restartDocker"
+                    sh "curl -X POST https://webhook.site/f02282c4-f339-4299-818d-faff2f3214fb"
                 }
 
             }
