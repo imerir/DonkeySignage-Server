@@ -22,6 +22,10 @@ import java.util.Locale;
 @Configuration
 public class MvcApplication extends WebMvcConfigurerAdapter {
 
+    /**
+     * Add javascript auto versioning.
+     * @param registry
+     */
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         VersionResourceResolver versionResourceResolver = new VersionResourceResolver()
@@ -37,7 +41,7 @@ public class MvcApplication extends WebMvcConfigurerAdapter {
 
     /**
      * {@inheritDoc}
-     * <p>This implementation is empty.
+     * Register the LocalContext Resolver.
      *
      * @param registry
      */
@@ -58,6 +62,10 @@ public class MvcApplication extends WebMvcConfigurerAdapter {
         return localeResolver;
     }
 
+    /**
+     * Define the LocalChangeInterceptor to intercept parameter "lang" to change locale.
+     * @return Configured LocaleChangeInterceptor
+     */
     @Bean
     public LocaleChangeInterceptor localeChangeInterceptor(){
         LocaleChangeInterceptor lci = new LocaleChangeInterceptor();
@@ -65,6 +73,10 @@ public class MvcApplication extends WebMvcConfigurerAdapter {
         return lci;
     }
 
+    /**
+     * Configure message source for locale
+     * @return
+     */
     @Bean
     public MessageSource messageSource(){
         ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
