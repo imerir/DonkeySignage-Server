@@ -82,7 +82,7 @@ pipeline {
         stage('Restart Docker prod') {
             steps {
                 script {
-                    sh "/root/docker/donkey/restartDocker"
+                    sh "bash /root/docker/donkey/restartDocker"
                 }
 
             }
