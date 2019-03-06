@@ -79,5 +79,13 @@ pipeline {
                 sh 'docker image prune -f'
             }
         }
+        stage('Restart Docker prod') {
+            steps {
+                script {
+                    sh "/root/docker/donkey/restartDocker"
+                }
+
+            }
+        }
     }
 }
