@@ -172,22 +172,22 @@ public class ScreenApiController {
 
     /**
      * Delete a screen in a database
-     * @param deleteScreenJson
+     * @param id
      * @return DeleteScreenJson
      */
     @RequestMapping(value = "", method = RequestMethod.DELETE)
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> deleteScreen(@RequestBody DeleteScreenJson deleteScreenJson){
-        ScreenEntity screenToDelete = screenRegisterRep.getScreenEntityById(deleteScreenJson.id);
+    public ResponseEntity<?> deleteScreen(@RequestParam(name = "id")int id){
+        ScreenEntity screenToDelete = screenRegisterRep.getScreenEntityById(id);
         if(screenToDelete != null){
             screenRegisterRep.delete(screenToDelete);
-            if(deleteScreenJson.groupId != -1){
+            if(screenToDelete.getGroup() != null && screenToDelete.getGroup().getId() != -1){
                 return new ResponseEntity<>(new  DeleteScreenJson(screenToDelete.getId(),screenToDelete.getName(),screenToDelete.getGroup().getId()),HttpStatus.OK);
             }else{
                 return new ResponseEntity<>(new DeleteScreenJson(screenToDelete.getId(),screenToDelete.getName(),-1),HttpStatus.OK);
             }
         }else{
-            return new ResponseEntity<>(new Error("Screen with id : " + deleteScreenJson.id + " not exist ! ", "SCREEN_NOT_FOUND"),HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new Error("Screen with id : " + id + " not exist ! ", "SCREEN_NOT_FOUND"),HttpStatus.NOT_FOUND);
         }
     }
 
