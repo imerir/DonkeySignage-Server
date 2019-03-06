@@ -2,7 +2,7 @@ pipeline {
     agent any
     options {
         buildDiscarder(logRotator(numToKeepStr: '20'))
-        properties([[$class: 'HudsonNotificationProperty', endpoints: [[buildNotes: '', urlInfo: [urlOrId: 'https://webhook.site/f02282c4-f339-4299-818d-faff2f3214fb', urlType: 'PUBLIC']]]]])
+        [[$class: 'HudsonNotificationProperty', endpoints: [[buildNotes: '', urlInfo: [urlOrId: 'https://webhook.site/f02282c4-f339-4299-818d-faff2f3214fb', urlType: 'PUBLIC']]]]]
 
     }
 
