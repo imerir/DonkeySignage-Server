@@ -3,7 +3,18 @@
 Jenkins Build:<br/>
 [![Build Status](https://jenkins.donkeysignage.imerir.org/buildStatus/icon?job=DonkeySignage-Server%2Fmaster)](https://jenkins.donkeysignage.imerir.org/job/DonkeySignage-Server/job/master/)
 
-## Environment Variable
+## Requirements
+
+### Java
+We use Java 11 for this project.
+- [Java 11](https://jdk.java.net/11/)
+
+### Gradle
+
+We use Gradle for this project.
+- [Gradle](https://gradle.org/install/)
+
+### Environment Variable
 
 1. PORT : 8080
 2. DB_URL : jdbc:mysql://localhost:3306/test
@@ -12,7 +23,7 @@ Jenkins Build:<br/>
 5. DB_MODE : update
 6. LOG_LEVEL : trace
 
-## Install Database:
+### Install Database:
  
 > The easiest method it's to use docker-compose:
 > 
