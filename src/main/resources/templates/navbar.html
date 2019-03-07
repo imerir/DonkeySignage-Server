@@ -39,7 +39,12 @@
 
         <th:block th:if="${page != 'login'}">s
             <ul id="side_nav" class="sidenav sidenav-fixed">
-
+                <li th:if="${user?.isAdmin()}" th:classappend="${page == 'screenRegister'? 'active' : ''}">
+                    <a href="/screenRegister"  th:text="#{screenregister.screenregister}"></a>
+                </li>
+                <li>
+                    <div class="divider"></div>
+                </li>
             </ul>
         </th:block>
 
@@ -53,12 +58,11 @@
             </li>
             <li class="divider"></li>
             <li>
-                <a class="center tooltipped" data-position="left" data-delay="50" data-tooltip="Under Development!">My
-                    Account</a>
+                <a class="center tooltipped" data-position="left" data-delay="50" data-tooltip="Under Development!" th:text="#{login.account}"></a>
             </li>
             <li class="divider"></li>
 
-            <li><a class="center red-text nav-disconnect" style="font-weight: bold" href="/logout">Disconnect</a></li>
+            <li><a class="center red-text nav-disconnect" style="font-weight: bold" href="/logout" th:text="#{login.disconnect}"></a></li>
         </ul>
 
         <script>

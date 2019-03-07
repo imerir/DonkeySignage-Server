@@ -65,7 +65,7 @@ public class ScreenController {
      * @return String
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping(value = {"/screenRegister"})
+    @RequestMapping(value = "/screenRegister", method = RequestMethod.POST)
     public String registerScreenPost(Model model, @ModelAttribute TmpTokenForm tokenForm, Authentication authentication) {
         UserEntity userEntity = (UserEntity) authentication.getPrincipal();
         model.addAttribute("user", userEntity);
@@ -74,9 +74,8 @@ public class ScreenController {
         if(!tokenForm.getTempToken().isEmpty() && tmpReg != null){
             return "redirect:/screenRegister?uuid="+tmpReg.getUuid();
         }else{
-            //TODO
-            //Gestion erreur
-            return "Error";
+            model.addAttribute("error", true);
+            return "Screen/screenRegister";
         }
     }
 

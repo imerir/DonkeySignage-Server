@@ -1,20 +1,113 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:form="http://www.w3.org/1999/xhtml">
-    <head>
-        <meta charset="UTF-8"/>
-        <title>Form Screen Register</title>
-    </head>
-    <body>
-        <h1>Add new Screen in DataBase</h1>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+    <!--TODO <meta name="description" content=""/>-->
+    <title>Donkey Signage</title>
+    <link rel="icon"
+          type="image/x-icon"
+          href="/favicon.png"/>
+
+    <!-- CSS  -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+    <link href="/css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+    <style>
+
+
+    </style>
+
+
+</head>
+
+<body class="blue-grey lighten-5">
+<header>
+    <div th:replace="navbar :: navbar ('screenRegister')" th:with="user=${user}"></div>
+</header>
+
+<main class="container">
+    <div class="card-panel">
+        <div class="row">
+            <div class="col s12">
+                <h2 class="center" th:text="#{screenregister.screenregister}"></h2>
+            </div>
+        </div>
+
         <form action="#" th:action="@{/formScreenRegister}" th:object="${screenRegisterForm}" method="POST">
             <input type="hidden"  id="uuid" name="uuid" th:value="${uuid}"/>
-            <label for="name">Screen's Name : </label>
-            <input type="text" id="name" name="name" />
-            <br/>
-            <label for="groupId">Group Id : </label>
-            <input type="text" id="groupId" name="groupId"/>
-            <br/>
-            <input type="submit" value="Submit"/>
+        
+
+
+            <div class="row">
+                <div class="input-field col s12">
+                    <input type="text" id="name" name="name" />
+                    <label for="name" th:text="#{screenregister.name}"></label>
+                    <span class="helper-text" th:attr="data-error=#{screenregister.invalidName}" data-succes="right"></span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="input-field col s12">
+                    <input type="text" id="groupId" name="groupId"/>
+                    <label for="groupId" th:text="#{screenregister.group}"></label>
+                </div>
+
+            </div>
+
+
+            <div class="row">
+                <div class="col s12 center">
+                    <input type="submit" class="btn disabled" id="submit" value="Submit"/>
+                </div>
+            </div>
+
+
         </form>
-    </body>
+    </div>
+
+</main>
+
+<footer class="page-footer" style="padding: 0">
+    <!--<div th:replace="footer :: footer">...</div>-->
+</footer>
+<!--  Scripts-->
+<script th:src="@{/js/materialize.js}"></script>
+<script th:src="@{/js/jquery-3.3.1.min.js}"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    // document.addEventListener('DOMContentLoaded', function () {
+    //     var textNeedCount = document.querySelectorAll('#tempToken');
+    //     M.CharacterCounter.init(textNeedCount);
+    //
+    //     let tmpTokenF = $('#tempToken');
+    //     let submit = $('#submit');
+    //
+    //     if(tmpTokenF.val().length === 0){
+    //         if(!submit.hasClass("disabled"))
+    //             submit.addClass("disabled");
+    //     }
+    //     else{
+    //         if(submit.hasClass("disabled"))
+    //             submit.removeClass("disabled");
+    //     }
+    //
+    //     tmpTokenF.on('input',() => {
+    //         tmpTokenF.val(tmpTokenF.val().toUpperCase());
+    //         console.log(tmpTokenF.val().length);
+    //         if(tmpTokenF.val().length < 4){
+    //             if(!submit.hasClass("disabled"))
+    //                 submit.addClass("disabled");
+    //         }
+    //         else{
+    //             if(submit.hasClass("disabled"))
+    //                 submit.removeClass("disabled");
+    //         }
+    //
+    //     })
+    // });
+    /*]]>*/
+</script>
+
+
+</body>
 </html>
