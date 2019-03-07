@@ -19,9 +19,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final MyUserDetailService userDetailService;
 
+    private final PersistentTokenDaoImp persistentTokenDaoImp;
+
     @Autowired
-    public SecurityConfig(MyUserDetailService userDetailService) {
+    public SecurityConfig(MyUserDetailService userDetailService, PersistentTokenDaoImp persistentTokenDaoImp) {
         this.userDetailService = userDetailService;
+        this.persistentTokenDaoImp = persistentTokenDaoImp;
     }
 
     @Override
@@ -39,7 +42,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .logout()
                 .permitAll()
                 .and()
-                .rememberMe().userDetailsService(userDetailService)
+                .rememberMe().userDetailsService(userDetailService).tokenRepository(persistentTokenDaoImp).useSecureCookie(false)
                 .and()
                 .authenticationProvider(authenticationProvider()).userDetailsService(userDetailService);
     }
