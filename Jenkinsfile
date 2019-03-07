@@ -82,7 +82,7 @@ pipeline {
         stage('Webhook') {
             steps {
                 script {
-                    sh "curl -X POST https://webhook.site/f02282c4-f339-4299-818d-faff2f3214fb"
+                    sh "curl -X POST localhost:8555/bc798ebc-3c57-48df-8bed-9de957fcc053"
                 }
 
             }
