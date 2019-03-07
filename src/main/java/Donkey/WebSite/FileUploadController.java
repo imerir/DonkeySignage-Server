@@ -1,4 +1,4 @@
-package Donkey.Storage;
+package Donkey.WebSite;
 
 import java.io.IOException;
 import java.util.stream.Collectors;
