@@ -62,6 +62,8 @@ dependencies {
         exclude group:"org.springframework.boot", module: "spring-boot-starter-logging"
         exclude group: "org.springframework.boot", module: "spring-boot-starter-tomcat"
     }
+
+    compile("javax.interceptor:javax.interceptor-api:1.2")
     
     
     compile("org.springframework.boot:spring-boot-starter-undertow")
