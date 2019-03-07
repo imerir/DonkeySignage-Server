@@ -1,8 +1,8 @@
 package Donkey.WebSite;
 
-import Donkey.Api.GroupApiController;
 import Donkey.Database.Entity.ScreenEntity;
 import Donkey.Database.Entity.TemporalScreenEntity;
+import Donkey.Database.Entity.UserAndPrivileges.UserEntity;
 import Donkey.Database.Repository.GroupRepository;
 import Donkey.Database.Repository.ScreenRepository;
 import Donkey.Database.Repository.TemporalScreenRepository;
@@ -13,6 +13,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -20,8 +21,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class ScreenController {
-    //TODO
-    //Remplacer les methodes POST par du js directement dans html #JSAWARE
+    //TODO Remplacer les methodes POST par du js directement dans html #JSAWARE
 
     private final ScreenRepository screenRegRep;
     private final TemporalScreenRepository tmpRegisterRep;
@@ -43,7 +43,9 @@ public class ScreenController {
      */
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = {"/screenRegister"}, method = RequestMethod.GET)
-    public String registerScreenGet(Model model, @RequestParam(value = "uuid", defaultValue = "")String uuid) {
+    public String registerScreenGet(Model model, @RequestParam(value = "uuid", defaultValue = "")String uuid, Authentication authentication) {
+        UserEntity userEntity = (UserEntity) authentication.getPrincipal();
+        model.addAttribute("user", userEntity);
         TemporalScreenEntity tmpReg = tmpRegisterRep.getTemporalRegisterByUuid(uuid);
         if (!uuid.isEmpty() && tmpReg!= null) {
             model.addAttribute("uuid",uuid);
@@ -64,7 +66,9 @@ public class ScreenController {
      */
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(value = {"/screenRegister"})
-    public String registerScreenPost(Model model, @ModelAttribute TmpTokenForm tokenForm){
+    public String registerScreenPost(Model model, @ModelAttribute TmpTokenForm tokenForm, Authentication authentication) {
+        UserEntity userEntity = (UserEntity) authentication.getPrincipal();
+        model.addAttribute("user", userEntity);
         TemporalScreenEntity tmpReg = tmpRegisterRep.getTemporalRegisterByTempToken(tokenForm.getTempToken());
         log.debug("Post screenRegister, token : " + tokenForm.getTempToken());
         if(!tokenForm.getTempToken().isEmpty() && tmpReg != null){
@@ -84,7 +88,9 @@ public class ScreenController {
      */
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = {"/formScreenRegister"}, method = RequestMethod.POST)
-    public String formScreenRegister(Model model, @ModelAttribute ScreenRegisterForm screenRegisterForm){
+    public String formScreenRegister(Model model, @ModelAttribute ScreenRegisterForm screenRegisterForm, Authentication authentication) {
+        UserEntity userEntity = (UserEntity) authentication.getPrincipal();
+        model.addAttribute("user", userEntity);
         if(screenRegisterForm.getUuid() != null && !screenRegisterForm.getUuid().isEmpty()){
             ScreenEntity newEntry = new ScreenEntity();
             if(screenRegRep.getScreenRegisterByUuid(screenRegisterForm.getUuid()) == null){
@@ -118,7 +124,9 @@ public class ScreenController {
      * @return
      */
     @RequestMapping(value="/screen", method = RequestMethod.GET)
-    public String getScreen(Model model, @RequestParam(name = "id")int id, RedirectAttributes redirectAttributes){
+    public String getScreen(Model model, @RequestParam(name = "id")int id, RedirectAttributes redirectAttributes, Authentication authentication) {
+        UserEntity userEntity = (UserEntity) authentication.getPrincipal();
+        model.addAttribute("user", userEntity);
         if(screenRegRep.getScreenEntityById(id) != null){
             ScreenEntity theScreen =  screenRegRep.getScreenEntityById(id);
             if(theScreen.getGroup() != null){
