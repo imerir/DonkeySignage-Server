@@ -37,9 +37,9 @@ public class SocketHandler extends TextWebSocketHandler {
 
     private ScreenRepository screenRepository;
 
+
     public SocketHandler(){
-        ApplicationContext context = SpringContext.getAppContext();
-        screenRepository = (ScreenRepository) context.getBean("screenRepository");
+
     }
 
 
@@ -163,6 +163,10 @@ public class SocketHandler extends TextWebSocketHandler {
             webSocketData.type = "CONFIG";
             webSocketData.data = new HashMap<>();
 
+            if(screenRepository == null){
+                ApplicationContext context = SpringContext.getAppContext();
+                screenRepository = (ScreenRepository) context.getBean("screenRepository");
+            }
             ScreenEntity screen = screenRepository.getScreenRegisterByUuid(state.uuid);
             webSocketData.data.put("template", screen.getTemplate());
             String screenStr = objectMapper.writeValueAsString(webSocketData);
