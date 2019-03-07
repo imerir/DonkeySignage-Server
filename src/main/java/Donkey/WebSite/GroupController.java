@@ -4,13 +4,14 @@ import Donkey.Api.GroupApiController;
 import Donkey.Api.JSON.Group.AddGroupJson;
 import Donkey.Database.Entity.GroupEntity;
 import Donkey.Database.Entity.ScreenEntity;
+import Donkey.Database.Entity.UserAndPrivileges.UserEntity;
 import Donkey.Database.Repository.GroupRepository;
 import Donkey.Database.Repository.ScreenRepository;
-import Donkey.Database.Repository.TemporalScreenRepository;
 import Donkey.WebSite.FormClass.Group.AddGroupForm;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -19,8 +20,7 @@ import java.util.List;
 
 @Controller
 public class GroupController {
-    //TODO
-    //Remplacer les methodes POST par du js directement dans html #JSAWARE
+    //TODO Remplacer les methodes POST par du js directement dans html #JSAWARE
 
     private final ScreenRepository screenRegRep;
     private final GroupRepository grpRep;
@@ -52,7 +52,9 @@ public class GroupController {
      * @return
      */
     @PostMapping(value = "/addGroup")
-    public String addGroup(Model model, @ModelAttribute AddGroupForm groupForm){
+    public String addGroup(Model model, @ModelAttribute AddGroupForm groupForm, Authentication authentication){
+        UserEntity userEntity = (UserEntity) authentication.getPrincipal();
+        model.addAttribute("user", userEntity);
         if(groupForm.getName() != null && ! groupForm.getName().isEmpty()){
             model.addAttribute("groupForm",groupForm);
             AddGroupJson newEntry = new AddGroupJson();
@@ -78,7 +80,9 @@ public class GroupController {
      * @return
      */
     @RequestMapping(value = "/group")
-    public String showGroup(Model model, @RequestParam(name = "id", defaultValue = "-1")int id){
+    public String showGroup(Model model, @RequestParam(name = "id", defaultValue = "-1")int id, Authentication authentication){
+        UserEntity userEntity = (UserEntity) authentication.getPrincipal();
+        model.addAttribute("user", userEntity);
         if(id == -1){
             List<GroupEntity> groupList = grpRep.getGroupEntityByParentNull();
             List<ScreenEntity> screenList = screenRegRep.getScreenByGroupNull();
@@ -95,8 +99,16 @@ public class GroupController {
             model.addAttribute("screenList" , screenList);
             model.addAttribute("childrenList" , childrenList);
             model.addAttribute("getWithId",1);
+            if(group.getParent() != null){
+                model.addAttribute("groupParentIsNull",0);
+                model.addAttribute("groupParentId",group.getParent().getId());
+                model.addAttribute("groupParentName",group.getParent().getName());
+            }else
+                model.addAttribute("groupParentIsNull",1);
+
             return "Group/group";
         }else{
+            //TODO Gestion erreur
             return "Error";
         }
     }
