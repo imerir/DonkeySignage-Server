@@ -1,81 +1,72 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-    <head>
-        <meta charset="UTF-8"/>
-        <title>Media</title>
-    </head>
-    <!--<body onload="updateSize();">-->
-    <body>
-        <div th:if="${message}">
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+    <!--TODO <meta name="description" content=""/>-->
+    <title>Add Media - Donkey Signage</title>
+    <link rel="icon"
+          type="image/x-icon"
+          href="/favicon.png"/>
+
+    <!-- CSS  -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+    <link href="/css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+    <style>
+
+
+    </style>
+
+
+</head>
+
+<body class="blue-grey lighten-5">
+<header>
+    <div th:replace="navbar :: navbar ('uplaodForm')" th:with="user=${user}"></div>
+</header>
+
+<main class="container">
+    <!--write your stuff here-->
+    <div class="row">
+        <div class="col s12" th:if="${message}">
             <h2 th:text="${message}"/>
         </div>
+    </div>
 
-        <div>
-            <form method="POST" enctype="multipart/form-data" action="/addMedia">
-                <table>
-                    <tr>
-                        <td>File to upload:</td>
-                        <td><input type="file" name="file" /></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td><input type="submit" value="Upload" /></td>
-                    </tr>
-                </table>
-            </form>
-        </div>
-        <div>
+    <div>
+        <form method="POST" enctype="multipart/form-data" action="/addMedia">
+
+            <div class="row">
+                <div class="input-field col s12">
+                    <p>File to upload:</p>
+                    <input class="validate" type="file" name="file" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s12 center">
+                    <input type="submit" class="btn diasbled" value="Upload" />
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="row">
+        <div class="col s12 center">
             <ul>
                 <li th:each="file : ${files}">
                     <a th:href="${file}" th:text="${file}">...</a>
                 </li>
             </ul>
         </div>
-        <script th:inline="javascript">
-            /*<![CDATA[*/
-            /*function updateSize() {
-                console.log("Begin UpdateSize");
-                var nBytes = 0;
-                var oFiles = document.getElementById("fileInput").files;
-                var nFiles = oFiles.length;
-                for (var nFileId = 0; nFileId < nFiles; nFileId++) {
-                    nBytes += oFiles[nFileId].size;
-                }
-                console.log("nBytes : " + nBytes + " , nFiles : " + nFiles);
-                var sOutput = nBytes + " bytes";
-                // optional code for multiples approximation
-                for (var aMultiples = ["KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"], nMultiple = 0, nApprox = nBytes / 1024; nApprox > 1; nApprox /= 1024, nMultiple++) {
-                    sOutput = nApprox.toFixed(3) + " " + aMultiples[nMultiple] + " (" + nBytes + " bytes)";
-                }
-                // end of optional code
+    </div>
+</main>
 
-                document.getElementById("fileNum").innerHTML = nFiles;
-                document.getElementById("fileSize").innerHTML = sOutput;
-                console.log("End UpdateSize");
-            }
+<footer class="page-footer" style="padding: 0">
+    <!--<div th:replace="footer :: footer">...</div>-->
+</footer>
+<!--  Scripts-->
+<script th:src="@{/js/materialize.js}"></script>
+<script th:src="@{/js/jquery-3.3.1.min.js}"></script>
 
-            function addFile (){
-                var newTr = document.createElement("tr");
-                document.getElementById("JsAddFile").appendChild(newTr);
 
-                var firstTd = document.createElement("td");
-                var node = document.createTextNode("File to upload:");
-                firstTd.appendChild(node);
-                newTr.appendChild(firstTd);
-
-                var secondTd = document.createElement("td");
-                var firstInput = document.createElement("INPUT");
-                firstInput.setAttribute("id","fileInput");
-                firstInput.setAttribute("type","file");
-                firstInput.setAttribute("name","file");
-                firstInput.setAttribute("onchange","updateSize();");;
-                firstInput.setAttribute("multiple","multiple();");
-                secondTd.appendChild(firstInput);
-                newTr.appendChild(secondTd);
-
-            }*/
-            /*]]>*/
-
-        </script>
-    </body>
+</body>
 </html>

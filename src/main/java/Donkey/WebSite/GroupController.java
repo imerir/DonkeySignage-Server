@@ -90,8 +90,7 @@ public class GroupController {
             model.addAttribute("screenList", screenList);
             model.addAttribute("getWithId",0);
             return "Group/group";
-        }
-        if(grpRep.getGroupEntityById(id) != null){
+        }else if(grpRep.getGroupEntityById(id) != null){
             GroupEntity group =  grpRep.getGroupEntityById(id);
             List<ScreenEntity> screenList = screenRegRep.getScreenEntityByGroupId(id);
             List<GroupEntity> childrenList = grpRep.getGroupEntityByParent_Id(id);

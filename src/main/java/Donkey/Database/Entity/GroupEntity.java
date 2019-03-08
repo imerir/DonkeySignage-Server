@@ -31,8 +31,8 @@ public class GroupEntity {
 
     public GroupEntity(String name, List<ScreenEntity> screenList, GroupEntity parent, List<GroupEntity> childrens){
         this.setName(name);
-        for(ScreenEntity scree : screenList){
-            this.getScreenList().add(scree);
+        for(ScreenEntity screen : screenList){
+            this.getScreenList().add(screen);
         }
         this.setParent(parent);
         for (GroupEntity children : childrens) {

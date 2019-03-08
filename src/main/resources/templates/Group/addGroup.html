@@ -29,13 +29,24 @@
     <!--write your stuff here-->
     <h1>Add new Group in DataBase</h1>
     <form action="#" th:action="@{/addGroup}" th:object="${groupForm}" method="POST">
-        <label for="name">Name : </label>
-        <input type="text" id="name" name="name" />
-        <br/>
-        <label for="parentId">Parent Id : </label>
-        <input type="text" id="groupId" name="parentId"/>
-        <br/>
-        <input type="submit" value="Submit"/>
+
+        <div class="row">
+            <div class="input-field col s12">
+                <input type="text" id="name" name="name" />
+                <label for="name">Name : </label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col s12">
+                <input type="text" id="groupId" name="parentId"/>
+                <label for="parentId">Parent Id : </label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col s12 center">
+                <input type="submit" value="Submit"/>
+            </div>
+        </div>
     </form>
 </main>
 
@@ -48,3 +59,4 @@
 
 </body>
 </html>
+

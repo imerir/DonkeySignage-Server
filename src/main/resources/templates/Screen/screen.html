@@ -1,35 +1,69 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/html">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8"/>
-    <title>Screen</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+    <!--TODO <meta name="description" content=""/>-->
+    <title>Screen - Donkey Signage</title>
+    <link rel="icon"
+          type="image/x-icon"
+          href="/favicon.png"/>
+
+    <!-- CSS  -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+    <link href="/css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+    <style>
+
+
+    </style>
+
+
 </head>
-<body>
-    <h2 th:utext="'Screen name : ' + ${screen.name}">...</h2>
+
+<body class="blue-grey lighten-5">
+<header>
+    <div th:replace="navbar :: navbar ('screen')" th:with="user=${user}"></div>
+</header>
+
+<main class="container">
+    <!--write your stuff here-->
+    <h3>Screen</h3>
+    <h4 th:utext="${screen.name}">...</h4>
     <div>
-        <h3>Ip : </h3>
-        <h4 th:utext="${screen.ip}">...</h4>
-        <h3>Token : </h3>
-        <h4 th:utext="${screen.token}">...</h4>
-        <h3>Uuid : </h3>
-        <h4 th:utext="${screen.uuid}">...</h4>
-        <table >
-            <td >
-                <input type="submit" value="Modify" />
-            </td>
-            <td >
-                <input type="submit" value="Delete" />
-            </td>
+        <table>
+            <tr>
+                <th>Ip</th>
+                <th>Token</th>
+                <th>Uuid</th>
+            </tr>
+            <tr>
+                <td th:utext="${screen.ip}">...</td>
+                <td th:utext="${screen.token}">...</td>
+                <td th:utext="${screen.uuid}">...</td>
+            </tr>
         </table>
+        <br/>
+        <br/>
+        <input type="submit" value="Modify" />
+        <input type="submit" value="Delete" />
         <th:block th:if="${groupId} != -1">
-            <h3>Group : </h3>
+            <h3>Group </h3>
             <h4><a th:utext="${groupName}" th:href="${'/group?id=' + groupId}">...</a></h4>
         </th:block>
         <br/>
         <th:block th:if="${groupId} == -1">
-            <h3>Group : </h3>
+            <h3>Group </h3>
             <h4>No Affectation</h4>
         </th:block>
     </div>
+</main>
+
+<footer class="page-footer" style="padding: 0">
+    <!--<div th:replace="footer :: footer">...</div>-->
+</footer>
+<!--  Scripts-->
+<script th:src="@{/js/materialize.js}"></script>
+
+
 </body>
 </html>
