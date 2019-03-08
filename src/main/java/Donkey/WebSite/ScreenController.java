@@ -50,6 +50,7 @@ public class ScreenController {
         if (!uuid.isEmpty() && tmpReg!= null) {
             model.addAttribute("uuid",uuid);
             model.addAttribute("screenRegisterForm",new ScreenRegisterForm());
+
             return "Screen/formScreenRegister";
         } else {
             TmpTokenForm form = new TmpTokenForm();

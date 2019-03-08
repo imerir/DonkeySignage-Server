@@ -36,7 +36,7 @@
         <form action="#" th:action="@{/screenRegister}" th:object="${tmpTokenForm}" method="POST">
             <div class="row">
                 <div class="input-field col s12">
-                    <input type="text" id="tempToken" name="tempToken" th:field="*{tempToken}" class="validate" th:classappend="${error ? 'invalid' : ''}"  data-length="4" maxlength="4"/>
+                    <input type="text" id="tempToken" name="tempToken" th:field="*{tempToken}" class="validate" th:classappend="${error != null ? 'invalid' : ''}"  data-length="4" maxlength="4"/>
                     <label for="tempToken" th:text="#{screenregister.temptoken}"></label>
                     <span class="helper-text" th:attr="data-error=#{screenregister.invalidTmpToken}" data-succes="right"></span>
                 </div>
@@ -51,6 +51,7 @@
 
         </form>
     </div>
+
 
 </main>
 

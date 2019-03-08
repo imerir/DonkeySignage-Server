@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale}">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
@@ -34,13 +34,18 @@
         </div>
 
         <form action="#" th:action="@{/formScreenRegister}" th:object="${screenRegisterForm}" method="POST">
-            <input type="hidden"  id="uuid" name="uuid" th:value="${uuid}"/>
-        
+
+            <div class="row">
+                <div class="input-field col s12">
+                    <input type="text"  id="uuid" name="uuid" th:value="${uuid}" disabled="true"/>
+                    <label for="uuid" th:text="#{screenregister.uuid}"></label>
+                </div>
+            </div>
 
 
             <div class="row">
                 <div class="input-field col s12">
-                    <input type="text" id="name" name="name" />
+                    <input type="text" id="name" name="name" th:classappend="${error != null ? 'invalid' : ''}"/>
                     <label for="name" th:text="#{screenregister.name}"></label>
                     <span class="helper-text" th:attr="data-error=#{screenregister.invalidName}" data-succes="right"></span>
                 </div>
@@ -64,6 +69,30 @@
 
         </form>
     </div>
+    <a class="waves-effect waves-light btn modal-trigger" href="#modal1">Modal</a>
+
+    <!-- Modal Structure -->
+    <div id="modal1" class="modal modal-fixed-footer">
+        <div class="modal-content">
+            <div class="row">
+                <div class="col s12 center">
+                    <h4 th:text="#{screenregister.groupselector}"></h4>
+                </div>
+            </div>
+            <div class="row">
+
+                <div class="col s12" >
+                    <ul class="collection with-header" id="groupSelector">
+
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+        <div class="modal-footer">
+            <a href="" class="modal-close waves-effect waves-green btn-flat" th:text="#{form.cancel}"></a>
+        </div>
+    </div>
 
 </main>
 
@@ -73,38 +102,40 @@
 <!--  Scripts-->
 <script th:src="@{/js/materialize.js}"></script>
 <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
+<script th:src="@{/js/group_selector.js}"></script>
 <script th:inline="javascript">
     /*<![CDATA[*/
-    // document.addEventListener('DOMContentLoaded', function () {
-    //     var textNeedCount = document.querySelectorAll('#tempToken');
-    //     M.CharacterCounter.init(textNeedCount);
-    //
-    //     let tmpTokenF = $('#tempToken');
-    //     let submit = $('#submit');
-    //
-    //     if(tmpTokenF.val().length === 0){
-    //         if(!submit.hasClass("disabled"))
-    //             submit.addClass("disabled");
-    //     }
-    //     else{
-    //         if(submit.hasClass("disabled"))
-    //             submit.removeClass("disabled");
-    //     }
-    //
-    //     tmpTokenF.on('input',() => {
-    //         tmpTokenF.val(tmpTokenF.val().toUpperCase());
-    //         console.log(tmpTokenF.val().length);
-    //         if(tmpTokenF.val().length < 4){
-    //             if(!submit.hasClass("disabled"))
-    //                 submit.addClass("disabled");
-    //         }
-    //         else{
-    //             if(submit.hasClass("disabled"))
-    //                 submit.removeClass("disabled");
-    //         }
-    //
-    //     })
-    // });
+    document.addEventListener('DOMContentLoaded', function () {
+        getGroupPage(-1);
+        let elems = document.querySelectorAll('.modal');
+        M.Modal.init(elems);
+
+        let name = $('#name');
+        let submit = $('#submit');
+
+        if(name.val().length < 1){
+            if(!submit.hasClass("disabled"))
+                submit.addClass("disabled");
+        }
+        else{
+            if(submit.hasClass("disabled"))
+                submit.removeClass("disabled");
+        }
+
+        name.on('input',() => {
+            name.val(name.val().toUpperCase());
+            console.log(name.val().length);
+            if(name.val().length < 1){
+                if(!submit.hasClass("disabled"))
+                    submit.addClass("disabled");
+            }
+            else{
+                if(submit.hasClass("disabled"))
+                    submit.removeClass("disabled");
+            }
+
+        })
+    });
     /*]]>*/
 </script>
 

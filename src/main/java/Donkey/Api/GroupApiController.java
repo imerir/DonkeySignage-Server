@@ -16,6 +16,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
+
 
 @RestController
 @RequestMapping("/api/group")
@@ -35,15 +40,14 @@ public class GroupApiController {
     @RequestMapping(value = "", method = RequestMethod.GET)
     public ResponseEntity<?> getGroups(@RequestParam(name = "id", defaultValue = "-1") int id){
         if(id == -1){
-
-            return new ResponseEntity<>(groupRepository.getAllBy(), HttpStatus.OK);
+            return new ResponseEntity<>(convert(groupRepository.getAllBy()), HttpStatus.OK);
         }
         GroupEntity groupEntity = groupRepository.getGroupEntityById(id);
         if(groupEntity == null){
             log.info("[api/group GET] Group " + id + " not found");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(groupEntity, HttpStatus.OK);
+        return new ResponseEntity<>(new GroupJson(groupEntity), HttpStatus.OK);
     }
 
 
@@ -176,7 +180,7 @@ public class GroupApiController {
     @RequestMapping(value = "/getParent", method = RequestMethod.GET)
     public ResponseEntity<?>  getParent(@RequestParam(name = "id") int id) {
         if(groupRepository.getGroupEntityById(id) != null)
-            return new ResponseEntity<>(new AddGroupJson(groupRepository.getGroupEntityById(id).getName(), groupRepository.getGroupEntityById(id).getId()), HttpStatus.OK);
+            return new ResponseEntity<>(new GroupJson(groupRepository.getGroupEntityById(id)), HttpStatus.OK);
         else
             return new ResponseEntity<>(new Error("No group with id : " + id,"ID_ALREADY_USE"), HttpStatus.NOT_FOUND);
 
@@ -190,11 +194,33 @@ public class GroupApiController {
      */
     @RequestMapping(value = "/getChildren", method = RequestMethod.GET)
     public ResponseEntity<?> getChildren(@RequestParam(name = "id") int id) {
-        if(groupRepository.getGroupEntityById(id) != null)
-            return new ResponseEntity<>(groupRepository.getGroupEntityById(id).getChildrens(), HttpStatus.OK);
-        else
-            return new ResponseEntity<>(new Error("No group with id : " + id,"ID_ALREADY_USE"), HttpStatus.NOT_FOUND);
+        List<GroupEntity> raw;
+        GroupEntity parent = groupRepository.getGroupEntityById(id);
+        if(parent != null){
+            raw = parent.getChildrens();
 
+        }
+        else if(id == -1){
+            raw = groupRepository.getGroupEntityByParent_Id(null);
+        }
+        else
+            return new ResponseEntity<>(new Error("No group with id : " + id,"ID_NOT_FOUND"), HttpStatus.NOT_FOUND);
+
+
+        HashMap<String, Object> map = new HashMap<>();
+        int parentId;
+        boolean isRoot = false;
+        if(id == -1){
+            parentId = -1;
+        }
+
+        else{
+            parentId = parent.getParent() == null ? -1 : parent.getParent().getId();
+        }
+        map.put("parentId", parentId);
+        map.put("children", convert(raw));
+
+        return new ResponseEntity<>(map , HttpStatus.OK);
     }
 
     /**
@@ -229,5 +255,14 @@ public class GroupApiController {
 //        group.getScreenList().add(se);
 //        group = groupRepository.save(group);
 //        return group.getScreenList();
+    }
+
+
+    private List<GroupJson> convert(List<GroupEntity> groupEntities){
+        List<GroupJson> converted = new ArrayList<>();
+        for(GroupEntity entity : groupEntities){
+            converted.add(new GroupJson(entity));
+        }
+        return converted;
     }
 }
