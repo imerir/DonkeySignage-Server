@@ -51,7 +51,7 @@ public class GroupController {
      * @param groupForm
      * @return
      */
-    @PostMapping(value = "/addGroup")
+    @RequestMapping(value = "/addGroup", method = RequestMethod.POST)
     public String addGroup(Model model, @ModelAttribute AddGroupForm groupForm, Authentication authentication){
         UserEntity userEntity = (UserEntity) authentication.getPrincipal();
         model.addAttribute("user", userEntity);
@@ -112,5 +112,4 @@ public class GroupController {
             return "Error";
         }
     }
-
 }
