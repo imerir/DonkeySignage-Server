@@ -129,12 +129,6 @@ public class ScreenController {
         model.addAttribute("user", userEntity);
         if(screenRegRep.getScreenEntityById(id) != null){
             ScreenEntity theScreen =  screenRegRep.getScreenEntityById(id);
-            if(theScreen.getGroup() != null){
-                model.addAttribute("groupId",theScreen.getGroup().getId());
-                model.addAttribute("groupName",theScreen.getGroup().getName());
-            }
-            else
-                model.addAttribute("groupId",-1);
             model.addAttribute("screen",theScreen);
             return "Screen/screen";
         }else{
