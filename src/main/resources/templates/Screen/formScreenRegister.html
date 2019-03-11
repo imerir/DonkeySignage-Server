@@ -42,13 +42,13 @@
 
                 <div class="input-field col s12">
                     <input type="text" id="name" name="name" th:classappend="${error != null ? 'invalid' : ''}"/>
-                    <label for="name" th:text="#{screenregister.name}"></label>
-                    <span class="helper-text" th:attr="data-error=#{screenregister.invalidName}" data-succes="right"></span>
+                    <label for="name" th:text="#{form.name}"></label>
+                    <span class="helper-text" th:attr="data-error=#{form.invalidName}" data-succes="right"></span>
                 </div>
 
                 <div class="file-field input-field col s12">
                     <div class="" style="margin-bottom: 5px; ">
-                        <label  th:text="#{screenregister.group}" style="font-size: 15px"></label>
+                        <label th:text="#{group.group}" style="font-size: 15px"></label>
                     </div>
                     <a class="waves-effect waves-light btn modal-trigger" href="#modalGroup" th:text="#{form.select}"></a>
                     <div class="file-path-wrapper">
@@ -74,7 +74,7 @@
         <div class="modal-content">
             <div class="row">
                 <div class="col s12 center">
-                    <h4 th:text="#{screenregister.groupselector}"></h4>
+                    <h4 th:text="#{form.groupselector}"></h4>
                 </div>
             </div>
             <div class="row">

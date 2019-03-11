@@ -25,37 +25,82 @@
     <div th:replace="navbar :: navbar ('screen')" th:with="user=${user}"></div>
 </header>
 
-<main class="container">
+<main class="">
     <!--write your stuff here-->
-    <h3>Screen</h3>
-    <h4 th:utext="${screen.name}">...</h4>
-    <div>
-        <table>
-            <tr>
-                <th>Ip</th>
-                <th>Token</th>
-                <th>Uuid</th>
-            </tr>
-            <tr>
-                <td th:utext="${screen.ip}">...</td>
-                <td th:utext="${screen.token}">...</td>
-                <td th:utext="${screen.uuid}">...</td>
-            </tr>
-        </table>
-        <br/>
-        <br/>
-        <input type="submit" value="Modify" />
-        <input type="submit" value="Delete" />
-        <th:block th:if="${groupId} != -1">
-            <h3>Group </h3>
-            <h4><a th:utext="${groupName}" th:href="${'/group?id=' + groupId}">...</a></h4>
-        </th:block>
-        <br/>
-        <th:block th:if="${groupId} == -1">
-            <h3>Group </h3>
-            <h4>No Affectation</h4>
-        </th:block>
+    <div class="row">
+        <div class="card-panel col s10 offset-s1">
+            <div class="row">
+                <div class="col s12 center">
+                    <h2>Screen</h2>
+                </div>
+            </div>
+            <div class="row">
+                <div class="divider col s10 offset-s1"></div>
+            </div>
+
+            <div class="row">
+
+                <div class="input-field col s10 offset-s1">
+                    <input class="black-text" placeholder="Placeholder" id="name" type="text" disabled="disabled" th:value="${screen.name}"/>
+                    <label for="name" class="grey-text" th:text="#{form.name}"></label>
+                </div>
+                <div class="input-field col s10 offset-s1">
+                    <input class="black-text" placeholder="Placeholder" id="ip" type="text" disabled="disabled" th:value="${screen.ip}"/>
+                    <label for="ip" class="grey-text">IP</label>
+                </div>
+                <div class="input-field col s10 offset-s1">
+                    <input class="black-text" placeholder="Placeholder" id="token" type="text" disabled="disabled" th:value="${screen.token}"/>
+                    <label for="token" class="grey-text">Token</label>
+                </div>
+                <div class="input-field col s10 offset-s1">
+                    <input class="black-text" placeholder="Placeholder" id="uuid" type="text" disabled="disabled" th:value="${screen.uuid}"/>
+                    <label for="uuid" class="grey-text">UUID</label>
+                </div>
+                <div class="file-field input-field col s10 offset-s1" style="margin-top: 0">
+                    <div class="" style="margin-bottom: 5px; ">
+                        <label th:text="#{group.group}" style="font-size: 15px"></label>
+                    </div>
+                    <th:block th:if="${screen.getGroup() != null}">
+                        <a class="waves-effect waves-light btn" th:href="${'/group?id=' + screen.getGroup()?.getId()}" th:text="#{form.view}"></a>
+                    </th:block>
+                    <th:block th:if="${screen.getGroup() == null}">
+                        <a class="waves-effect waves-light btn disabled" th:text="#{form.view}"></a>
+                    </th:block>
+                    <div class="file-path-wrapper">
+                        <th:block th:if="${screen.getGroup() == null}">
+                            <input type="text" disabled="disabled" th:value="#{group.notAffected}"/>
+                        </th:block>
+                        <th:block th:if="${screen.getGroup() != null}">
+                            <input type="text" disabled="disabled" class="black-text" th:value="${screen.getGroup().getName()}"/>
+                        </th:block>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s12 center">
+                    <button class="btn green" th:text="#{form.modify}"></button>
+                    <button class="btn red modal-trigger" data-target="delModal" th:text="#{form.delete}"></button>
+                </div>
+            </div>
+
+
+
+        </div>
     </div>
+
+    <div id="delModal" class="modal">
+        <div class="modal-content">
+            <h4 th:text="#{screen.delScreen}">Delete Screen</h4>
+            <p th:text="#{screen.deleteConfirmMessage}"></p>
+        </div>
+        <div class="modal-footer">
+            <button class="modal-close waves-effect waves-green btn-flat red-text" th:text="#{form.no}"></button>
+            <button class="modal-close waves-effect waves-green btn-flat green-text" id="deleteBtn" th:text="#{form.yes}"></button>
+
+        </div>
+    </div>
+
+
 </main>
 
 <footer class="page-footer" style="padding: 0">
@@ -63,6 +108,36 @@
 </footer>
 <!--  Scripts-->
 <script th:src="@{/js/materialize.js}"></script>
+<script th:src="@{/js/jquery-3.3.1.min.js}"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    var screenId = [[${screen.getId()}]];
+    var groupId = [[${screen.getGroup()?.getId()}]];
+    if(groupId == null) groupId = -1;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        let elems = document.querySelectorAll('.modal');
+        M.Modal.init(elems);
+
+        $('#deleteBtn').click(function () {
+            console.log("ok");
+            let settings = {
+                "url": "/api/screen?id=" + screenId,
+                "method": "DELETE"
+            };
+            $.ajax(settings).done(function (response) {
+                console.log(response);
+                window.location.replace("/group?id=" + groupId);
+            });
+        })
+    });
+
+
+
+
+
+    /*]]>*/
+</script>
 
 
 </body>
