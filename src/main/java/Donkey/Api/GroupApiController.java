@@ -64,7 +64,6 @@ public class GroupApiController {
         if(grpToDelete != null){
             if(grpToDelete.getParent() != null){
                 if(grpToDelete.getScreenList().size() != 0){
-                    //Deplacer les ecrans au groupe parent
                     GroupEntity newParentForScreen = groupRepository.getGroupEntityById(groupRepository.getGroupEntityById(id).getParent().getId());
                     for(int i = 0 ; i < grpToDelete.getScreenList().size() ; i++){
                         ScreenEntity screenWithNewParent = grpToDelete.getScreenList().get(i);
@@ -118,6 +117,7 @@ public class GroupApiController {
     @RequestMapping(value = "", method = RequestMethod.PUT)
     public ResponseEntity<?> modifyGroup(@RequestBody GroupJson modifyGroupJson) {
         GroupEntity groupNeedModification = groupRepository.getGroupEntityById(modifyGroupJson.id);
+        log.debug("Group need modifiation id : " + groupRepository.getGroupEntityById(modifyGroupJson.id));
         if (groupNeedModification != null) {
             if (modifyGroupJson.parentId == -1) {
                 if(modifyGroupJson.name != null && !modifyGroupJson.name.isEmpty())

@@ -1,75 +1,205 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:form="http://www.w3.org/1999/xhtml">
-<head>
-    <meta charset="UTF-8"/>
-    <title>Group</title>
-</head>
-<body>
-    <th:block th:if="${getWithId} == 0">
-        <h2>Group : </h2>
-        <div>
-            <table border="1">
-                <tr>
-                    <th>Name</th>
-                </tr>
-                <tr th:each ="groupItem : ${groupList}">
-                    <td >
-                        <a th:utext="${groupItem.name}" th:href="${'/group?id=' + groupItem.id}"></a>
-                    </td>
-                </tr>
-            </table>
-        </div>
-        <h2>Screen : </h2>
-        <div>
-            <table border="1">
-                <tr>
-                    <th>Name</th>
-                </tr>
-                <tr th:each ="screenItem : ${screenList}">
-                    <td>
-                        <a th:utext="${screenItem.name}" th:href="${'/screen?id=' + screenItem.id}"></a>
-                    </td>
-                </tr>
-            </table>
-        </div>
-    </th:block>
-    <th:block th:if="${getWithId} == 1">
-        <h2 th:utext="'Group name : ' + ${group.name}">...</h2>
-        <h2> Group : </h2>
-        <div>
-            <table border="1">
-                <tr>
-                    <th>Name</th>
-                </tr>
-                <tr th:each ="childrenItem : ${childrenList}">
-                    <td>
-                        <a th:utext="${childrenItem.name}" th:href="${'/group?id=' + childrenItem.id}"></a>
-                    </td>
-                </tr>
-            </table>
-        </div>
-        <br/>
-        <table >
-            <td >
-                <input type="submit" value="Modify" />
-            </td>
-            <td >
-                <input type="submit" value="Delete" />
-            </td>
-        </table>
-        <h2> Screen : </h2>
-        <div>
-            <table border="1">
-            <tr>
-                <th>Name</th>
-            </tr>
-            <tr th:each ="screenItem : ${screenList}">
-                <td>
-                    <a th:utext="${screenItem.name}" th:href="${'/screen?id=' + screenItem.id}"></a>
-                </td>
-            </tr>
-        </table>
-        </div>
-    </th:block>
-</body>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+        <!--TODO <meta name="description" content=""/>-->
+        <title>Group - Donkey Signage</title>
+        <link rel="icon"
+              type="image/x-icon"
+              href="/favicon.png"/>
+
+        <!-- CSS  -->
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+        <link href="/css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+        <style>
+
+
+        </style>
+
+
+    </head>
+
+    <body class="blue-grey lighten-5">
+        <header>
+            <div th:replace="navbar :: navbar ('group')" th:with="user=${user}"></div>
+        </header>
+
+        <main class="container">
+            <!--write your stuff here-->
+            <th:block th:if="${getWithId} == 0">
+                <h3 class="center">Group</h3>
+                <div class="row">
+                    <div class="col s12">
+                        <h5>Name</h5>
+                    </div>
+                </div>
+                <th:block th:each="group : ${groupList}">
+                    <div class="row">
+                        <div class="col s12">
+                            <a th:utext="${group.name}" th:href="${'/group?id=' + group.id}">...</a>
+                        </div>
+                    </div>
+                </th:block>
+                <h3 class="center">Screen</h3>
+                <div class="row">
+                    <div class="col s12">
+                        <h5>Name</h5>
+                    </div>
+                </div>
+                <th:block th:each="screen : ${screenList}">
+                    <div class="row">
+                        <div class="col s12">
+                            <a th:utext="${screen.name}" th:href="${'/screen?id=' + screen.id}">...</a>
+                        </div>
+                    </div>
+                </th:block>
+            </th:block>
+            <th:block th:if="${getWithId} == 1 ">
+                <h3 th:text=" ${group.name}"></h3>
+                <div class="row">
+                    <div class="col s12">
+                        <h4>Group Children : </h4>
+                    </div>
+                    <th:block th:each = "childrenItem : ${childrenList}">
+                        <div class="row">
+                            <div class="col s12">
+                                <a th:utext="${childrenItem.name}" th:href="${'/group?id=' + childrenItem.id}"></a>
+                            </div>
+                        </div>
+                    </th:block>
+                    <th:block th:if="${groupParentIsNull} == 0">
+                        <div class="col s12">
+                            <h4>Group Parent : </h4>
+                            <a th:utext="${groupParentName}" th:href="${'/group?id=' + groupParentId}">...</a>
+                        </div>
+                    </th:block>
+                    <th:block th:if="${groupParentIsNull} == 1">
+                        <div class="col s12">
+                            <h4>No Group Parent </h4>
+                        </div>
+                    </th:block>
+                    <br/>
+                    <br/>
+                </div>
+                <div class="row">
+                    <div class="col s12">
+                        <a class="waves-effect waves-light btn modal-trigger" href="#modifyModal">Modify</a>
+                        <a class="waves-effect waves-light btn modal-trigger" href="#deleteModal">Delete</a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col s12">
+                        <h4>Screen: </h4>
+                    </div>
+                    <div class="col s12">
+                        <th:block th:each="screen : ${screenList}">
+                            <div class="row">
+                                <div class="col s12">
+                                    <a th:utext="${screen.name}" th:href="${'/screen?id=' + screen.id}"></a>
+                                </div>
+                            </div>
+                        </th:block>
+                    </div>
+                </div>
+
+                <div id="modifyModal" class="modal modal-fixed-footer">
+                    <div class="modal-content">
+                        <h4 th:utext="'Modify ' + ${group.name}"> </h4><div class="row">
+                        <div class="input-field col s12">
+                            <input type="text" id="name" name="name" />
+                            <label for="name">Name : </label>
+                        </div>
+                    </div>
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <!--TODO add seb system-->
+                                <input type="text" id="parentId" name="parentId" />
+                                <label for="parentId">parentId : </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="validateBtn"  class="modal-close waves-effect waves-green btn-flat">Validate</button>
+                        <button id="quitBtn" class="modal-close waves-effect waves-green btn-flat">Quit</button>
+                    </div>
+                </div>
+
+                <div id="deleteModal" class="modal modal-fixed-footer">
+                    <div class="modal-content">
+                        <h4 th:utext="'Delete ' + ${group.name}"> </h4>
+                        <p>Are you sure to delete this group ?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="validateBtn2" class="modal-close waves-effect waves-green btn-flat">Validate</button>
+                        <button id="quitBtn2" href="" class="modal-close waves-effect waves-green btn-flat">Quit</button>
+                    </div>
+                </div>
+            </th:block>
+        </main>
+
+        <footer class="page-footer" style="padding: 0">
+            <!--<div th:replace="footer :: footer">...</div>-->
+        </footer>
+        <!--  Scripts-->
+        <script th:src="@{/js/materialize.js}"></script>
+        <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
+        <script th:inline="javascript">
+            /*<![CDATA[*/
+            document.addEventListener('DOMContentLoaded', function () {
+                let elems = document.querySelectorAll('.modal');
+                M.Modal.init(elems);
+
+                let requestWithId = [[${getWithId}]];
+                console.log("getWithId : " + requestWithId);
+
+                $("#validateBtn").click(function () {
+                    let modifyGroupJson = {
+                        "id": [[${group?.id}]],
+                        "name": $("#name").val(),
+                        "parentId": $("#parentId").val()
+                    };
+                    console.log(JSON.stringify(modifyGroupJson));
+
+                    var settings = {
+                        "url": "/api/group/",
+                        "method": "PUT",
+                        "timeout": 0,
+                        "headers": {
+                            "Content-Type": "application/json"
+                        },
+                        "data": JSON.stringify(modifyGroupJson),
+                    };
+                    $.ajax(settings).done(function (response) {
+                        console.log(response);
+                        location.reload();
+                    });
+                });
+
+                let parentId = [[${groupParentId}]];
+                $("#validateBtn2").click(function () {
+                    var settings = {
+                        "url": "api/group?id="+[[${group?.id}]],
+                        "method": "DELETE",
+                        "timeout": 0,
+                        "headers": {
+                            "Content-Type": "application/json"
+                        }
+                    };
+                    $.ajax(settings).done(function (response) {
+                        console.log(response);
+                        if(parentId != null){
+                            let urlReload = "/group?id=" + parentId;
+                            location.replace(urlReload);
+                        }else{
+                            location.replace("/group");
+                        }
+                    });
+                });
+
+            });
+
+            /*]]>*/
+        </script>
+    </body>
 </html>
