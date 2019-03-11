@@ -34,45 +34,43 @@
         </div>
 
         <form action="#" th:action="@{/formScreenRegister}" th:object="${screenRegisterForm}" method="POST">
-
             <div class="row">
                 <div class="input-field col s12">
-                    <input type="text"  id="uuid" name="uuid" th:value="${uuid}" disabled="true"/>
+                    <input type="text"  id="uuid" name="uuid" th:value="${uuid}" readonly="readonly"/>
                     <label for="uuid" th:text="#{screenregister.uuid}"></label>
                 </div>
-            </div>
 
-
-            <div class="row">
                 <div class="input-field col s12">
                     <input type="text" id="name" name="name" th:classappend="${error != null ? 'invalid' : ''}"/>
                     <label for="name" th:text="#{screenregister.name}"></label>
                     <span class="helper-text" th:attr="data-error=#{screenregister.invalidName}" data-succes="right"></span>
                 </div>
-            </div>
 
-            <div class="row">
-                <div class="input-field col s12">
-                    <input type="text" id="groupId" name="groupId"/>
-                    <label for="groupId" th:text="#{screenregister.group}"></label>
+                <div class="file-field input-field col s12">
+                    <div class="" style="margin-bottom: 5px; ">
+                        <label  th:text="#{screenregister.group}" style="font-size: 15px"></label>
+                    </div>
+                    <a class="waves-effect waves-light btn modal-trigger" href="#modalGroup" th:text="#{form.select}"></a>
+                    <div class="file-path-wrapper">
+                        <input type="text" disabled="disabled" id="groupName"/>
+                    </div>
                 </div>
-
             </div>
 
-
+            <input type="hidden" id="groupId" name="groupId" value="-1"/>
             <div class="row">
                 <div class="col s12 center">
-                    <input type="submit" class="btn disabled" id="submit" value="Submit"/>
+                    <input type="submit" class="btn disabled" id="submit" th:value="#{form.submit}"/>
                 </div>
             </div>
 
 
         </form>
     </div>
-    <a class="waves-effect waves-light btn modal-trigger" href="#modal1">Modal</a>
+
 
     <!-- Modal Structure -->
-    <div id="modal1" class="modal modal-fixed-footer">
+    <div id="modalGroup" class="modal modal-fixed-footer">
         <div class="modal-content">
             <div class="row">
                 <div class="col s12 center">
@@ -90,7 +88,7 @@
 
         </div>
         <div class="modal-footer">
-            <a href="" class="modal-close waves-effect waves-green btn-flat" th:text="#{form.cancel}"></a>
+            <button type="button" class="modal-action modal-close btn-flat" th:text="#{form.cancel}"></button>
         </div>
     </div>
 
@@ -123,7 +121,6 @@
         }
 
         name.on('input',() => {
-            name.val(name.val().toUpperCase());
             console.log(name.val().length);
             if(name.val().length < 1){
                 if(!submit.hasClass("disabled"))
@@ -134,7 +131,20 @@
                     submit.removeClass("disabled");
             }
 
-        })
+        });
+        name.on('input',() => {
+            console.log(name.val().length);
+            if(name.val().length < 1){
+                if(!submit.hasClass("disabled"))
+                    submit.addClass("disabled");
+            }
+            else{
+                if(submit.hasClass("disabled"))
+                    submit.removeClass("disabled");
+            }
+
+        });
+
     });
     /*]]>*/
 </script>
