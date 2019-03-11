@@ -12,32 +12,36 @@
 
         <th:block th:if="${page != 'login'}">
             <style>
-                .sidenav {
-                    margin-top: 65px;
+                @media only screen and (min-width : 993px) {
+                    .sidenav {
+                        margin-top: 65px;
+                    }
+
+                    main {
+                        padding-left: 300px !important;
+                    }
                 }
 
-                main {
-                    padding-left: 300px !important;
-                }
             </style>
         </th:block>
 
 
+        <div class="navbar-fixed">
+            <nav class="blue darken-3 darken-4 z-depth-3" role="navigation">
+                <div class="nav-wrapper container">
+                    <a href="/" class="brand-logo" style="white-space: nowrap">Donkey Signage</a>
+                    <ul class="right hide-on-med-and-down">
+                        <li id="nav-bar-account" th:if="${user}">
+                            <a class="dropdown-account dropdown-trigger green-text" data-target="dropdown_connected"><i
+                                    class="material-icons">account_box</i></a>
+                        </li>
+                    </ul>
+                    <a href="#" data-target="side_nav" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+                </div>
+            </nav>
+        </div>
 
-        <nav class="blue darken-3 darken-4 z-depth-3" role="navigation">
-            <div class="nav-wrapper container">
-                <a href="/" class="brand-logo" style="white-space: nowrap">Donkey Signage</a>
-                <ul class="right hide-on-med-and-down">
-                    <li id="nav-bar-account" th:if="${user}">
-                        <a class="dropdown-account dropdown-trigger green-text" data-target="dropdown_connected"><i
-                                class="material-icons">account_box</i></a>
-                    </li>
-                </ul>
-                <a href="#" data-target="side_nav" class="sidenav-trigger"><i class="material-icons">menu</i></a>
-            </div>
-        </nav>
-
-        <th:block th:if="${page != 'login'}">s
+        <th:block th:if="${page != 'login'}">
             <ul id="side_nav" class="sidenav sidenav-fixed">
                 <li th:if="${user?.isAdmin()}" th:classappend="${page == 'screenRegister'? 'active' : ''}">
                     <a href="/screenRegister"  th:text="#{screenregister.screenregister}"></a>
