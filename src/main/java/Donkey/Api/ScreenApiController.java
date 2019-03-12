@@ -231,7 +231,7 @@ public class ScreenApiController {
     public ResponseEntity<?> getGroup(@RequestParam(name = "id") int id) {
         if(screenRegisterRep.getScreenEntityById(id) != null){
             if(id != -1 )
-                return new ResponseEntity<>(new GroupJson(grpRep.getGroupEntityById(screenRegisterRep.getScreenEntityById(id).getGroup().getId()).getId(),grpRep.getGroupEntityById(screenRegisterRep.getScreenEntityById(id).getGroup().getId()).getName(), grpRep.getGroupEntityById(screenRegisterRep.getScreenEntityById(id).getGroup().getId()).getId()), HttpStatus.OK);
+                return new ResponseEntity<>(new GroupJson(grpRep.getGroupEntityById(screenRegisterRep.getScreenEntityById(id).getGroup().getId())), HttpStatus.OK);
             else
                 return new ResponseEntity<>(new GroupJson(-1,"", -1), HttpStatus.OK);
         }else{
