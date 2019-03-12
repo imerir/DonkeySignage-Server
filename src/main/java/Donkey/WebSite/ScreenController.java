@@ -12,6 +12,7 @@ import Donkey.WebSite.FormClass.Screen.TmpTokenForm;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -127,11 +128,13 @@ public class ScreenController {
      * @param id
      * @return
      */
+    @PreAuthorize("hasPermission(#id,'screen', 'read')")
     @RequestMapping(value="/screen", method = RequestMethod.GET)
     public String getScreen(Model model, @RequestParam(name = "id")int id, RedirectAttributes redirectAttributes, Authentication authentication) {
         UserEntity userEntity = (UserEntity) authentication.getPrincipal();
         model.addAttribute("user", userEntity);
         if(screenRegRep.getScreenEntityById(id) != null){
+
             ScreenEntity theScreen =  screenRegRep.getScreenEntityById(id);
             model.addAttribute("screen",theScreen);
             return "Screen/screen";

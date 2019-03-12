@@ -3,6 +3,7 @@ package Donkey.Security;
 import Donkey.Database.Entity.ScreenEntity;
 import Donkey.Database.Entity.UserAndPrivileges.UserEntity;
 import Donkey.Database.Entity.UserAndPrivileges.UserScreenPrivilege;
+import Donkey.Database.Repository.ScreenRepository;
 import Donkey.Database.Repository.UserScreenPrivilegeRepository;
 import Donkey.SpringContext;
 import org.apache.logging.log4j.LogManager;
@@ -19,6 +20,7 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
     private Logger logger = LogManager.getLogger();
 
     private UserScreenPrivilegeRepository userScreenPrivilegeRepository;
+    private ScreenRepository screenRepository;
 
 
     /**
@@ -33,10 +35,7 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
      */
     @Override
     public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permission) {
-        if(userScreenPrivilegeRepository == null){
-            ApplicationContext context = SpringContext.getAppContext();
-            userScreenPrivilegeRepository = (UserScreenPrivilegeRepository) context.getBean("userScreenPrivilegeRepository");
-        }
+
         UserEntity loggedUser =  (UserEntity) authentication.getPrincipal();
         if(loggedUser.isAdmin())
             return true;
@@ -81,11 +80,30 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
      */
     @Override
     public boolean hasPermission(Authentication authentication, Serializable targetId, String targetType, Object permission) {
-        logger.debug("ups");
+
+        UserEntity loggedUser =  (UserEntity) authentication.getPrincipal();
+        if(loggedUser.isAdmin())
+            return true;
+
+        if(screenRepository == null){
+            ApplicationContext context = SpringContext.getAppContext();
+            screenRepository = (ScreenRepository) context.getBean("screenRepository");
+        }
+        logger.debug(targetId);
+        logger.debug(targetType);
+        if(targetType.equals("screen")){
+            int id = (int) targetId;
+            ScreenEntity screen = screenRepository.getScreenEntityById(id);
+            return hasScreenPermission(screen, (String) permission, loggedUser);
+        }
         return false;
     }
 
-    private boolean hasScreenPermission(ScreenEntity screenEntity, String permission, UserEntity userEntity){;
+    private boolean hasScreenPermission(ScreenEntity screenEntity, String permission, UserEntity userEntity){
+        if(userScreenPrivilegeRepository == null){
+            ApplicationContext context = SpringContext.getAppContext();
+            userScreenPrivilegeRepository = (UserScreenPrivilegeRepository) context.getBean("userScreenPrivilegeRepository");
+        }
         List<UserScreenPrivilege> privileges = userScreenPrivilegeRepository.getByUserEntityAndScreenEntity(userEntity, screenEntity);
         return privileges.size() != 0;
     }
