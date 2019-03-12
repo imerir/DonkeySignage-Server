@@ -28,7 +28,7 @@ function getGroupPage(groupId) {
                 "</div>" +
                 "</li>");
         });
-        listeners();
+        group_selector_listeners();
     });
 
 
@@ -36,7 +36,7 @@ function getGroupPage(groupId) {
 }
 
 
-function listeners(){
+function group_selector_listeners(){
     $(".changeGroupBtn").click(function(){
         console.log($(this).attr("data-id"));
         getGroupPage($(this).attr("data-id"));
@@ -48,7 +48,7 @@ function listeners(){
         selectGroup($(this).attr("data-id"), $(this).attr("data-name"));
         var instance = M.Modal.getInstance($("#modalGroup").get(0));
         instance.close();
-    })
+    });
 
 
 

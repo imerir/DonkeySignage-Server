@@ -206,7 +206,7 @@ public class ScreenApiController {
                     screenNeedModification.setName(modifyScreenJson.name);
                 screenNeedModification.setGroup(null);
                 screenRegisterRep.save(screenNeedModification);
-                return new ResponseEntity<>(new AddScreenJson(screenNeedModification.getIp(),screenNeedModification.getToken(),screenNeedModification.getUuid(),screenNeedModification.getName(),screenNeedModification.getGroup().getId()),HttpStatus.OK);
+                return new ResponseEntity<>(new AddScreenJson(screenNeedModification.getIp(),screenNeedModification.getToken(),screenNeedModification.getUuid(),screenNeedModification.getName(),screenNeedModification.getGroup() == null ? -1 :screenNeedModification.getGroup().getId()),HttpStatus.OK);
             } else {
                 GroupEntity newGrpParent = grpRep.getGroupEntityById(modifyScreenJson.groupId);
                 if(modifyScreenJson.name != null && !modifyScreenJson.name.isEmpty())

@@ -16,7 +16,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -132,10 +135,11 @@ public class ScreenController {
             model.addAttribute("screen",theScreen);
             return "Screen/screen";
         }else{
-            redirectAttributes.addFlashAttribute("message",
-                    "No screen with id "+ id + "!");
-            //TODO gestion erreur
-            return "Error";
+            throw new ErrorCode.ResourceNotFoundException();
         }
     }
+
+
+
+
 }

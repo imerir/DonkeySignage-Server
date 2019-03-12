@@ -41,53 +41,88 @@
             <div class="row">
 
                 <div class="input-field col s10 offset-s1">
-                    <input class="black-text" placeholder="Placeholder" id="name" type="text" disabled="disabled" th:value="${screen.name}"/>
+                    <input class="editable grey-text text-darken-2" placeholder="Placeholder" id="name" type="text"
+                           disabled="disabled" th:value="${screen.name}"/>
                     <label for="name" class="grey-text" th:text="#{form.name}"></label>
                 </div>
                 <div class="input-field col s10 offset-s1">
-                    <input class="black-text" placeholder="Placeholder" id="ip" type="text" disabled="disabled" th:value="${screen.ip}"/>
+                    <input class="grey-text text-darken-2" placeholder="Placeholder" id="ip" type="text"
+                           disabled="disabled" th:value="${screen.ip}"/>
                     <label for="ip" class="grey-text">IP</label>
                 </div>
                 <div class="input-field col s10 offset-s1">
-                    <input class="black-text" placeholder="Placeholder" id="token" type="text" disabled="disabled" th:value="${screen.token}"/>
+                    <input class="grey-text text-darken-2" placeholder="Placeholder" id="token" type="text"
+                           disabled="disabled" th:value="${screen.token}"/>
                     <label for="token" class="grey-text">Token</label>
                 </div>
                 <div class="input-field col s10 offset-s1">
-                    <input class="black-text" placeholder="Placeholder" id="uuid" type="text" disabled="disabled" th:value="${screen.uuid}"/>
+                    <input class="grey-text text-darken-2" placeholder="Placeholder" id="uuid" type="text"
+                           disabled="disabled" th:value="${screen.uuid}"/>
                     <label for="uuid" class="grey-text">UUID</label>
                 </div>
-                <div class="file-field input-field col s10 offset-s1" style="margin-top: 0">
+
+
+                <div class="file-field input-field col s10 offset-s1 hide-to-edit" style="margin-top: 0">
                     <div class="" style="margin-bottom: 5px; ">
                         <label th:text="#{group.group}" style="font-size: 15px"></label>
                     </div>
+
                     <th:block th:if="${screen.getGroup() != null}">
-                        <a class="waves-effect waves-light btn" th:href="${'/group?id=' + screen.getGroup()?.getId()}" th:text="#{form.view}"></a>
+                        <a class="waves-effect waves-light btn" th:href="${'/group?id=' + screen.getGroup()?.getId()}"
+                           th:text="#{form.view}"></a>
                     </th:block>
+
                     <th:block th:if="${screen.getGroup() == null}">
                         <a class="waves-effect waves-light btn disabled" th:text="#{form.view}"></a>
                     </th:block>
+
                     <div class="file-path-wrapper">
                         <th:block th:if="${screen.getGroup() == null}">
                             <input type="text" disabled="disabled" th:value="#{group.notAffected}"/>
                         </th:block>
                         <th:block th:if="${screen.getGroup() != null}">
-                            <input type="text" disabled="disabled" class="black-text" th:value="${screen.getGroup().getName()}"/>
+                            <input type="text" disabled="disabled" class="grey-text text-darken-2"
+                                   th:value="${screen.getGroup().getName()}"/>
                         </th:block>
                     </div>
                 </div>
+
+                <div class="file-field input-field col s10 offset-s1 show-to-edit" hidden="hidden"
+                     style="margin-top: 0">
+                    <div class="" style="margin-bottom: 5px; ">
+                        <label th:text="#{group.group}" style="font-size: 15px"></label>
+                    </div>
+                    <a class="waves-effect waves-light btn modal-trigger" href="#modalGroup"
+                       th:text="#{form.select}"></a>
+                    <div class="file-path-wrapper">
+                        <input type="text" disabled="disabled" class="black-text" id="groupName" th:value="${screen.getGroup()?.getName()}"/>
+                    </div>
+                    <input type="hidden" id="groupId" name="groupId"
+                           th:value="${screen.getGroup() == null ? -1 : screen.getGroup().getId()}"/>
+                </div>
             </div>
-            <div class="row">
+
+            <div class="row hide-to-edit">
                 <div class="col s12 center">
-                    <button class="btn green" th:text="#{form.modify}"></button>
+                    <button class="btn green" id="edit_btn" th:text="#{form.modify}"></button>
                     <button class="btn red modal-trigger" data-target="delModal" th:text="#{form.delete}"></button>
                 </div>
             </div>
+
+            <div class="row show-to-edit" hidden="hidden">
+                <div class="col s12 center">
+                    <button class="btn green" id="confirm_btn" th:text="#{form.submit}"></button>
+                    <button class="btn red" id="cancel_btn" th:text="#{form.cancel}"></button>
+                </div>
+            </div>
+
 
 
 
         </div>
     </div>
 
+    <!-- ___________________ Dell Modal  __________________________ -->
     <div id="delModal" class="modal">
         <div class="modal-content">
             <h4 th:text="#{screen.delScreen}">Delete Screen</h4>
@@ -95,8 +130,32 @@
         </div>
         <div class="modal-footer">
             <button class="modal-close waves-effect waves-green btn-flat red-text" th:text="#{form.no}"></button>
-            <button class="modal-close waves-effect waves-green btn-flat green-text" id="deleteBtn" th:text="#{form.yes}"></button>
+            <button class="modal-close waves-effect waves-green btn-flat green-text" id="deleteBtn"
+                    th:text="#{form.yes}"></button>
 
+        </div>
+    </div>
+
+    <!-- _______________  Group Modal  ___________________________ -->
+    <div id="modalGroup" class="modal modal-fixed-footer">
+        <div class="modal-content">
+            <div class="row">
+                <div class="col s12 center">
+                    <h4 th:text="#{form.groupselector}"></h4>
+                </div>
+            </div>
+            <div class="row">
+
+                <div class="col s12">
+                    <ul class="collection with-header" id="groupSelector">
+
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="modal-action modal-close btn-flat" th:text="#{form.cancel}"></button>
         </div>
     </div>
 
@@ -109,18 +168,19 @@
 <!--  Scripts-->
 <script th:src="@{/js/materialize.js}"></script>
 <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
+<script th:src="@{/js/group_selector.js}"></script>
+<script th:src="@{/js/screen_edit.js}"></script>
 <script th:inline="javascript">
     /*<![CDATA[*/
     var screenId = [[${screen.getId()}]];
     var groupId = [[${screen.getGroup()?.getId()}]];
-    if(groupId == null) groupId = -1;
+    if (groupId == null) groupId = -1;
 
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         let elems = document.querySelectorAll('.modal');
         M.Modal.init(elems);
 
         $('#deleteBtn').click(function () {
-            console.log("ok");
             let settings = {
                 "url": "/api/screen?id=" + screenId,
                 "method": "DELETE"
@@ -129,11 +189,47 @@
                 console.log(response);
                 window.location.replace("/group?id=" + groupId);
             });
-        })
+
+        });
+
+        if(window.location.hash.includes("success")){
+            M.toast({
+                html: " <i class=\"material-icons\" style='margin-right: 10px'>check_circle</i> Update Success",
+                classes: 'green',
+                displayLength: 4000
+            });
+            window.location.hash = "";
+        }
     });
 
 
+    function sendForm() {
+        let name = $('#name').val();
+        let parentid = $('#groupId').val();
+        var settings = {
+            url: "/api/screen/",
+            method: "PUT",
+            headers: {
+                "Content-Type" :  "application/json"
+            },
+            data: JSON.stringify({
+                id : screenId,
+                name : name,
+                groupId : parentid
+            })
+        };
 
+        console.log(settings);
+        $.ajax(settings).done(function (response) {
+            window.location.reload();
+        }).fail(function () {
+            M.toast({
+                html: " <i class=\"material-icons\" style='margin-right: 10px'>warning</i> Update fail",
+                classes: 'red',
+                displayLength: 4000
+            });
+        });
+    }
 
 
     /*]]>*/
