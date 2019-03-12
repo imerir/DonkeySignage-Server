@@ -97,9 +97,10 @@ public class GroupApiController {
             }
 
             if(grpToDelete.getParent() == null)
-                return new ResponseEntity<>(new GroupJson(grpToDelete.getId(),grpToDelete.getName(),-1),HttpStatus.NO_CONTENT);
+                //TODO remove this
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             else
-                return new ResponseEntity<>(new GroupJson(grpToDelete.getId(),grpToDelete.getName(),grpToDelete.getParent().getId()),HttpStatus.NO_CONTENT);
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }else{
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -126,7 +127,7 @@ public class GroupApiController {
                 groupNeedModification.setParent(newGrpParent);
             }
             groupNeedModification = groupRepository.save(groupNeedModification);
-            return new ResponseEntity<>(new GroupJson(groupNeedModification.getId(),groupNeedModification.getName(), modifyGroupJson.parentId), HttpStatus.OK);
+            return new ResponseEntity<>(new GroupJson(groupNeedModification), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(new Error("No Group with id : " + modifyGroupJson.id,"ID_NOT_FOUND"), HttpStatus.NOT_FOUND);
         }
