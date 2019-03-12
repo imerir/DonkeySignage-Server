@@ -59,16 +59,17 @@ public class GroupController {
             model.addAttribute("groupForm",groupForm);
             AddGroupJson newEntry = new AddGroupJson();
             newEntry.name = groupForm.getName();
-            if(groupForm.getParentId() != -1)
-                newEntry.parent = groupForm.getParentId();
+            if(groupForm.getParent() != null)
+                newEntry.parent = groupForm.getParent().getId();
             else
                 newEntry.parent = -1;
             groupApi.addGroup(newEntry);
-            if(groupForm.getParentId() != -1)
-                return "redirect:/group?id="+grpRep.getGroupEntityByNameAndParent(groupForm.getName(),grpRep.getGroupEntityById(groupForm.getParentId())).getId();
+            if(groupForm.getParent() != null)
+                return "redirect:/group?id="+grpRep.getGroupEntityByNameAndParent(groupForm.getName(),grpRep.getGroupEntityById(groupForm.getParent().getId())).getId();
             else
                 return "redirect:/group?id="+grpRep.getGroupEntityByNameAndParent(groupForm.getName(),null).getId();
         }else{
+            //TODO gestion erreur
             return "error";
         }
     }
