@@ -117,7 +117,7 @@ public class GroupApiController {
     @RequestMapping(value = "", method = RequestMethod.PUT)
     public ResponseEntity<?> modifyGroup(@RequestBody GroupJson modifyGroupJson) {
         GroupEntity groupNeedModification = groupRepository.getGroupEntityById(modifyGroupJson.id);
-        log.debug("Group need modifiation id : " + groupRepository.getGroupEntityById(modifyGroupJson.id));
+        log.info("[API/Group POST] Group need modification id : " + groupRepository.getGroupEntityById(modifyGroupJson.id));
         if (groupNeedModification != null) {
             if (modifyGroupJson.parentId == -1) {
                 if(modifyGroupJson.name != null && !modifyGroupJson.name.isEmpty())
@@ -146,6 +146,7 @@ public class GroupApiController {
      */
     @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseEntity<?> addGroup(@RequestBody AddGroupJson addGroupJson) {
+        //log.debug(addGroupJson);
         GroupEntity newGroup = new GroupEntity();
         //log.debug(groupRepository.getGroupEntityByNameAndParent(addGroupJson.name, groupRepository.getGroupEntityById(addGroupJson.parent)));
         if (groupRepository.getGroupEntityByNameAndParent(addGroupJson.name, groupRepository.getGroupEntityById(addGroupJson.parent)) == null) {

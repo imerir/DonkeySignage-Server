@@ -1,8 +1,10 @@
 package Donkey.WebSite.FormClass.Group;
 
+import Donkey.Database.Entity.GroupEntity;
+
 public class AddGroupForm {
     private String name;
-    private int parentId;
+    private GroupEntity parent;
 
 
     public String getName() {
@@ -13,11 +15,11 @@ public class AddGroupForm {
         this.name = name;
     }
 
-    public int getParentId() {
-        return parentId;
+    public GroupEntity getParent() {
+        return parent;
     }
 
-    public void setParentId(int parentId) {
-        this.parentId = parentId;
+    public void setParent(GroupEntity parent) {
+        this.parent = parent;
     }
 }
