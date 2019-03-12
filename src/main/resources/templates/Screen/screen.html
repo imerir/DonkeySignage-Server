@@ -222,7 +222,8 @@
         console.log(settings);
         $.ajax(settings).done(function (response) {
             window.location.reload();
-        }).fail(function () {
+        }).fail(function (response) {
+            console.log(response);
             M.toast({
                 html: " <i class=\"material-icons\" style='margin-right: 10px'>warning</i> Update fail",
                 classes: 'red',

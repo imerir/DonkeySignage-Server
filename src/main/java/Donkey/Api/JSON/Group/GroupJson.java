@@ -8,6 +8,7 @@ public class GroupJson {
     public int id;
     public String name;
     public int parentId;
+    public boolean haveChildrenGroup;
 
     public GroupJson(){
 
@@ -17,6 +18,8 @@ public class GroupJson {
         this.id = entity.getId();
         this.name = entity.getName();
         this.parentId = entity.getParent() == null ? -1 : entity.getParent().getId();
+        this.haveChildrenGroup = entity.haveChildrenGroup();
+
     }
 
     public GroupJson(int id, String name, int parentId){

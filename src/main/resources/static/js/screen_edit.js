@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 function changeInput() {
-    getGroupPage(-1);
+    getGroupPage(-1,'');
     editableInput.removeAttr('disabled');
     editableInput.removeClass("grey-text text-darken-2");
     editableInput.addClass("validate valid");
