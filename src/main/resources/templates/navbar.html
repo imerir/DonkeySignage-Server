@@ -43,17 +43,19 @@
 
         <th:block th:if="${page != 'login'}">
             <ul id="side_nav" class="sidenav sidenav-fixed">
-                <li th:if="${user?.isAdmin()}" th:classappend="${page == 'screenRegister'? 'active' : ''}">
-                    <a href="/screenRegister"  th:text="#{screenregister.screenregister}"></a>
-                </li>
-                <li>
-                    <div class="divider"></div>
-                </li>
-                <li th:if="${user?.isAdmin()}" th:classappend="${page == 'group'? 'active' : ''}">
+                <th:block th:if="${user?.isAdmin()}">
+                    <li th:classappend="${page == 'screenRegister'? 'active' : ''}">
+                        <a href="/screenRegister"  th:text="#{screenregister.screenregister}"></a>
+                    </li>
+                    <li th:if="${user?.isAdmin()}" th:classappend="${page == 'addGroup'? 'active' : ''}">
+                        <a href="/addGroup"  th:text="#{group.addGroup}"></a>
+                    </li>
+                    <li>
+                        <div class="divider"></div>
+                    </li>
+                </th:block>
+                <li th:classappend="${page == 'group'? 'active' : ''}">
                     <a href="/group"  th:text="#{group.group}"></a>
-                </li>
-                <li th:if="${user?.isAdmin()}" th:classappend="${page == 'addGroup'? 'active' : ''}">
-                    <a href="/addGroup"  th:text="#{group.addGroup}"></a>
                 </li>
             </ul>
         </th:block>
