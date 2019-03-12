@@ -3,7 +3,6 @@ package Donkey.Api;
 
 import Donkey.Api.JSON.Error;
 import Donkey.Api.JSON.Group.GroupJson;
-import Donkey.Api.JSON.Group.AddGroupJson;
 import Donkey.Database.Entity.GroupEntity;
 import Donkey.Database.Entity.ScreenEntity;
 import Donkey.Database.Repository.GroupRepository;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 
 
 @RestController
@@ -111,28 +109,24 @@ public class GroupApiController {
      * Modify a group with a json
      *
      * @param modifyGroupJson
-     * @return AddGroupJson
+     * @return GroupJson
      */
     @PostAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "", method = RequestMethod.PUT)
     public ResponseEntity<?> modifyGroup(@RequestBody GroupJson modifyGroupJson) {
         GroupEntity groupNeedModification = groupRepository.getGroupEntityById(modifyGroupJson.id);
-        log.info("[API/Group POST] Group need modification id : " + groupRepository.getGroupEntityById(modifyGroupJson.id));
+        log.trace("[API/Group POST] Group need modification id : " + groupRepository.getGroupEntityById(modifyGroupJson.id));
         if (groupNeedModification != null) {
-            if (modifyGroupJson.parentId == -1) {
-                if(modifyGroupJson.name != null && !modifyGroupJson.name.isEmpty())
-                    groupNeedModification.setName(modifyGroupJson.name);
+            if(modifyGroupJson.name != null && !modifyGroupJson.name.isEmpty())
+                groupNeedModification.setName(modifyGroupJson.name);
+            if (modifyGroupJson.parentId == -1)
                 groupNeedModification.setParent(null);
-                groupRepository.save(groupNeedModification);
-                return new ResponseEntity<>(new AddGroupJson(groupNeedModification.getName(), -1), HttpStatus.OK);
-            } else {
+            else{
                 GroupEntity newGrpParent = groupRepository.getGroupEntityById(modifyGroupJson.parentId);
-                if(modifyGroupJson.name != null && !modifyGroupJson.name.isEmpty())
-                    groupNeedModification.setName(modifyGroupJson.name);
                 groupNeedModification.setParent(newGrpParent);
-                groupNeedModification = groupRepository.save(groupNeedModification);
-                return new ResponseEntity<>(new AddGroupJson(groupNeedModification.getName(), -1), HttpStatus.OK);
             }
+            groupNeedModification = groupRepository.save(groupNeedModification);
+            return new ResponseEntity<>(new GroupJson(groupNeedModification.getId(),groupNeedModification.getName(), modifyGroupJson.parentId), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(new Error("No Group with id : " + modifyGroupJson.id,"ID_NOT_FOUND"), HttpStatus.NOT_FOUND);
         }
@@ -142,33 +136,34 @@ public class GroupApiController {
      * Create and adding a group in database
      *
      * @param addGroupJson
-     * @return ResponseEntity with AddGroupJson
+     * @return ResponseEntity with GroupJson
      */
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public ResponseEntity<?> addGroup(@RequestBody AddGroupJson addGroupJson) {
-        //log.debug(addGroupJson);
+    public ResponseEntity<?> addGroup(@RequestBody GroupJson addGroupJson) {
+        log.debug("[api/group POST] groupJson : id :" + addGroupJson.id + ", name : " + addGroupJson.name + ", parentId : " + addGroupJson.parentId);
+//        log.debug(addGroupJson);
         GroupEntity newGroup = new GroupEntity();
-        //log.debug(groupRepository.getGroupEntityByNameAndParent(addGroupJson.name, groupRepository.getGroupEntityById(addGroupJson.parent)));
-        if (groupRepository.getGroupEntityByNameAndParent(addGroupJson.name, groupRepository.getGroupEntityById(addGroupJson.parent)) == null) {
+//        log.debug(groupRepository.getGroupEntityByNameAndParent(addGroupJson.name, groupRepository.getGroupEntityById(addGroupJson.parent)));
+        if (groupRepository.getGroupEntityByNameAndParent(addGroupJson.name, groupRepository.getGroupEntityById(addGroupJson.parentId)) == null) {
             newGroup.setName(addGroupJson.name);
-            if (addGroupJson.parent == -1)
+            if (addGroupJson.parentId == -1)
                 newGroup.setParent(null);
             else {
-                newGroup.setParent(groupRepository.getGroupEntityById(addGroupJson.parent));
+                newGroup.setParent(groupRepository.getGroupEntityById(addGroupJson.parentId));
             }
             newGroup.getScreenList().clear();
             newGroup.getChildrens().clear();
         } else {
             return new ResponseEntity<>(new Error("This Group is already create","ID_ALREADY_USE"), HttpStatus.CONFLICT);
         }
-        groupRepository.save(newGroup);
+        newGroup = groupRepository.save(newGroup);
         if (newGroup.getParent() == null)
-            return new ResponseEntity<>(new AddGroupJson(newGroup.getName(), -1), HttpStatus.OK);
+            return new ResponseEntity<>(newGroup, HttpStatus.OK);
         else{
-            GroupEntity groupNeedToChange = groupRepository.getGroupEntityById(addGroupJson.parent);
+            GroupEntity groupNeedToChange = groupRepository.getGroupEntityById(addGroupJson.parentId);
             groupNeedToChange.getChildrens().add(newGroup);
-            groupRepository.save(newGroup);
-            return new ResponseEntity<>(new AddGroupJson(newGroup.getName(), newGroup.getParent().getId()), HttpStatus.OK);
+            newGroup = groupRepository.save(newGroup);
+            return new ResponseEntity<>(newGroup, HttpStatus.OK);
         }
     }
 
@@ -176,7 +171,7 @@ public class GroupApiController {
      * Send name and id of parent's group
      *
      * @param id
-     * @return ResponseEntity with AddGroupJson
+     * @return ResponseEntity with GroupJson
      */
     @RequestMapping(value = "/getParent", method = RequestMethod.GET)
     public ResponseEntity<?>  getParent(@RequestParam(name = "id") int id) {

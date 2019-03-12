@@ -1,8 +1,10 @@
 package Donkey.Api.JSON.Group;
 
 import Donkey.Database.Entity.GroupEntity;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 public class GroupJson {
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public int id;
     public String name;
     public int parentId;

@@ -1,7 +1,7 @@
 package Donkey.WebSite;
 
 import Donkey.Api.GroupApiController;
-import Donkey.Api.JSON.Group.AddGroupJson;
+import Donkey.Api.JSON.Group.GroupJson;
 import Donkey.Database.Entity.GroupEntity;
 import Donkey.Database.Entity.ScreenEntity;
 import Donkey.Database.Entity.UserAndPrivileges.UserEntity;
@@ -57,12 +57,12 @@ public class GroupController {
         model.addAttribute("user", userEntity);
         if(groupForm.getName() != null && ! groupForm.getName().isEmpty()){
             model.addAttribute("groupForm",groupForm);
-            AddGroupJson newEntry = new AddGroupJson();
+            GroupJson newEntry = new GroupJson();
             newEntry.name = groupForm.getName();
             if(groupForm.getParent() != null)
-                newEntry.parent = groupForm.getParent().getId();
+                newEntry.parentId = groupForm.getParent().getId();
             else
-                newEntry.parent = -1;
+                newEntry.parentId = -1;
             groupApi.addGroup(newEntry);
             if(groupForm.getParent() != null)
                 return "redirect:/group?id="+grpRep.getGroupEntityByNameAndParent(groupForm.getName(),grpRep.getGroupEntityById(groupForm.getParent().getId())).getId();

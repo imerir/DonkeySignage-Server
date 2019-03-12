@@ -1,7 +1,7 @@
 package Donkey.Api;
 
 import Donkey.Api.JSON.Error;
-import Donkey.Api.JSON.Group.AddGroupJson;
+import Donkey.Api.JSON.Group.GroupJson;
 import Donkey.Api.JSON.Screen.*;
 import Donkey.Api.JSON.UuidJson;
 import Donkey.Database.Entity.GroupEntity;
@@ -231,9 +231,9 @@ public class ScreenApiController {
     public ResponseEntity<?> getGroup(@RequestParam(name = "id") int id) {
         if(screenRegisterRep.getScreenEntityById(id) != null){
             if(id != -1 )
-                return new ResponseEntity<>(new AddGroupJson(grpRep.getGroupEntityById(screenRegisterRep.getScreenEntityById(id).getGroup().getId()).getName(), grpRep.getGroupEntityById(screenRegisterRep.getScreenEntityById(id).getGroup().getId()).getId()), HttpStatus.OK);
+                return new ResponseEntity<>(new GroupJson(grpRep.getGroupEntityById(screenRegisterRep.getScreenEntityById(id).getGroup().getId()).getId(),grpRep.getGroupEntityById(screenRegisterRep.getScreenEntityById(id).getGroup().getId()).getName(), grpRep.getGroupEntityById(screenRegisterRep.getScreenEntityById(id).getGroup().getId()).getId()), HttpStatus.OK);
             else
-                return new ResponseEntity<>(new AddGroupJson("", -1), HttpStatus.OK);
+                return new ResponseEntity<>(new GroupJson(-1,"", -1), HttpStatus.OK);
         }else{
             return new ResponseEntity<>(new Error("No Screen with id : " + id,"ID_NOT_FOUND"), HttpStatus.NOT_FOUND);
         }

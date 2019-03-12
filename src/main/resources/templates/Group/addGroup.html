@@ -28,34 +28,32 @@
 <main class="container">
     <!--write your stuff here-->
     <h1>Add new Group in DataBase</h1>
-    <form action="#" th:object="${addGroupForm}">
-        <div class="row">
-            <div class="input-field col s12">
-                <input type="text" id="name" name="name" />
-                <label for="name">Name : </label>
-            </div>
+    <div class="row">
+        <div class="input-field col s12">
+            <input type="text" id="name" name="name"/>
+            <label for="name">Name : </label>
         </div>
-        <div class="file-field input-field col s10 offset-s1" style="margin-top: 0">
-            <div class="" style="margin-bottom: 5px; ">
-                <label th:text="#{group.group}" style="font-size: 15px"></label>
-            </div>
-            <a class="waves-effect waves-light btn modal-trigger" href="#modalGroup" th:text="#{form.select}"></a>
-            <div class="file-path-wrapper">
-                <input type="text" disabled="disabled" id="groupName"/>
-            </div>
-            <input type="hidden" id="groupId" name="groupId"
-                   th:value="${addGroupForm?.getParent() == null ? -1 : addGroupForm?.getParent().getId()}"/>
+    </div>
+    <div class="file-field input-field col s10 offset-s1" style="margin-top: 0">
+        <div class="" style="margin-bottom: 5px; ">
+            <label th:text="#{group.group}" style="font-size: 15px"></label>
         </div>
+        <a class="waves-effect waves-light btn modal-trigger" href="#modalGroup" th:text="#{form.select}"></a>
+        <div class="file-path-wrapper">
+            <input type="text" disabled="disabled" id="groupName"/>
+        </div>
+        <input type="hidden" id="groupId" name="groupId"
+               th:value="${addGroupForm?.getParent() == null ? -1 : addGroupForm?.getParent().getId()}"/>
+    </div>
 
-        <div class="row">
-            <div class="col s12 center">
-                <button type="button" class="waves-effect waves-green btn-flat red-text"
-                        th:utext="#{form.cancel}"></button>
-                <button id="validateBtn" class="waves-effect waves-green btn-flat green-text"
-                        th:utext="#{form.submit}"></button>
-            </div>
+    <div class="row">
+        <div class="col s12 center">
+            <button type="button" class="waves-effect waves-green btn-flat red-text"
+                    th:utext="#{form.cancel}"></button>
+            <button id="validateBtn" class="waves-effect waves-green btn-flat green-text"
+                    th:utext="#{form.submit}"></button>
         </div>
-    </form>
+    </div>
 
     <div id="modalGroup" class="modal modal-fixed-footer">
         <div class="modal-content">
@@ -97,11 +95,12 @@
         let elems = document.querySelectorAll('.modal');
         M.Modal.init(elems);
 
-        $("#validateBtn").click(function(){
-           let addGroupJson = {
-               "name" : $("#name").val(),
-               "parent" : $("#groupId").val()
-           };
+        $("#validateBtn").click(function () {
+            let addGroupJson = {
+                "id" : -1,
+                "name": $("#name").val(),
+                "parentId": $("#groupId").val()
+            };
             console.log("Json send to api : " + JSON.stringify(addGroupJson));
 
             var settings = {
@@ -113,10 +112,10 @@
                 },
                 "data": JSON.stringify(addGroupJson),
             };
-            debugger;
+            //debugger;
             $.ajax(settings).done(function (response) {
                 console.log(response);
-                location.replace("/group");
+                window.location.replace("/group?id="+response.id);
             });
         });
 
