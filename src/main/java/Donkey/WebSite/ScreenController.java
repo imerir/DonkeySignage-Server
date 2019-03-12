@@ -116,7 +116,8 @@ public class ScreenController {
             tmpRegisterRep.delete(tmpRegisterRep.getTemporalRegisterByUuid(screenRegisterForm.getUuid()));
             return "redirect:/screen?id="+newEntry.getId();
         }else{
-            return "Uuid null or empty";
+            //TODO replace dat
+            throw new ErrorCode.ResourceNotFoundException();
         }
     }
 

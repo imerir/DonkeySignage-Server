@@ -20,7 +20,6 @@ import java.util.List;
 
 @Controller
 public class GroupController {
-    //TODO Remplacer les methodes POST par du js directement dans html #JSAWARE
 
     private final ScreenRepository screenRegRep;
     private final GroupRepository grpRep;
@@ -40,38 +39,11 @@ public class GroupController {
      * @return
      */
     @RequestMapping(value="/addGroup", method = RequestMethod.GET)
-    public String addGroup(Model model){
-        model.addAttribute("addGroupForm", new AddGroupForm());
-        return "Group/addGroup";
-    }
-
-    /**
-     * Add group in db
-     * @param model
-     * @param groupForm
-     * @return
-     */
-    @RequestMapping(value = "/addGroup", method = RequestMethod.POST)
-    public String addGroup(Model model, @ModelAttribute AddGroupForm groupForm, Authentication authentication){
+    public String addGroup(Model model, Authentication authentication){
         UserEntity userEntity = (UserEntity) authentication.getPrincipal();
         model.addAttribute("user", userEntity);
-        if(groupForm.getName() != null && ! groupForm.getName().isEmpty()){
-            model.addAttribute("groupForm",groupForm);
-            GroupJson newEntry = new GroupJson();
-            newEntry.name = groupForm.getName();
-            if(groupForm.getParent() != null)
-                newEntry.parentId = groupForm.getParent().getId();
-            else
-                newEntry.parentId = -1;
-            groupApi.addGroup(newEntry);
-            if(groupForm.getParent() != null)
-                return "redirect:/group?id="+grpRep.getGroupEntityByNameAndParent(groupForm.getName(),grpRep.getGroupEntityById(groupForm.getParent().getId())).getId();
-            else
-                return "redirect:/group?id="+grpRep.getGroupEntityByNameAndParent(groupForm.getName(),null).getId();
-        }else{
-            //TODO gestion erreur
-            return "error";
-        }
+        model.addAttribute("addGroupForm", new AddGroupForm());
+        return "Group/addGroup";
     }
 
     /**
@@ -80,7 +52,7 @@ public class GroupController {
      * @param id
      * @return
      */
-    @RequestMapping(value = "/group")
+    @RequestMapping(value = "/group", method = RequestMethod.GET)
     public String showGroup(Model model, @RequestParam(name = "id", defaultValue = "-1")int id, Authentication authentication){
         UserEntity userEntity = (UserEntity) authentication.getPrincipal();
         model.addAttribute("user", userEntity);
@@ -108,8 +80,7 @@ public class GroupController {
 
             return "Group/group";
         }else{
-            //TODO Gestion erreur
-            return "Error";
+            throw new ErrorCode.ResourceNotFoundException();
         }
     }
 }

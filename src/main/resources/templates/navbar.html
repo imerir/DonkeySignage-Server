@@ -49,6 +49,12 @@
                 <li>
                     <div class="divider"></div>
                 </li>
+                <li th:if="${user?.isAdmin()}" th:classappend="${page == 'group'? 'active' : ''}">
+                    <a href="/group"  th:text="#{group.group}"></a>
+                </li>
+                <li th:if="${user?.isAdmin()}" th:classappend="${page == 'addGroup'? 'active' : ''}">
+                    <a href="/addGroup"  th:text="#{group.addGroup}"></a>
+                </li>
             </ul>
         </th:block>
 
