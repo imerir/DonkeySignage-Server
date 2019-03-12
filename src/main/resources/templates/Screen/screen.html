@@ -67,14 +67,10 @@
                         <label th:text="#{group.group}" style="font-size: 15px"></label>
                     </div>
 
-                    <th:block th:if="${screen.getGroup() != null}">
-                        <a class="waves-effect waves-light btn" th:href="${'/group?id=' + screen.getGroup()?.getId()}"
-                           th:text="#{form.view}"></a>
-                    </th:block>
 
-                    <th:block th:if="${screen.getGroup() == null}">
-                        <a class="waves-effect waves-light btn disabled" th:text="#{form.view}"></a>
-                    </th:block>
+                    <a class="waves-effect waves-light btn"
+                       th:href="${'/group?id=' + (screen.getGroup() == null ? -1 : screen.getGroup().getId())}"
+                       th:text="#{form.view}"></a>
 
                     <div class="file-path-wrapper">
                         <th:block th:if="${screen.getGroup() == null}">
@@ -95,7 +91,8 @@
                     <a class="waves-effect waves-light btn modal-trigger" href="#modalGroup"
                        th:text="#{form.select}"></a>
                     <div class="file-path-wrapper">
-                        <input type="text" disabled="disabled" class="black-text" id="groupName" th:value="${screen.getGroup()?.getName()}"/>
+                        <input type="text" disabled="disabled" class="black-text" id="groupName"
+                               th:value="${screen.getGroup()?.getName()}"/>
                     </div>
                     <input type="hidden" id="groupId" name="groupId"
                            th:value="${screen.getGroup() == null ? -1 : screen.getGroup().getId()}"/>
@@ -115,8 +112,6 @@
                     <button class="btn red" id="cancel_btn" th:text="#{form.cancel}"></button>
                 </div>
             </div>
-
-
 
 
         </div>
@@ -192,7 +187,7 @@
 
         });
 
-        if(window.location.hash.includes("success")){
+        if (window.location.hash.includes("success")) {
             M.toast({
                 html: " <i class=\"material-icons\" style='margin-right: 10px'>check_circle</i> Update Success",
                 classes: 'green',
@@ -210,12 +205,12 @@
             url: "/api/screen/",
             method: "PUT",
             headers: {
-                "Content-Type" :  "application/json"
+                "Content-Type": "application/json"
             },
             data: JSON.stringify({
-                id : screenId,
-                name : name,
-                groupId : parentid
+                id: screenId,
+                name: name,
+                groupId: parentid
             })
         };
 

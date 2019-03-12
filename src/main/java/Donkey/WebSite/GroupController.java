@@ -61,26 +61,19 @@ public class GroupController {
             List<ScreenEntity> screenList = screenRegRep.getScreenByGroupNull();
             model.addAttribute("groupList",groupList);
             model.addAttribute("screenList", screenList);
-            model.addAttribute("getWithId",0);
-            return "Group/group";
         }else if(grpRep.getGroupEntityById(id) != null){
             GroupEntity group =  grpRep.getGroupEntityById(id);
-            List<ScreenEntity> screenList = screenRegRep.getScreenEntityByGroupId(id);
-            List<GroupEntity> childrenList = grpRep.getGroupEntityByParent_Id(id);
+            List<ScreenEntity> screenList = group.getScreenList();
+            List<GroupEntity> childrenList = group.getChildrens();
             model.addAttribute("group",group);
             model.addAttribute("screenList" , screenList);
-            model.addAttribute("childrenList" , childrenList);
-            model.addAttribute("getWithId",1);
-            if(group.getParent() != null){
-                model.addAttribute("groupParentIsNull",0);
-                model.addAttribute("groupParentId",group.getParent().getId());
-                model.addAttribute("groupParentName",group.getParent().getName());
-            }else
-                model.addAttribute("groupParentIsNull",1);
+            model.addAttribute("groupList" , childrenList);
 
-            return "Group/group";
+
         }else{
             throw new ErrorCode.ResourceNotFoundException();
         }
+
+        return "Group/group";
     }
 }
