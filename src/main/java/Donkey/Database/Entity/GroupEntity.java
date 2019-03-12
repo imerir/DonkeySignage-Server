@@ -1,6 +1,7 @@
 package Donkey.Database.Entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -97,5 +98,9 @@ public class GroupEntity {
         }
 
         return str;
+    }
+
+    public boolean haveChildrenGroup(){
+        return getChildrens().size() != 0;
     }
 }
