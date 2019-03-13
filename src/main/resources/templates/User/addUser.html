@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale}">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+    <!--TODO <meta name="description" content=""/>-->
+    <title>User - Donkey Signage</title>
+    <link rel="icon"
+          type="image/x-icon"
+          href="/favicon.png"/>
+
+    <!-- CSS  -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+    <link href="/css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+    <style>
+
+
+    </style>
+
+
+</head>
+
+<body class="blue-grey lighten-5">
+<header>
+    <div th:replace="navbar :: navbar ('addUser')" th:with="user=${user}"></div>
+</header>
+
+<main class="container">
+    <!--write your stuff here-->
+    <div class="card-panel">
+        <div class="row">
+            <div class="col s12">
+                <h2 class="center" th:text="#{screenregister.screenregister}"></h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col s12">
+                <input type="text" id="username" name="username"/>
+                <label for="username" th:text="#{login.username}"></label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col s12">
+                <input type="password" id="password" name="password"/>
+                <label for="password" th:text="#{login.password}"></label>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col s12 center">
+                <input type="submit" class="btn disabled" id="submit" th:value="#{form.submit}"/>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+<footer class="page-footer" style="padding: 0">
+    <!--<div th:replace="footer :: footer">...</div>-->
+</footer>
+<!--  Scripts-->
+<script th:src="@{/js/materialize.js}"></script>
+<script th:src="@{/js/jquery-3.3.1.min.js}"></script>
+
+
+</body>
+</html>

@@ -3,6 +3,7 @@ package Donkey.WebSite;
 import java.io.IOException;
 import java.util.stream.Collectors;
 
+import Donkey.Database.Entity.UserAndPrivileges.UserEntity;
 import Donkey.Tools.Exception.StorageFileNotFoundException;
 import Donkey.Storage.Service.StorageService;
 import org.apache.logging.log4j.LogManager;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -36,13 +38,15 @@ public class FileUploadController {
 
     /**
      * show all media upload in server, and you can upload a media here
+     *
      * @param model
      * @return
      * @throws IOException
      */
     @GetMapping("/media")
-    public String listUploadedFiles(Model model) throws IOException {
-
+    public String listUploadedFiles(Model model, Authentication authentication) throws IOException {
+        UserEntity userEntity = (UserEntity) authentication.getPrincipal();
+        model.addAttribute("user",userEntity);
         model.addAttribute("files", storageService.loadAll().map(
                 path -> MvcUriComponentsBuilder.fromMethodName(FileUploadController.class,
                         "serveFile", path.getFileName().toString()).build().toString())
@@ -52,6 +56,7 @@ public class FileUploadController {
 
     /**
      * Add Media in server's storage
+     *
      * @param file
      * @param redirectAttributes
      * @return
@@ -67,6 +72,7 @@ public class FileUploadController {
 
     /**
      * Download the file
+     *
      * @param filename
      * @return
      */
