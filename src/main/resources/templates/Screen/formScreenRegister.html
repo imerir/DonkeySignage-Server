@@ -132,18 +132,6 @@
             }
 
         });
-        name.on('input',() => {
-            console.log(name.val().length);
-            if(name.val().length < 1){
-                if(!submit.hasClass("disabled"))
-                    submit.addClass("disabled");
-            }
-            else{
-                if(submit.hasClass("disabled"))
-                    submit.removeClass("disabled");
-            }
-
-        });
 
     });
     /*]]>*/
