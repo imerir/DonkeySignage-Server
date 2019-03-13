@@ -30,7 +30,7 @@
     <div class="card-panel">
         <div class="row">
             <div class="col s12">
-                <h2 class="center" th:text="#{login.user}"></h2>
+                <h2 class="center" th:text="#{login.newUser}"></h2>
             </div>
         </div>
         <div class="row">
@@ -136,8 +136,8 @@
 
             $.ajax(settings).done(function (response) {
                 console.log(response);
-                //TODO replace with GET screen
-                window.location.replace("/");
+                //console.log(response);
+                window.location.replace("/user?id="+response.id);
             }).fail(function(response){
                 $('#username').addClass("invalid");
             });

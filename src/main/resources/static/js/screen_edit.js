@@ -13,8 +13,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 function changeInput() {
-    getGroupPage(-1,'');
+    if( typeof getGroupPage === 'function')
+        getGroupPage(-1,'');
     editableInput.removeAttr('disabled');
+    editableInput.prop('disabled', false); //TODO Maybe erase it
     editableInput.removeClass("grey-text text-darken-2");
     editableInput.addClass("validate valid");
     toHide.attr("hidden", "hidden");

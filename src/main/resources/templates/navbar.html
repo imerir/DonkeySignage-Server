@@ -63,7 +63,7 @@
                         <a href="/addGroup"  th:text="#{group.addGroup}"></a>
                     </li>
                     <li th:if="${user?.isAdmin()}" th:classappend="${page == 'addUser'? 'active' : ''}">
-                        <a href="/addUser"  th:text="#{login.user}"></a>
+                        <a href="/addUser"  th:text="#{login.newUser}"></a>
                     </li>
                     <li>
                         <div class="divider"></div>
@@ -71,6 +71,12 @@
                 </th:block>
                 <li th:classappend="${page == 'group'? 'active' : ''}">
                     <a href="/group"  th:text="#{group.group}"></a>
+                </li>
+                <li th:classappend="${page == 'user'? 'active' : ''}">
+                    <a href="/user"  th:text="#{login.user}"></a>
+                </li>
+                <li th:classappend="${page == 'uplaodForm'? 'active' : ''}">
+                    <a href="/media" th:utext="#{media.media}"></a>
                 </li>
             </ul>
         </th:block>

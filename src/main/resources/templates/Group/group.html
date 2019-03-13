@@ -64,15 +64,15 @@
                 </th:block>
             </ul>
         </div>
-        <th:block th:if="${group != null and user.isAdmin()}">
-            <div class="row">
-                <div class="col s12 center">
-                    <a class="waves-effect waves-light btn modal-trigger green" href="#modifyModal" th:utext="#{form.modify}"></a>
-                    <a class="waves-effect waves-light btn modal-trigger red" href="#deleteModal" th:utext="#{form.delete}"></a>
-                </div>
-            </div>
-        </th:block>
     </div>
+    <th:block th:if="${group != null and user.isAdmin()}">
+        <div class="row">
+            <div class="col s12 center">
+                <a class="waves-effect waves-light btn modal-trigger green" href="#modifyModal" th:utext="#{form.modify}"></a>
+                <a class="waves-effect waves-light btn modal-trigger red" href="#deleteModal" th:utext="#{form.delete}"></a>
+            </div>
+        </div>
+    </th:block>
 
 
     <th:block th:if="${group != null and user.isAdmin()}">
