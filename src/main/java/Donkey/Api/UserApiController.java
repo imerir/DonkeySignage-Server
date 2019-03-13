@@ -40,8 +40,8 @@ public class UserApiController {
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "/user", method = RequestMethod.POST)
     public ResponseEntity<?> createUser(@RequestBody UserJson userJson){
-        logger.info("[api/user GET] Username " + userJson.username);
-        logger.info("[api/user GET] Pass " + userJson.password);
+        logger.info("[api/user POST] Username " + userJson.username);
+        logger.info("[api/user POST] Pass " + userJson.password);
 
         if(userJson.username == null || userJson.password == null || userJson.roleId == null){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

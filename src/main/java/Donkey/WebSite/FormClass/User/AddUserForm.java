@@ -9,7 +9,7 @@ public class AddUserForm {
     public String username;
     public String password;
     public List<RolesEntity> roles;
-    public List<UserScreenPrivilege> screenPrivileges;
+    //public List<UserScreenPrivilege> screenPrivileges;
 
     public String getUsername() {
         return username;
@@ -35,11 +35,11 @@ public class AddUserForm {
         this.roles = roles;
     }
 
-    public List<UserScreenPrivilege> getScreenPrivileges() {
+    /*public List<UserScreenPrivilege> getScreenPrivileges() {
         return screenPrivileges;
     }
 
     public void setScreenPrivileges(List<UserScreenPrivilege> screenPrivileges) {
         this.screenPrivileges = screenPrivileges;
-    }
+    }*/
 }

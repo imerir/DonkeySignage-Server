@@ -30,13 +30,14 @@
     <div class="card-panel">
         <div class="row">
             <div class="col s12">
-                <h2 class="center" th:text="#{screenregister.screenregister}"></h2>
+                <h2 class="center" th:text="#{login.user}"></h2>
             </div>
         </div>
         <div class="row">
             <div class="input-field col s12">
-                <input type="text" id="username" name="username"/>
+                <input type="text" id="username" name="username" class="validate"/>
                 <label for="username" th:text="#{login.username}"></label>
+                <span class="helper-text" th:attr="data-error=#{login.invalidUsername}">Helper text</span>
             </div>
         </div>
         <div class="row">
@@ -45,13 +46,27 @@
                 <label for="password" th:text="#{login.password}"></label>
             </div>
         </div>
-
-
         <div class="row">
+            <div class="input-field col s12">
+                <select id="roleSelect">
+                    <th:block th:each="role : ${roleList}">
+                        <th:block th:if="${role.getName() == 'ROLE_USER'}">
+                            <option th:value='${role.getId()}' selected="selected" th:utext="${#strings.substringAfter(role.getName(),'_')}"></option>
+                        </th:block>
+                        <th:block th:unless="${role.getName() == 'ROLE_USER'}">
+                            <option th:value='${role.getId()}' th:utext="${#strings.substringAfter(role.getName(),'_')}"></option>
+                        </th:block>
+                    </th:block>
+                </select>
+                <label th:text="#{login.chooseRole}"></label>
+            </div>
+
             <div class="col s12 center">
-                <input type="submit" class="btn disabled" id="submit" th:value="#{form.submit}"/>
+                <button type="submit" class="disabled waves-effect waves-light btn green" id="submit"
+                        th:text="#{form.submit}"></button>
             </div>
         </div>
+
     </div>
 
 </main>
@@ -62,7 +77,75 @@
 <!--  Scripts-->
 <script th:src="@{/js/materialize.js}"></script>
 <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
+<script>
+    /*<![CDATA[*/
+    document.addEventListener('DOMContentLoaded', function() {
+        var elems = document.querySelectorAll('select');
+        var instances = M.FormSelect.init(elems);
 
+        let username = $('#username');
+        let password = $('#password');
+        let choiceRole = $('#roleSelect');
+        let submit = $('#submit');
+
+
+        /*--------------USERNAME--------------*/
+        username.on('input',() => {
+            console.log("Username test, length username : " + username.val().length + ", length password : " + password.val().length);
+            if(username.val().length < 1 || password.val().length < 1) {
+                if(!submit.hasClass("disabled"))
+                    submit.addClass("disabled");
+            }
+            else{
+                if(submit.hasClass("disabled"))
+                    submit.removeClass("disabled");
+            }
+        });
+
+        /*--------------PASSWORD--------------*/
+        password.on('input',() => {
+            console.log("Password test, length username : " + username.val().length + ", length password : " + password.val().length);
+            if(password.val().length < 1 || username.val().length < 1){
+                if(!submit.hasClass("disabled"))
+                    submit.addClass("disabled");
+            }
+            else{
+                if(submit.hasClass("disabled"))
+                    submit.removeClass("disabled");
+            }
+        });
+
+        /*--------------SUBMIT--------------*/
+        submit.on('click', function () {
+            let addUserJson = {
+                "username": username.val(),
+                "password": password.val(),
+                "roleId" : choiceRole.val()
+            };
+            console.log(JSON.stringify(addUserJson));
+
+            var settings = {
+                "url": "/api/user",
+                "method": "POST",
+                "timeout": 0,
+                "headers": {
+                    "Content-Type": "application/json"
+                },
+                "data": JSON.stringify(addUserJson),
+            };
+
+            $.ajax(settings).done(function (response) {
+                console.log(response);
+                //TODO replace with GET screen
+                window.location.replace("/");
+            }).fail(function(response){
+                $('#username').addClass("invalid");
+            });
+
+        })
+    });
+    /*]]>*/
+</script>
 
 </body>
 </html>
