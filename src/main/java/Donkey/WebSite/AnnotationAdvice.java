@@ -4,6 +4,8 @@ import Donkey.Database.Entity.UserAndPrivileges.UserEntity;
 import Donkey.Database.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContext;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -50,5 +52,17 @@ public class AnnotationAdvice {
             languages.put(c, availableLocales.get(c).getDisplayLanguage(availableLocales.get(c)));
         }
         return languages;
+    }
+
+    @ModelAttribute("lang")
+    public String dispLocal(){
+        Locale locale = LocaleContextHolder.getLocale();
+        HashMap<String, String> langs = getLangs();
+        String localeSrt = locale.getLanguage();
+        if(langs.keySet().contains(localeSrt)){
+            return localeSrt;
+        }
+
+        return "en";
     }
 }

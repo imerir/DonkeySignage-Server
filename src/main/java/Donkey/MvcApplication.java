@@ -58,7 +58,6 @@ public class MvcApplication extends WebMvcConfigurerAdapter {
     @Bean(name="localeResolver")
     public LocaleContextResolver getLocaleContextResolver() {
         CookieLocaleResolver localeResolver = new CookieLocaleResolver();
-        localeResolver.setDefaultLocale(Locale.US);
         return localeResolver;
     }
 
