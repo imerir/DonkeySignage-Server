@@ -5,4 +5,5 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface RoleRepository extends CrudRepository<RolesEntity, Integer> {
     RolesEntity getRolesEntityByName(String name);
+    RolesEntity getRolesEntityById(int id);
 }

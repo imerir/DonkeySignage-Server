@@ -1,7 +1,7 @@
 package Donkey.Api;
 
 import Donkey.Api.JSON.Error;
-import Donkey.Api.JSON.User.ModifyUserJson;
+import Donkey.Api.JSON.User.UserJson;
 import Donkey.Database.Entity.UserAndPrivileges.RolesEntity;
 import Donkey.Database.Entity.UserAndPrivileges.UserEntity;
 import Donkey.Database.Repository.RoleRepository;
@@ -39,19 +39,25 @@ public class UserApiController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "/user", method = RequestMethod.POST)
-    public ResponseEntity<?> createUser(@RequestBody UserEntity userEntity){
-        logger.info("[api/user GET] Username " + userEntity.getUsername());
-        logger.info("[api/user GET] Pass " + userEntity.getPassword());
-        if(userEntity.getUsername() == null || userEntity.getPassword() == null){
+    public ResponseEntity<?> createUser(@RequestBody UserJson userJson){
+        logger.info("[api/user GET] Username " + userJson.username);
+        logger.info("[api/user GET] Pass " + userJson.password);
+
+        if(userJson.username == null || userJson.password == null || userJson.roleId == null){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        if(userRepository.getUserEntityByUsername(userEntity.getUsername()) != null){
+        if(userRepository.getUserEntityByUsername(userJson.username) != null){
             return new ResponseEntity<>(new Error("Username already exist", "USER_EXIST"), HttpStatus.CONFLICT);
         }
-        userEntity.setPassword(encoder.encode(userEntity.getPassword()));
+        RolesEntity role = roleRepository.getRolesEntityById(userJson.roleId);
+        if(role == null){
+            return new ResponseEntity<>(new Error("Role not found", "ROLE_404"), HttpStatus.NOT_FOUND);
+        }
+        UserEntity userEntity = new UserEntity();
+        userEntity.setUsername(userJson.username);
+        userEntity.setRoles(Collections.singletonList(role));
+        userEntity.setPassword(encoder.encode(userJson.password));
 
-        RolesEntity userRole = roleRepository.getRolesEntityByName("ROLE_USER");
-        userEntity.setRoles(Collections.singletonList(userRole));
         userEntity = userRepository.save(userEntity);
         return new ResponseEntity<>(userEntity, HttpStatus.OK);
     }
@@ -91,17 +97,17 @@ public class UserApiController {
     }
 
     @RequestMapping (value = {"/user"}, method = RequestMethod.PUT)
-    public ResponseEntity<?> modifyUser (@RequestBody ModifyUserJson modifyUserJson , @RequestParam (name = "id") int id, Authentication authentication){
+    public ResponseEntity<?> modifyUser (@RequestBody UserJson userJson, @RequestParam (name = "id") int id, Authentication authentication){
         UserEntity loggedUser = (UserEntity) authentication.getPrincipal();
         if(loggedUser.isAdmin() || loggedUser.getId() == id){
             UserEntity user = userRepository.getUserEntityById(id);
             if(user != null){
-                if(modifyUserJson.username == null || modifyUserJson.username.isEmpty() ||
-                        (userRepository.getUserEntityByUsername(modifyUserJson.username) != null && (userRepository.getUserEntityById(id).getUsername().compareTo(modifyUserJson.username) != 0))){
+                if(userJson.username == null || userJson.username.isEmpty() ||
+                        (userRepository.getUserEntityByUsername(userJson.username) != null && (userRepository.getUserEntityById(id).getUsername().compareTo(userJson.username) != 0))){
                     logger.debug("[api/user PUT] username already use or empty or null");
                     return new ResponseEntity<>(new Error("username already use or empty or null","USER_CONFLICT"),HttpStatus.CONFLICT);
                 }else{
-                    user.setUsername(modifyUserJson.username);
+                    user.setUsername(userJson.username);
                     userRepository.save(user);
                     return new ResponseEntity<>(user, HttpStatus.OK);
                 }
