@@ -1,5 +1,6 @@
 package Donkey.Database.Repository;
 
+import Donkey.Database.Entity.GroupEntity;
 import Donkey.Database.Entity.ScreenEntity;
 import Donkey.Database.Entity.UserAndPrivileges.UserEntity;
 import Donkey.Database.Entity.UserAndPrivileges.UserScreenPrivilege;
@@ -11,6 +12,7 @@ import java.util.List;
 
 public interface UserScreenPrivilegeRepository extends CrudRepository<UserScreenPrivilege, Integer> {
     List<UserScreenPrivilege> getByUserEntityAndScreenEntity(UserEntity userEntity, ScreenEntity screenEntity);
+    List<UserScreenPrivilege> getByUserEntityAndScreenEntity_GroupOrderByScreenEntity_Name(UserEntity userEntity, GroupEntity groupEntity);
     List<UserScreenPrivilege> getByUserEntity(UserEntity userEntity);
     List<UserScreenPrivilege> getByScreenEntity(ScreenEntity screenEntity);
     List<UserScreenPrivilege> getAllBy();

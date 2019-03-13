@@ -1,12 +1,13 @@
 package Donkey.WebSite;
 
 import Donkey.Api.GroupApiController;
-import Donkey.Api.JSON.Group.GroupJson;
 import Donkey.Database.Entity.GroupEntity;
 import Donkey.Database.Entity.ScreenEntity;
 import Donkey.Database.Entity.UserAndPrivileges.UserEntity;
+import Donkey.Database.Entity.UserAndPrivileges.UserScreenPrivilege;
 import Donkey.Database.Repository.GroupRepository;
 import Donkey.Database.Repository.ScreenRepository;
+import Donkey.Database.Repository.UserScreenPrivilegeRepository;
 import Donkey.WebSite.FormClass.Group.AddGroupForm;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -24,13 +26,16 @@ public class GroupController {
     private final ScreenRepository screenRegRep;
     private final GroupRepository grpRep;
     private final GroupApiController groupApi;
+    @Autowired
+    private final UserScreenPrivilegeRepository privilegeRepository;
     private Logger log = LogManager.getLogger();
 
     @Autowired
-    public GroupController(ScreenRepository screenRegRep, GroupRepository grpRep, GroupApiController groupApi) {
+    public GroupController(ScreenRepository screenRegRep, GroupRepository grpRep, GroupApiController groupApi, UserScreenPrivilegeRepository privilegeRepository) {
         this.screenRegRep = screenRegRep;
         this.grpRep = grpRep;
         this.groupApi = groupApi;
+        this.privilegeRepository = privilegeRepository;
     }
 
     /**
@@ -56,17 +61,19 @@ public class GroupController {
     public String showGroup(Model model, @RequestParam(name = "id", defaultValue = "-1")int id, Authentication authentication){
         UserEntity userEntity = (UserEntity) authentication.getPrincipal();
         model.addAttribute("user", userEntity);
+        GroupEntity group = grpRep.getGroupEntityById(id);
         if(id == -1){
+
             List<GroupEntity> groupList = grpRep.getGroupEntityByParentNull();
-            List<ScreenEntity> screenList = screenRegRep.getScreenByGroupNull();
+            List<ScreenEntity> screenList = getMyScreen(userEntity, null);
             model.addAttribute("groupList",groupList);
             model.addAttribute("screenList", screenList);
-        }else if(grpRep.getGroupEntityById(id) != null){
-            GroupEntity group =  grpRep.getGroupEntityById(id);
-            List<ScreenEntity> screenList = group.getScreenList();
+
+        }else if(group != null){
+
             List<GroupEntity> childrenList = group.getChildrens();
             model.addAttribute("group",group);
-            model.addAttribute("screenList" , screenList);
+            model.addAttribute("screenList" , getMyScreen(userEntity, group));
             model.addAttribute("groupList" , childrenList);
 
 
@@ -75,5 +82,23 @@ public class GroupController {
         }
 
         return "Group/group";
+    }
+
+
+    private List<ScreenEntity> getMyScreen(UserEntity user, GroupEntity group){
+        List<ScreenEntity> screenList  = new ArrayList<>();
+        if(user.isAdmin()){
+            if(group == null)
+                screenList = screenRegRep.getScreenByGroupNull();
+            else
+                screenList = group.getScreenList();
+        }
+        else{
+            List<UserScreenPrivilege> privileges = privilegeRepository.getByUserEntityAndScreenEntity_GroupOrderByScreenEntity_Name(user, group);
+            for(UserScreenPrivilege priv : privileges){
+                screenList.add(priv.getScreenEntity());
+            }
+        }
+        return screenList;
     }
 }
