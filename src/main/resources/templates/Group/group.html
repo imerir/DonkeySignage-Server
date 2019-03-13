@@ -22,7 +22,7 @@
 
 <body class="blue-grey lighten-5">
 <header>
-    <div th:replace="navbar :: navbar ('group')" th:with="user=${user}"></div>
+    <div th:replace="navbar :: navbar ('group')"></div>
 </header>
 
 <main class="container">
@@ -32,7 +32,7 @@
     <div class="card-panel">
         <th:block th:if="${group != null}">
             <div class="row">
-                <ul class="collection with-header">
+                <ul class="collection with-header z-depth-1">
                     <a class="collection-item"
                        th:href="${'/group?id=' + (group.getParent() == null ? -1 : group.getParent().getId())}"><i
                             class="material-icons">arrow_back</i> </a>
@@ -40,22 +40,27 @@
                 </ul>
             </div>
         </th:block>
+        <th:block th:if="${group == null}">
+            <div class="row">
+                <ul class="collection with-header z-depth-1">
+                    <li class="collection-header"><h4><b th:text="#{group.mainGroup}"></b></h4></li>
+                </ul>
+            </div>
+        </th:block>
 
         <div class="row">
-            <ul class="collection with-header">
+            <ul class="collection with-header z-depth-1">
                 <li class="collection-header"><h4 th:text="#{group.groupList}"></h4></li>
                 <th:block th:each="aGroup : ${groupList}">
-                    <a th:href="${'/group?id=' + aGroup.getId()}" class="collection-item"
-                       th:text="${aGroup.getName()}"></a>
+                    <a th:href="${'/group?id=' + aGroup.getId()}" class="collection-item" style="font-size: 18px"><i class="material-icons left">folder</i><th:block th:text="${aGroup.getName()}"></th:block></a>
                 </th:block>
             </ul>
         </div>
         <div class="row">
-            <ul class="collection with-header">
+            <ul class="collection with-header z-depth-1">
                 <li class="collection-header"><h4 th:text="#{group.screenList}"></h4></li>
                 <th:block th:each="aScreen : ${screenList}">
-                    <a th:href="${'/screen?id=' + aScreen.getId()}" class="collection-item"
-                       th:text="${aScreen.getName()}"></a>
+                    <a th:href="${'/screen?id=' + aScreen.getId()}" class="collection-item"  style="font-size: 18px"><i class="material-icons left">tv</i><th:block th:text="${aScreen.getName()}"></th:block></a>
                 </th:block>
             </ul>
         </div>

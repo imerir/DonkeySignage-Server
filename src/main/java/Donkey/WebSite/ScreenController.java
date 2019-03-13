@@ -47,9 +47,7 @@ public class ScreenController {
      */
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = {"/screenRegister"}, method = RequestMethod.GET)
-    public String registerScreenGet(Model model, @RequestParam(value = "uuid", defaultValue = "")String uuid, Authentication authentication) {
-        UserEntity userEntity = (UserEntity) authentication.getPrincipal();
-        model.addAttribute("user", userEntity);
+    public String registerScreenGet(Model model, @RequestParam(value = "uuid", defaultValue = "") String uuid) {
         TemporalScreenEntity tmpReg = tmpRegisterRep.getTemporalRegisterByUuid(uuid);
         if (!uuid.isEmpty() && tmpReg!= null) {
             model.addAttribute("uuid",uuid);
@@ -71,9 +69,7 @@ public class ScreenController {
      */
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "/screenRegister", method = RequestMethod.POST)
-    public String registerScreenPost(Model model, @ModelAttribute TmpTokenForm tokenForm, Authentication authentication) {
-        UserEntity userEntity = (UserEntity) authentication.getPrincipal();
-        model.addAttribute("user", userEntity);
+    public String registerScreenPost(Model model, @ModelAttribute TmpTokenForm tokenForm) {
         TemporalScreenEntity tmpReg = tmpRegisterRep.getTemporalRegisterByTempToken(tokenForm.getTempToken());
         log.debug("Post screenRegister, token : " + tokenForm.getTempToken());
         if(!tokenForm.getTempToken().isEmpty() && tmpReg != null){
@@ -92,9 +88,7 @@ public class ScreenController {
      */
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = {"/formScreenRegister"}, method = RequestMethod.POST)
-    public String formScreenRegister(Model model, @ModelAttribute ScreenRegisterForm screenRegisterForm, Authentication authentication) {
-        UserEntity userEntity = (UserEntity) authentication.getPrincipal();
-        model.addAttribute("user", userEntity);
+    public String formScreenRegister(Model model, @ModelAttribute ScreenRegisterForm screenRegisterForm) {
         if(screenRegisterForm.getUuid() != null && !screenRegisterForm.getUuid().isEmpty()){
             ScreenEntity newEntry = new ScreenEntity();
             if(screenRegRep.getScreenRegisterByUuid(screenRegisterForm.getUuid()) == null){
@@ -130,9 +124,9 @@ public class ScreenController {
      */
     @PreAuthorize("hasPermission(#id,'screen', 'read')")
     @RequestMapping(value="/screen", method = RequestMethod.GET)
-    public String getScreen(Model model, @RequestParam(name = "id")int id, RedirectAttributes redirectAttributes, Authentication authentication) {
-        UserEntity userEntity = (UserEntity) authentication.getPrincipal();
-        model.addAttribute("user", userEntity);
+    public String getScreen(Model model, @RequestParam(name = "id") int id) {
+
+        //TODO Can edit ?
         if(screenRegRep.getScreenEntityById(id) != null){
 
             ScreenEntity theScreen =  screenRegRep.getScreenEntityById(id);

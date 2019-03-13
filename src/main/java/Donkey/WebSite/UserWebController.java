@@ -19,9 +19,7 @@ public class UserWebController {
     }
 
     @RequestMapping(value = "/user", method = RequestMethod.GET)
-    public String createUser(Model model, Authentication authentication){
-        UserEntity user = (UserEntity) authentication.getPrincipal();
-        model.addAttribute("user",user);
+    public String createUser(Model model){
         model.addAttribute("addUserForm", new AddUserForm());
         return "User/addUser";
     }

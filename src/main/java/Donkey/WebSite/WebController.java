@@ -19,9 +19,7 @@ public class WebController {
     }
 
     @RequestMapping(value ="/",method = RequestMethod.GET)
-    public String index(Model model, Authentication authentication){
-        UserEntity userEntity = (UserEntity) authentication.getPrincipal();
-        model.addAttribute("user", userEntity);
+    public String index(Model model){
         return "index";
     }
 }

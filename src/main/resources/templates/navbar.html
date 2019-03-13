@@ -7,6 +7,7 @@
 <body>
 
 <!--/*@thymesVar id="user" type="Donkey.Database.Entity.UserAndPrivileges.UserEntity"*/-->
+<!--/*@thymesVar id="langs" type="java.util.HashMap<java.lang.String, java.lang.String>"*/-->
 <div th:fragment="navbar (page)">
     <header>
 
@@ -26,15 +27,26 @@
         </th:block>
 
 
-        <div class="navbar-fixed">
-            <nav class="blue darken-3 darken-4 z-depth-3" role="navigation">
+        <div class="navbar-fixed" th:with="currentLang = ${#strings.contains(#locale, '_')? #strings.substringBefore(#locale, '_') : #locale}">
+            <nav class="blue darken-4 z-depth-3" role="navigation">
                 <div class="nav-wrapper container">
                     <a href="/" class="brand-logo" style="white-space: nowrap">Donkey Signage</a>
                     <ul class="right hide-on-med-and-down">
+                        <li>
+
+                            <a class='dropdown-trigger btn blue darken-3' data-target='dropdownLocale' th:text="${langs.get(#strings.toString(currentLang))}"></a>
+                            <ul id='dropdownLocale' class='dropdown-content'>
+                                <th:block th:each="lang : ${langs}">
+                                    <li th:if="${lang.key != #strings.toString(currentLang)}"> <a th:text="${#strings.capitalize(lang.value)}" th:href="${'?lang=' + lang.key}"></a> </li>
+                                </th:block>
+                            </ul>
+
+                        </li>
                         <li id="nav-bar-account" th:if="${user}">
-                            <a class="dropdown-account dropdown-trigger green-text" data-target="dropdown_connected"><i
+                            <a class="dropdown-trigger green-text" data-target="dropdown_connected"><i
                                     class="material-icons">account_box</i></a>
                         </li>
+
                     </ul>
                     <a href="#" data-target="side_nav" class="sidenav-trigger"><i class="material-icons">menu</i></a>
                 </div>

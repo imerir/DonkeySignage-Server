@@ -44,9 +44,7 @@ public class GroupController {
      * @return
      */
     @RequestMapping(value="/addGroup", method = RequestMethod.GET)
-    public String addGroup(Model model, Authentication authentication){
-        UserEntity userEntity = (UserEntity) authentication.getPrincipal();
-        model.addAttribute("user", userEntity);
+    public String addGroup(Model model){
         model.addAttribute("addGroupForm", new AddGroupForm());
         return "Group/addGroup";
     }
@@ -60,7 +58,6 @@ public class GroupController {
     @RequestMapping(value = "/group", method = RequestMethod.GET)
     public String showGroup(Model model, @RequestParam(name = "id", defaultValue = "-1")int id, Authentication authentication){
         UserEntity userEntity = (UserEntity) authentication.getPrincipal();
-        model.addAttribute("user", userEntity);
         GroupEntity group = grpRep.getGroupEntityById(id);
         if(id == -1){
 

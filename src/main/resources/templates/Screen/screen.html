@@ -99,60 +99,63 @@
                 </div>
             </div>
 
-            <div class="row hide-to-edit">
-                <div class="col s12 center">
-                    <button class="btn green" id="edit_btn" th:text="#{form.modify}"></button>
-                    <button class="btn red modal-trigger" data-target="delModal" th:text="#{form.delete}"></button>
+            <th:block th:if="${user.isAdmin()}">
+                <div class="row hide-to-edit">
+                    <div class="col s12 center">
+                        <button class="btn green" id="edit_btn" th:text="#{form.modify}"></button>
+                        <button class="btn red modal-trigger" data-target="delModal" th:text="#{form.delete}"></button>
+                    </div>
                 </div>
-            </div>
 
-            <div class="row show-to-edit" hidden="hidden">
-                <div class="col s12 center">
-                    <button class="btn green" id="confirm_btn" th:text="#{form.submit}"></button>
-                    <button class="btn red" id="cancel_btn" th:text="#{form.cancel}"></button>
+                <div class="row show-to-edit" hidden="hidden">
+                    <div class="col s12 center">
+                        <button class="btn green" id="confirm_btn" th:text="#{form.submit}"></button>
+                        <button class="btn red" id="cancel_btn" th:text="#{form.cancel}"></button>
+                    </div>
                 </div>
-            </div>
+            </th:block>
 
 
         </div>
     </div>
 
-    <!-- ___________________ Dell Modal  __________________________ -->
-    <div id="delModal" class="modal">
-        <div class="modal-content">
-            <h4 th:text="#{screen.delScreen}">Delete Screen</h4>
-            <p th:text="#{screen.deleteConfirmMessage}"></p>
-        </div>
-        <div class="modal-footer">
-            <button class="modal-close waves-effect waves-green btn-flat red-text" th:text="#{form.no}"></button>
-            <button class="modal-close waves-effect waves-green btn-flat green-text" id="deleteBtn"
-                    th:text="#{form.yes}"></button>
-
-        </div>
-    </div>
-
-    <!-- _______________  Group Modal  ___________________________ -->
-    <div id="modalGroup" class="modal modal-fixed-footer">
-        <div class="modal-content">
-            <div class="row">
-                <div class="col s12 center">
-                    <h4 th:text="#{form.groupselector}"></h4>
-                </div>
+    <th:block th:if="${user.isAdmin()}"><!-- ___________________ Dell Modal  __________________________ -->
+        <div id="delModal" class="modal">
+            <div class="modal-content">
+                <h4 th:text="#{screen.delScreen}">Delete Screen</h4>
+                <p th:text="#{screen.deleteConfirmMessage}"></p>
             </div>
-            <div class="row">
+            <div class="modal-footer">
+                <button class="modal-close waves-effect waves-green btn-flat red-text" th:text="#{form.no}"></button>
+                <button class="modal-close waves-effect waves-green btn-flat green-text" id="deleteBtn"
+                        th:text="#{form.yes}"></button>
 
-                <div class="col s12">
-                    <ul class="collection with-header" id="groupSelector">
-
-                    </ul>
-                </div>
             </div>
+        </div>
 
+        <!-- _______________  Group Modal  ___________________________ -->
+        <div id="modalGroup" class="modal modal-fixed-footer">
+            <div class="modal-content">
+                <div class="row">
+                    <div class="col s12 center">
+                        <h4 th:text="#{form.groupselector}"></h4>
+                    </div>
+                </div>
+                <div class="row">
+
+                    <div class="col s12">
+                        <ul class="collection with-header" id="groupSelector">
+
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="modal-action modal-close btn-flat" th:text="#{form.cancel}"></button>
+            </div>
         </div>
-        <div class="modal-footer">
-            <button type="button" class="modal-action modal-close btn-flat" th:text="#{form.cancel}"></button>
-        </div>
-    </div>
+    </th:block>
 
 
 </main>
