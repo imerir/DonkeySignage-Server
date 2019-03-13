@@ -29,7 +29,7 @@ public class UserWebController {
         return "login";
     }
 
-    @RequestMapping(value = "/user", method = RequestMethod.GET)
+    @RequestMapping(value = "/addUser", method = RequestMethod.GET)
     public String createUser(Model model){
         model.addAttribute("addUserForm", new AddUserForm());
         model.addAttribute("roleList", roleRep.getAllBy());
