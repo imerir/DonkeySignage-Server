@@ -73,7 +73,7 @@
                     <li class="collection-header"><h4 th:text="#{login.groupUser}"></h4></li>
                     <th:block th:each="aUser : ${userList}">
                         <a th:href="${'/user?id=' + aUser.getId()}" class="collection-item" style="font-size: 18px">
-                            <!--<i class="material-icons left">folder</i>-->
+                            <i class="material-icons left">person</i>
                             <th:block th:text="${aUser.getUsername()}"></th:block>
                         </a>
                     </th:block>
