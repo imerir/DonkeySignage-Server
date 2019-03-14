@@ -32,7 +32,7 @@
             <div class="row">
                 <div class="row">
                     <div class="col s12 center">
-                        <h2>User</h2>
+                        <h2 th:utext="#{login.user}"></h2>
                     </div>
                 </div>
                 <div class="row">
@@ -45,11 +45,11 @@
                     <label for="username" class="grey-text" th:text="#{login.username}"></label>
                 </div>
 
-                <div class="input-field col s10 offset-s1">
-                    <select id="roleSelect" >
+                <div class=" col s10 offset-s1">
+                    <!--TODO Change  remove disabled with js-->
+                    <select id="roleSelect" class="browser-default" disabled="disabled" >
                         <th:block th:each="role : ${roleList}">
                             <!--TODO Change  displayUser.getRoles().get(0)-->
-                            <!--TODO Change  remove disabled with js-->
                             <th:block th:if="${role.getName() == displayUser?.getRoles().get(0).getName()}">
                                 <option  th:value='${role.getId()}' selected="selected" th:utext="${#strings.substringAfter(role.getName(),'_')}"></option>
                             </th:block>

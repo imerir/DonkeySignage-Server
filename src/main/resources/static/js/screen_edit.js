@@ -16,13 +16,12 @@ function changeInput() {
     if( typeof getGroupPage === 'function')
         getGroupPage(-1,'');
     editableInput.removeAttr('disabled');
-    editableInput.prop('disabled', false); //TODO Maybe erase it
+    //$('#roleSelect').prop('disabled',''); //TODO tag select without disabled but nothing change !!!
     editableInput.removeClass("grey-text text-darken-2");
     editableInput.addClass("validate valid");
     toHide.attr("hidden", "hidden");
     toShow.removeAttr("hidden");
     edition = true;
-
 }
 
 
