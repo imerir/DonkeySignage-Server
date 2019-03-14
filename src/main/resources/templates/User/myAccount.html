@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${lang}">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+    <!--TODO <meta name="description" content=""/>-->
+    <title>My Account - Donkey Signage</title>
+    <link rel="icon"
+          type="image/x-icon"
+          href="/favicon.png"/>
+
+    <!-- CSS  -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+    <link href="/css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+    <style>
+
+
+    </style>
+
+
+</head>
+
+<body class="blue-grey lighten-5">
+<header>
+    <div th:replace="navbar :: navbar ('myAccount')"></div>
+</header>
+
+<main class="container">
+    <!--write your stuff here-->
+    <div class="card-panel">
+        <div class="row">
+            <div class="col s12">
+                <h2 class="center" th:text="#{login.user}"></h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col s12">
+                <input type="text" id="username" name="username" autocomplete="username" class="validate" th:value="${user.getUsername()}"/>
+                <label for="username" th:utext="#{login.username}"></label>
+                <span class="helper-text" th:attr="data-error=#{login.invalidUsername}"></span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col s12">
+                <input type="password" id="currentPassword" name="currentPassword" autocomplete="password" class="validate"/>
+                <label for="currentPassword" th:text="#{login.currentPassword}"></label>
+                <span class="helper-text" th:attr="data-error=#{login.wrongPassword}"></span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col s12">
+                <input type="password" id="newPassword" name="newPassword" autocomplete="new-password"/>
+                <label for="newPassword" th:text="#{login.newPassword}"></label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col s12">
+                <input type="password" id="newPassword2" name="newPassword2" autocomplete="new-password" class="validate"/>
+                <label for="newPassword2" th:text="#{login.newPassword}"></label>
+                <span class="helper-text" th:attr="data-error=#{login.wrongPassword}"></span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col s12 center">
+                <button id="submit" class="disabled waves-effect waves-light btn green"
+                        th:utext="#{form.submit}" ></button>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer class="page-footer" style="padding: 0">
+    <!--<div th:replace="footer :: footer">...</div>-->
+</footer>
+<!--  Scripts-->
+<script th:src="@{/js/materialize.js}"></script>
+<script th:src="@{/js/jquery-3.3.1.min.js}"></script>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    document.addEventListener('DOMContentLoaded', function () {
+        let username = $("#username");
+        let currentPassword = $("#currentPassword");
+        let newPassword = $("#newPassword");
+        let newPassword2 = $("#newPassword2");
+        let submit = $("#submit");
+
+
+        /*--------------Username--------------*/
+        username.on('input',() => {
+            if(username.val().length > 1 && currentPassword.val().length > 0){
+                if(newPassword.val().empty && newPassword2.val.empty){
+                    if(submit.hasClass("disabled"))
+                        submit.removeClass("disabled");
+                }else{
+                    if(newPassword.val() == newPassword2.val()){
+                        if(submit.hasClass("disabled")){
+                            submit.removeClass("disabled");
+                            $("#newPassword2").removeClass("invalid");
+                        }
+                    }else{
+                        if(!submit.hasClass("disabled")){
+                            submit.addClass("disabled");
+                            $("#newPassword2").addClass("invalid");
+                        }
+                    }
+                }
+            }else{
+                if(!submit.hasClass("disabled"))
+                    submit.addClass("disabled");
+            }
+        });
+
+        /*--------------Current Password--------------*/
+        currentPassword.on('input',() => {
+            if(username.val().length > 1 && currentPassword.val().length > 0){
+                if(newPassword.val().empty && newPassword2.val.empty){
+                    if(submit.hasClass("disabled"))
+                        submit.removeClass("disabled");
+                }else{
+                    if(newPassword.val() == newPassword2.val()){
+                        submit.removeClass("disabled");
+                        $("#newPassword2").removeClass("invalid");
+                    }else{
+                        if(!submit.hasClass("disabled")){
+                            submit.addClass("disabled");
+                            $("#newPassword2").addClass("invalid");
+                        }
+                    }
+                }
+            }else{
+                if(!submit.hasClass("disabled"))
+                    submit.addClass("disabled");
+            }
+        });
+
+        /*--------------New Password--------------*/
+        newPassword.on('input',() => {
+            if(username.val().length > 1 && currentPassword.val().length > 0){
+                if(newPassword.val().empty && newPassword2.val.empty){
+                    if(submit.hasClass("disabled"))
+                        submit.removeClass("disabled");
+                }else{
+                    if(newPassword.val() == newPassword2.val()){
+                        submit.removeClass("disabled");
+                        $("#newPassword2").removeClass("invalid");
+                    }else{
+                        if(!submit.hasClass("disabled")){
+                            submit.addClass("disabled");
+                            $("#newPassword2").addClass("invalid");
+                        }
+                    }
+                }
+            }else{
+                if(!submit.hasClass("disabled"))
+                    submit.addClass("disabled");
+            }
+        });
+
+        /*--------------New Password 2--------------*/
+        newPassword2.on('input',() => {
+            if(username.val().length > 1 && currentPassword.val().length > 0){
+                if(newPassword.val().empty && newPassword2.val.empty){
+                    if(submit.hasClass("disabled"))
+                        submit.removeClass("disabled");
+                }else{
+                    if(newPassword.val() == newPassword2.val()){
+                        submit.removeClass("disabled");
+                        $("#newPassword2").removeClass("invalid");
+                    }else{
+                        if(!submit.hasClass("disabled")){
+                            submit.addClass("disabled");
+                            $("#newPassword2").addClass("invalid");
+                        }
+                    }
+                }
+            }else{
+                if(!submit.hasClass("disabled"))
+                    submit.addClass("disabled");
+            }
+        });
+
+        //TODO doing post on api user
+        /*--------------Submit-------------*/
+        submit.on('click',function(){
+            let modifyMyAccount ={
+                "username" : username.val(),
+                "currentPassword" : currentPassword.val(),
+                "newPassword" : newPassword.val()
+            };
+            console.log(JSON.stringify(modifyMyAccount));
+
+            var settings = {
+                "url": "/api/modifyMyAccount",
+                "method": "PUT",
+                "timeout": 0,
+                "headers": {
+                    "Content-Type": "application/json"
+                },
+                "data": JSON.stringify(modifyMyAccount),
+            };
+
+            $.ajax(settings).done(function (response) {
+                window.location.replace("/myAccount");
+            }).fail(function(response){
+                console.log(response);
+                if(response.responseJSON.code == "WRONG_PASSWORD")
+                    $("#currentPassword").addClass("invalid");
+                if(response.responseJSON.code == "USER_CONFLICT")
+                    $("#username").addClass("invalid");
+            });
+        });
+    })
+
+    /*]]>*/
+</script>
+
+</body>
+</html>

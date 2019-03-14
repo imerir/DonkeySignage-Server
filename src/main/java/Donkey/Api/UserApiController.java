@@ -1,6 +1,7 @@
 package Donkey.Api;
 
 import Donkey.Api.JSON.Error;
+import Donkey.Api.JSON.User.ModifyMyAccountJson;
 import Donkey.Api.JSON.User.UserJson;
 import Donkey.Database.Entity.UserAndPrivileges.RolesEntity;
 import Donkey.Database.Entity.UserAndPrivileges.UserEntity;
@@ -13,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +30,7 @@ public class UserApiController {
     private final PasswordEncoder encoder;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+
 
     @Autowired
     public UserApiController(UserRepository userRepository, PasswordEncoder encoder, RoleRepository roleRepository) {
@@ -121,4 +124,38 @@ public class UserApiController {
         }
     }
 
+    @RequestMapping(value = "/modifyMyAccount", method = RequestMethod.PUT)
+    public ResponseEntity<?> modifyMyAccount(@RequestBody ModifyMyAccountJson userJson, Authentication authentication){
+        UserEntity loggedUser = (UserEntity) authentication.getPrincipal();
+        if(!encoder.matches(userJson.currentPassword,loggedUser.getPassword())){
+            logger.info("[api/modifyMyAccount PUT] wrong password access denied !");
+            return new ResponseEntity<>(new Error("wrong password","WRONG_PASSWORD"),HttpStatus.UNAUTHORIZED);
+        }else{
+//            if(!loggedUser.getUsername().equals(userJson.username) &&
+//                    userRepository.getUserEntityByUsername(userJson.username) == null &&
+//                    userJson.newPassword.isEmpty())
+//                loggedUser.setUsername(userJson.username);
+//            else{
+//                logger.debug("[api/user PUT] username already use");
+//                return new ResponseEntity<>(new Error("username already use or empty or null","USER_CONFLICT"),HttpStatus.CONFLICT);
+//            }
+//            if(!encoder.matches(userJson.newPassword,loggedUser.getPassword()))
+//                loggedUser.setPassword(encoder.encode(userJson.newPassword));
+
+            if(userJson.newPassword.isEmpty()){
+//                modifcation username
+                if(!loggedUser.getUsername().equals(userJson.username) &&
+                        userRepository.getUserEntityByUsername(userJson.username) == null )
+                    loggedUser.setUsername(userJson.username);
+                else{
+                    logger.debug("[api/user PUT] username already use");
+                    return new ResponseEntity<>(new Error("username already use or empty or null","USER_CONFLICT"),HttpStatus.CONFLICT);
+                }
+            }else
+                loggedUser.setPassword(encoder.encode(userJson.newPassword));
+
+            loggedUser = userRepository.save(loggedUser);
+            return new ResponseEntity<>(loggedUser, HttpStatus.OK);
+        }
+    }
 }

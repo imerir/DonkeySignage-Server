@@ -8,6 +8,7 @@ import Donkey.WebSite.FormClass.User.AddUserForm;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,7 +36,7 @@ public class UserWebController {
     }
 
     @RequestMapping(value = "/addUser", method = RequestMethod.GET)
-    public String createUser(Model model){
+    public String createUser(Model model, Authentication authentication){
         model.addAttribute("addUserForm", new AddUserForm());
         model.addAttribute("roleList", roleRep.getAllBy());
         return "User/addUser";
@@ -43,7 +44,7 @@ public class UserWebController {
 
 
     @RequestMapping(value = "/user", method = RequestMethod.GET)
-    public String showUser(Model model, @RequestParam(name = "id", defaultValue = "-1") int id){
+    public String showUser(Model model, @RequestParam(name = "id", defaultValue = "-1") int id, Authentication authentication){
         if(id == -1){
             model.addAttribute("userList",userRepository.getAllBy());
         }else{
@@ -51,5 +52,10 @@ public class UserWebController {
             model.addAttribute("roleList", roleRep.getAllBy());
         }
         return "User/user";
+    }
+
+    @RequestMapping(value = "/myAccount", method = RequestMethod.GET)
+    public String myAccount(Model model, Authentication authentication){
+        return "User/myAccount";
     }
 }

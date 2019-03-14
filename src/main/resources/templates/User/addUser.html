@@ -54,7 +54,7 @@
                         <th:block th:if="${role.getName() == 'ROLE_USER'}">
                             <option th:value='${role.getId()}' selected="selected" th:utext="${#strings.substringAfter(role.getName(),'_')}"></option>
                         </th:block>
-                        <th:block th:unless="${role.getName() == 'ROLE_USER'}">
+                        <th:block th:if="${role.getName() != 'ROLE_USER'}">
                             <option th:value='${role.getId()}' th:utext="${#strings.substringAfter(role.getName(),'_')}"></option>
                         </th:block>
                     </th:block>
