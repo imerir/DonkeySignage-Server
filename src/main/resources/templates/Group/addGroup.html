@@ -26,31 +26,38 @@
 </header>
 <main class="container">
     <!--write your stuff here-->
-    <h1>Add new Group in DataBase</h1>
-    <div class="row">
-        <div class="input-field col s12">
-            <input type="text" id="name" name="name"/>
-            <label for="name">Name : </label>
+    <div class="card-panel">
+        <div class="row">
+            <ul class="collection with-header z-depth-1">
+                <li class="collection-header"><h4><b th:text="#{group.addGroup}"></b></h4></li>
+            </ul>
         </div>
-    </div>
-    <div class="file-field input-field col s10 offset-s1" style="margin-top: 0">
-        <div class="" style="margin-bottom: 5px; ">
-            <label th:text="#{group.group}" style="font-size: 15px"></label>
+        <div class="row">
+            <div class="divider col s10 offset-s1"></div>
         </div>
-        <a class="waves-effect waves-light btn modal-trigger" href="#modalGroup" th:text="#{form.select}"></a>
-        <div class="file-path-wrapper">
-            <input type="text" disabled="disabled" id="groupName"/>
+        <div class="row">
+            <div class="input-field col s12">
+                <input type="text" id="name" name="name"/>
+                <label for="name" th:utext="#{form.name}"></label>
+            </div>
         </div>
-        <input type="hidden" id="groupId" name="groupId"
-               th:value="${addGroupForm?.getParent() == null ? -1 : addGroupForm?.getParent().getId()}"/>
-    </div>
+        <div class="file-field input-field col s10 offset-s1" style="margin-top: 0">
+            <div class="" style="margin-bottom: 5px; ">
+                <label th:text="#{group.group}" style="font-size: 15px"></label>
+            </div>
+            <a class="waves-effect waves-light btn modal-trigger" href="#modalGroup" th:text="#{form.select}"></a>
+            <div class="file-path-wrapper">
+                <input type="text" disabled="disabled" id="groupName"/>
+            </div>
+            <input type="hidden" id="groupId" name="groupId"
+                   th:value="${addGroupForm?.getParent() == null ? -1 : addGroupForm?.getParent().getId()}"/>
+        </div>
 
-    <div class="row">
-        <div class="col s12 center">
-            <button type="button" class="waves-effect waves-green btn-flat red-text"
-                    th:utext="#{form.cancel}"></button>
-            <button id="validateBtn" class="waves-effect waves-green btn-flat green-text"
-                    th:utext="#{form.submit}"></button>
+        <div class="row">
+            <div class="col s12 center">
+                <button id="validateBtn" class="disabled waves-effect waves-light btn green"
+                        th:utext="#{form.submit}" ></button>
+            </div>
         </div>
     </div>
 
@@ -118,6 +125,19 @@
             });
         });
 
+        let name = $('#name');
+        let submit =  $('#validateBtn');
+        /*--------------NAME--------------*/
+        name.on('input',() => {
+            if(name.val().length < 1) {
+                if(!submit.hasClass("disabled"))
+                    submit.addClass("disabled");
+            }
+            else{
+                if(submit.hasClass("disabled"))
+                    submit.removeClass("disabled");
+            }
+        });
     });
 
     /*]]>*/
