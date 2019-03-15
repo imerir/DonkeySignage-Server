@@ -1,7 +1,6 @@
 package Donkey.WebSite;
 
 import java.io.IOException;
-import java.util.stream.Collectors;
 
 import Donkey.Database.Entity.UserAndPrivileges.UserEntity;
 import Donkey.Tools.Exception.StorageFileNotFoundException;
@@ -22,7 +21,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -43,15 +41,11 @@ public class FileUploadController {
      * @return
      * @throws IOException
      */
-    @GetMapping("/media")
+    @GetMapping("/addMedia")
     public String listUploadedFiles(Model model, Authentication authentication) throws IOException {
         UserEntity userEntity = (UserEntity) authentication.getPrincipal();
         model.addAttribute("user",userEntity);
-        model.addAttribute("files", storageService.loadAll().map(
-                path -> MvcUriComponentsBuilder.fromMethodName(FileUploadController.class,
-                        "serveFile", path.getFileName().toString()).build().toString())
-                .collect(Collectors.toList()));
-        return "uploadForm";
+        return "Media/uploadForm";
     }
 
     /**

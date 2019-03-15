@@ -46,7 +46,7 @@
                             <input class="validate" name="file" type="file"/>
                         </div>
                         <div class="file-path-wrapper">
-                            <input class="file-path validate" type="text" th:attr="placeholder=#{media.addMedia}"/>
+                            <input class="file-path validate" type="text" th:attr="placeholder=#{media.uploadMedia}"/>
                         </div>
                     </div>
                 </div>
@@ -59,18 +59,18 @@
         </div>
         <div class="row">
             <div class="col s12" th:if="${message}">
-                <h5 th:text="${message}"/>
+                <h5 class="center" th:text="${message}"/>
             </div>
         </div>
-        <div class="row">
-            <div class="col s12 center">
-                <ul>
-                    <li th:each="file : ${files}">
-                        <a th:href="${file}" th:text="${file}">...</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
+        <!--<div class="row">-->
+            <!--<div class="col s12 center">-->
+                <!--<ul>-->
+                    <!--<li th:each="file : ${files}">-->
+                        <!--<a th:href="${file}" th:text="${file}">...</a>-->
+                    <!--</li>-->
+                <!--</ul>-->
+            <!--</div>-->
+        <!--</div>-->
     </div>
 </main>
 

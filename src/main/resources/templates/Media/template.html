@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${lang}">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+    <!--TODO <meta name="description" content=""/>-->
+    <title>Template - Donkey Signage</title>
+    <link rel="icon"
+          type="image/x-icon"
+          href="/favicon.png"/>
+
+    <!-- CSS  -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+    <link href="/css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+    <style>
+
+
+    </style>
+
+
+</head>
+
+<body class="blue-grey lighten-5">
+<header>
+    <div th:replace="navbar :: navbar ('Template')"></div>
+</header>
+
+<main class="container">
+    <!--write your stuff here-->
+    <div class="card-panel col s10 offset-s1">
+        <div class="row">
+            <div class="row">
+                <div class="col s12 center">
+                    <h2 th:utext="#{media.template}"></h2>
+                </div>
+            </div>
+            <div class="row">
+                <div class="divider col s10 offset-s1"></div>
+            </div>
+
+            <div class="input-field col s10 offset-s1">
+                <input class="editableTemplate grey-text text-darken-2" placeholder="Placeholder" id="name" type="text"
+                       disabled="disabled" th:value="${template.getName()}"/>
+                <label for="name" class="grey-text" th:text="#{login.username}"></label>
+            </div>
+        </div>
+        <div class="row">
+            <ul class="collapsible popout">
+                <th:block th:each="widgetConfig : ${widgetConfList}">
+                    <li>
+                        <div class="collapsible-header" th:utext="${widgetConfig.getWidgetId()}"></div>
+                        <!-- TODO replace by widget name -->
+                        <div class="collapsible-body">
+                            <div class="row">
+                                <div class="input-field col s10">
+                                    <input class="editableWidget grey-text text-darken-2" placeholder="Placeholder" id="posX"
+                                           type="text"
+                                           disabled="disabled" th:value="${widgetConfig.getPosX()}"/>
+                                    <label for="posX" class="grey-text" th:text="#{media.posX}"></label>
+                                </div>
+                                <div class="input-field col s10">
+                                    <input class="editableWidget grey-text text-darken-2" placeholder="Placeholder" id="posY"
+                                           type="text"
+                                           disabled="disabled" th:value="${widgetConfig.getPosY()}"/>
+                                    <label for="posY" class="grey-text" th:text="#{media.posY}"></label>
+                                </div>
+                                <div class="input-field col s10">
+                                    <input class="editableWidget grey-text text-darken-2" placeholder="Placeholder"
+                                           id="sizeWidth"
+                                           type="text"
+                                           disabled="disabled" th:value="${widgetConfig.getSizeWidth()}"/>
+                                    <label for="sizeWidth" class="grey-text" th:text="#{media.sizeWidth}"></label>
+                                </div>
+                                <div class="input-field col s10 ">
+                                    <input class="editableWidget grey-text text-darken-2" placeholder="Placeholder"
+                                           id="sizeHeigth" type="text"
+                                           disabled="disabled" th:value="${widgetConfig.getSizeHeight()}"/>
+                                    <label for="sizeWidth" class="grey-text" th:text="#{media.sizeHeight}"></label>
+                                </div>
+
+                                <div class="row hide-to-editWidget">
+                                    <div class="col s12 center">
+                                        <a class="waves-effect waves-light btn green" id="edit_btnwidget" th:utext="#{form.modify}"></a>
+                                        <a class="waves-effect waves-light btn modal-trigger red" href="#deleteModalwidget" th:utext="#{form.delete}"></a>
+                                    </div>
+                                </div>
+                                <div class="row show-to-editWidget" hidden="hidden">
+                                    <div class="col s12 center">
+                                        <button class="btn green" id="confirm_btnWidget" th:text="#{form.submit}"></button>
+                                        <button class="btn red" id="cancel_btnW0idget" th:text="#{form.cancel}"></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </th:block>
+            </ul>
+
+            <div class="row hide-to-edit">
+                <div class="col s12 center">
+                    <a class="waves-effect waves-light btn green" id="edit_btn" th:utext="#{form.modify}"></a>
+                    <a class="waves-effect waves-light btn modal-trigger red" href="#deleteModal" th:utext="#{form.delete}"></a>
+                </div>
+            </div>
+            <div class="row show-to-edit" hidden="hidden">
+                <div class="col s12 center">
+                    <button class="btn green" id="confirm_btn" th:text="#{form.submit}"></button>
+                    <button class="btn red" id="cancel_btn" th:text="#{form.cancel}"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Modify Template MODAL-->
+
+    <!--Delete Template MODAL-->
+
+    <!--Modify Widget MODAL-->
+
+    <!--Delete Widget MODAL-->
+</main>
+
+<footer class="page-footer" style="padding: 0">
+    <!--<div th:replace="footer :: footer">...</div>-->
+</footer>
+<!--  Scripts-->
+<script th:src="@{/js/materialize.js}"></script>
+<script th:src="@{/js/jquery-3.3.1.min.js}"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    document.addEventListener('DOMContentLoaded', function() {
+        var elems = document.querySelectorAll('.collapsible');
+        M.Collapsible.init(elems);
+
+        let modifyTemplate = $("#edit_btn");
+        let submitTemplate = $("#confirm_btn");
+        let cancelModifyTemplate = $("#cancel_btn");
+        let editableTemplate = $(".editableTemplate");
+        let toHideTemplate = $(".hide-to-edit");
+        let toShowTemplate = $(".show-to-edit");
+
+
+        modifyTemplate.click(function(){
+            editableTemplate.removeAttr('disabled');
+            editableTemplate.removeClass("grey-text text-darken-2");
+            editableTemplate.addClass("validate valid");
+            toHideTemplate.attr("hidden", "hidden");
+            toShowTemplate.removeAttr("hidden");
+        });
+
+        cancelModifyTemplate.click(function(){
+            location.reload();
+        });
+
+        submitTemplate.click(function(){
+            let modifyTemplateJson = {
+                "name" : $("#name").val()
+            };
+
+            var settings = {
+                "url": "api/template?id="+[[${template.getId()}]],
+                "method": "PUT",
+                "timeout": 0,
+                "headers": {
+                    "Content-Type": "application/json"
+                },
+                "data": JSON.stringify(modifyTemplateJson),
+            };
+
+            $.ajax(settings).done(function (response) {
+                console.log(response);
+            });
+        });
+
+    });
+    /*]]>*/
+</script>
+
+</body>
+</html>

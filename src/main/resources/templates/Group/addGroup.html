@@ -120,7 +120,7 @@
             $.ajax(settings).done(function (response) {
                 console.log(response);
                 window.location.replace("/group?id="+response.id);
-            });
+            }); //TODO gestion erreur
         });
 
         let name = $('#name');

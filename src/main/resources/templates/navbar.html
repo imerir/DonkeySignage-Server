@@ -75,8 +75,17 @@
                 <li th:classappend="${page == 'user'? 'active' : ''}">
                     <a href="/user"  th:text="#{login.user}"></a>
                 </li>
+                <li>
+                    <div class="divider"></div>
+                </li>
+                <li th:classappend="${page == 'media'? 'active' : ''}">
+                <a href="/media" th:utext="#{media.media}"></a>
+                </li>
+                <li th:classappend="${page == 'addTemplate'? 'active' : ''}">
+                    <a href="/addTemplate" th:utext="#{media.newTemplate}"></a>
+                </li>
                 <li th:classappend="${page == 'uplaodForm'? 'active' : ''}">
-                    <a href="/media" th:utext="#{media.media}"></a>
+                    <a href="/addMedia" th:utext="#{media.addMedia}"></a>
                 </li>
             </ul>
         </th:block>
