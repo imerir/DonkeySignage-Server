@@ -1,5 +1,7 @@
 package Donkey.WebSocket;
 
+import Donkey.Database.Entity.TemplateEntity;
+import Donkey.Database.Entity.WidgetConfigEntity;
 import Donkey.Widgets.WidgetInterface;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -7,6 +9,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.type.filter.AssignableTypeFilter;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
@@ -49,6 +52,20 @@ public class WebSocketUtils {
         return widgets;
 
 
+    }
+
+
+    public TemplateEntity templateConvertor(TemplateEntity templateEntity){
+        List<WidgetConfigEntity> widgetsConf = templateEntity.getWidgetConfigs();
+        for (WidgetConfigEntity aWidget : widgetsConf){
+            try {
+                aWidget.setParam(widgets.get(aWidget.getWidgetId()).convertParam(aWidget.getParam()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+        return templateEntity;
     }
 
 

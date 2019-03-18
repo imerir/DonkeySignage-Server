@@ -1,6 +1,8 @@
 package Donkey.WebSocket;
 
 import Donkey.Database.Entity.ScreenEntity;
+import Donkey.Database.Entity.TemplateEntity;
+import Donkey.Database.Entity.WidgetConfigEntity;
 import Donkey.Database.Repository.ScreenRepository;
 import Donkey.SpringContext;
 import Donkey.Tools.Exception.TokenNotMatch;
@@ -103,7 +105,6 @@ public class SocketHandler extends TextWebSocketHandler {
                 case "CONFIG":
 
                     sendConfig(session);
-
                     break;
 
             }
@@ -168,9 +169,13 @@ public class SocketHandler extends TextWebSocketHandler {
                 screenRepository = (ScreenRepository) context.getBean("screenRepository");
             }
             ScreenEntity screen = screenRepository.getScreenRegisterByUuid(state.uuid);
-            webSocketData.data.put("template", screen.getTemplate());
+            TemplateEntity template = screen.getTemplate();
+            webSocketData.data.put("template", WebSocketUtils.getINSTANCE().templateConvertor(template) );
             String screenStr = objectMapper.writeValueAsString(webSocketData);
             session.sendMessage(new TextMessage(screenStr));
         }
     }
+
+
+
 }

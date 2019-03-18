@@ -1,0 +1,25 @@
+<div id="$id" class="slider carousel-slider" style="width: 100%; height: 100%">
+    <ul class="slides">
+        <li>
+            <img src=""/>
+        </li>
+    </ul>
+</div>
+
+
+<script>
+    var id = $id;
+    var paramStr = '$param';
+    var param = JSON.parse(paramStr);
+    var heigth = document.getElementById(id).clientHeight;
+    console.log(param);
+    var imgHtml = "";
+    param.images.forEach(function (item) {
+        imgHtml += " <li>\n" +
+            "            <img src='data:image/png;base64,"+item+"'/>\n" +
+            "        </li>";
+    })
+    document.getElementById(id).querySelector(".slides").innerHTML = imgHtml;
+    var elems = document.querySelectorAll('.slider');
+    var instances = M.Slider.init(elems, {height: heigth, indicators: false});
+</script>
