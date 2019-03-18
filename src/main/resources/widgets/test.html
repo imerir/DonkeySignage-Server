@@ -1,13 +1,18 @@
-<div id="$id">
-    <h1>$message</h1>
+<div id="$id" class="valign-wrapper" style="width: 100%; height: 100%">
+    <div class="center-align" style="width: 100%; height: 100%">
+        <h1 id="text_$id" style="font-size: $font_size ex">$message</h1>
+    </div>
 </div>
 
 <script>
     var id = $id;
     var paramStr = '$param';
     var param = JSON.parse(paramStr);
-    $("#"+id).each(function(){
+    $("#" + id).each(function () {
         $(this)[0].innerHTML = $(this)[0].innerHTML.replace(/\$message/g, param.message);
+        $(this)[0].innerHTML = $(this)[0].innerHTML.replace(/\$font_size/g, param.font_size);
+
     });
+
 
 </script>

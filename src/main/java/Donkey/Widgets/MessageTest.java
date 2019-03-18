@@ -31,11 +31,18 @@ public class MessageTest implements WidgetInterface{
         return new String(Files.readAllBytes(file.toPath()));
     }
 
+    @Override
+    public String convertParam(String paramStr) {
+        return paramStr;
+    }
+
+
     @JsonIgnore
     @Override
     public HashMap<String, Object> getParam() {
         HashMap<String, Object> param = new HashMap<>();
         param.put("message", "");
+        param.put("font_size", 0);
         return param;
     }
 }
