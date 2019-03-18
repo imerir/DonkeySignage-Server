@@ -117,6 +117,13 @@
             </ul>
 
             <th:block th:if="${user.isAdmin()}">
+                <div class="row">
+                    <div class="col s12 center">
+                        <a class="waves-effect waves-light btn modal-trigger blue " href="#addWidgetToTemplate"
+                           th:utext="#{media.addWidget}"></a>
+                    </div>
+                </div>
+
                 <div class="row hide-to-edit">
                     <div class="col s12 center">
                         <a class="waves-effect waves-light btn green" id="edit_btn" th:utext="#{form.modify}"></a>
@@ -124,6 +131,7 @@
                            th:utext="#{form.delete}"></a>
                     </div>
                 </div>
+
                 <div class="row show-to-edit" hidden="hidden">
                     <div class="col s12 center">
                         <button class="btn green" id="confirm_btn" th:text="#{form.submit}"></button>
@@ -134,16 +142,63 @@
         </div>
     </div>
     <th:block th:if="${user.isAdmin()}">
+        <!--Adding Template MODAL-->
+        <div id="addWidgetToTemplate" class="modal">
+            <div class="modal-content">
+                <div class="row">
+                    <h4 th:text="#{media.addWidget}"></h4>
+                </div>
+                <div class="row">
+                    <select id="widgetSelect" class="browser-default">
+                        <th:block th:each=" widgetId : ${widgetIdList}">
+                            <option th:utext="${widgetId}"></option>
+                        </th:block>
+                    </select>
+                </div>
+                <div class="row">
+                    <div class="divider col s10 offset-s1"></div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s10 offset-s1">
+                        <input class="editable grey-text text-darken-2 validate" id="addWidgetPosX" min="0" max="12"
+                               type="number"/>
+                        <label for="addWidgetPosX" class="grey-text" th:text="#{media.posX}"></label>
+                    </div>
+                    <div class="input-field col s10 offset-s1">
+                        <input class="editable grey-text text-darken-2 validate" id="addWidgetPosY" min="0" max="12"
+                               type="number"/>
+                        <label for="addWidgetPosY" class="grey-text" th:text="#{media.posY}"></label>
+                    </div>
+                    <div class="input-field col s10 offset-s1">
+                        <input class="editable grey-text text-darken-2 validate" id="addWidgetSizeWidth" min="1" max="12"
+                               type="number"/>
+                        <label for="addWidgetSizeWidth" class="grey-text" th:text="#{media.sizeWidth}"></label>
+                    </div>
+                    <div class="input-field col s10 offset-s1">
+                        <input class="editable grey-text text-darken-2 validate" id="addWidgetSizeHeight" min="1" max="12"
+                               type="number"/>
+                        <label for="addWidgetSizeHeight" class="grey-text" th:text="#{media.sizeHeight}"></label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-close waves-effect waves-green btn red"
+                        th:text="#{form.no}"></button>
+                <button class="modal-close waves-effect waves-green btn green disabled" id="submitNewWidget"
+                        th:text="#{form.yes}"></button>
+            </div>
+        </div>
+
         <!--Delete Template MODAL-->
         <div id="delModal" class="modal">
             <div class="modal-content">
                 <h4 th:text="#{group.messageDelete}"></h4>
             </div>
             <div class="modal-footer">
-                <button class="modal-close waves-effect waves-green btn-flat red-text" th:text="#{form.no}"></button>
-                <button class="modal-close waves-effect waves-green btn-flat green-text" id="deleteTemplateBtn"
+                <button class="modal-close waves-effect waves-green btn red"
+                        th:text="#{form.no}"></button>
+                <button class="modal-close waves-effect waves-green btn green" id="deleteTemplateBtn"
                         th:text="#{form.yes}"></button>
-
             </div>
         </div>
         <!--Delete Widget MODAL-->
@@ -152,10 +207,10 @@
                 <h4 th:text="#{group.messageDelete}"></h4>
             </div>
             <div class="modal-footer">
-                <button class="modal-close waves-effect waves-green btn-flat red-text" th:text="#{form.no}"></button>
-                <button class="modal-close waves-effect waves-green btn-flat green-text" id="deleteWidgetBtn"
+                <button class="modal-close waves-effect waves-green btn red"
+                        th:text="#{form.no}"></button>
+                <button class="modal-close waves-effect waves-green btn green" id="deleteWidgetBtn"
                         th:text="#{form.yes}"></button>
-
             </div>
         </div>
 
@@ -173,8 +228,8 @@
     /*<![CDATA[*/
     document.addEventListener('DOMContentLoaded', function () {
 
-        let modaux = document.querySelectorAll('.modal');
-        M.Modal.init(modaux);
+        let modal = document.querySelectorAll('.modal');
+        M.Modal.init(modal);
 
         var elems = document.querySelectorAll('.collapsible');
         M.Collapsible.init(elems);
@@ -281,8 +336,8 @@
             });
         });
 
-        $("#delete_btn").click(function(){
-            idToDelete =  $(this).attr("data-id");
+        $("#delete_btn").click(function () {
+            idToDelete = $(this).attr("data-id");
         });
 
         $('#deleteWidgetBtn').click(function () {
