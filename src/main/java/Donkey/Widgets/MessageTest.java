@@ -8,7 +8,8 @@ import org.apache.logging.log4j.Logger;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.HashMap;
+import java.util.Arrays;
+import java.util.List;
 
 public class MessageTest implements WidgetInterface{
     Logger logger = LogManager.getLogger();
@@ -39,10 +40,9 @@ public class MessageTest implements WidgetInterface{
 
     @JsonIgnore
     @Override
-    public HashMap<String, Object> getParam() {
-        HashMap<String, Object> param = new HashMap<>();
-        param.put("message", "");
-        param.put("font_size", 0);
-        return param;
+    public List<WidgetConfDefinition> getParam() {
+        WidgetConfDefinition message = new WidgetConfDefinition("message", WidgetConfDefinition.Type.TEXT, true, false, null, null);
+        WidgetConfDefinition font_size = new WidgetConfDefinition("font_size", WidgetConfDefinition.Type.NUMBER, true, false, null, null);
+        return Arrays.asList(message, font_size);
     }
 }

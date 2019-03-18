@@ -2,8 +2,6 @@ package Donkey.Widgets;
 
 import Donkey.MainClass;
 import Donkey.Tools.Base64;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,7 +13,7 @@ import java.nio.file.Files;
 import java.util.*;
 
 public class ImageSlide implements WidgetInterface {
-    Logger logger = LogManager.getLogger();
+    private Logger logger = LogManager.getLogger();
     @Override
     public String getId() {
         return "IMAGE_SLIDE";
@@ -59,10 +57,10 @@ public class ImageSlide implements WidgetInterface {
     }
 
     @Override
-    public HashMap<String, Object> getParam() {
-        HashMap<String, Object> param = new HashMap<>();
-        param.put("images", new ArrayList<>());
-        return param;
+    public List<WidgetConfDefinition> getParam() {
+
+        WidgetConfDefinition images = new WidgetConfDefinition("images", WidgetConfDefinition.Type.MEDIA, false, true, "", null);
+        return Collections.singletonList(images);
     }
 
 
