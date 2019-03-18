@@ -11,12 +11,12 @@ import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.List;
 
-public class MessageTest implements WidgetInterface{
+public class Text implements WidgetInterface{
     Logger logger = LogManager.getLogger();
 
     @Override
     public String getId() {
-        return "TEST";
+        return "TEXT";
     }
 
     @Override
@@ -27,7 +27,7 @@ public class MessageTest implements WidgetInterface{
     @Override
     public String getTemplate() throws IOException {
         ClassLoader classLoader = MainClass.class.getClassLoader();
-        File file = new File(classLoader.getResource("widgets/test.html").getFile());
+        File file = new File(classLoader.getResource("widgets/text.html").getFile());
 
         return new String(Files.readAllBytes(file.toPath()));
     }
