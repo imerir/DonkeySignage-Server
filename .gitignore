@@ -80,3 +80,8 @@ logs/
 \.idea/codeStyles/Project\.xml
 
 \.idea/
+
+
+.zanata-cache/
+upload-dir/
+
