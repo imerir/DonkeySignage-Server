@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<config xmlns="http://zanata.org/namespace/config/">
+    <url>https://zanata.donkeysignage.imerir.org/</url>
+    <project>donkey-server</project>
+    <project-version>V0.1</project-version>
+    <project-type>utf8properties</project-type>
+    <src-dir>src/main/resources/messages</src-dir>
+    <trans-dir>src/main/resources/messages</trans-dir>
+    <excludes>*en_US.properties</excludes>
+    <rules/>
+</config>
