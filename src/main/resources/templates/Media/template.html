@@ -49,17 +49,18 @@
                 <th:block th:each="widgetConfig : ${widgetConfList}">
                     <li>
                         <div class="collapsible-header" th:utext="${widgetConfig.getWidgetId()}"></div>
-                        <!-- TODO replace by widget name -->
                         <div class="collapsible-body">
                             <div class="row">
                                 <div class="input-field col s10">
-                                    <input class="editableWidget grey-text text-darken-2" placeholder="Placeholder" id="posX"
+                                    <input class=" grey-text text-darken-2 "
+                                           th:classappend="${widgetConfig.getId()}" placeholder="Placeholder" id="posX"
                                            type="text"
                                            disabled="disabled" th:value="${widgetConfig.getPosX()}"/>
                                     <label for="posX" class="grey-text" th:text="#{media.posX}"></label>
                                 </div>
                                 <div class="input-field col s10">
-                                    <input class="editableWidget grey-text text-darken-2" placeholder="Placeholder" id="posY"
+                                    <input class=" grey-text text-darken-2"
+                                           th:classappend="${widgetConfig.getId()}" placeholder="Placeholder" id="posY"
                                            type="text"
                                            disabled="disabled" th:value="${widgetConfig.getPosY()}"/>
                                     <label for="posY" class="grey-text" th:text="#{media.posY}"></label>
@@ -68,56 +69,98 @@
                                     <input class="editableWidget grey-text text-darken-2" placeholder="Placeholder"
                                            id="sizeWidth"
                                            type="text"
-                                           disabled="disabled" th:value="${widgetConfig.getSizeWidth()}"/>
+                                           disabled="disabled" th:classappend="${widgetConfig.getId()}"
+                                           th:value="${widgetConfig.getSizeWidth()}"/>
                                     <label for="sizeWidth" class="grey-text" th:text="#{media.sizeWidth}"></label>
                                 </div>
                                 <div class="input-field col s10 ">
                                     <input class="editableWidget grey-text text-darken-2" placeholder="Placeholder"
                                            id="sizeHeigth" type="text"
-                                           disabled="disabled" th:value="${widgetConfig.getSizeHeight()}"/>
+                                           disabled="disabled" th:classappend="${widgetConfig.getId()}"
+                                           th:value="${widgetConfig.getSizeHeight()}"/>
                                     <label for="sizeWidth" class="grey-text" th:text="#{media.sizeHeight}"></label>
                                 </div>
 
-                                <div class="row hide-to-editWidget">
-                                    <div class="col s12 center">
-                                        <a class="waves-effect waves-light btn green" id="edit_btnwidget" th:utext="#{form.modify}"></a>
-                                        <a class="waves-effect waves-light btn modal-trigger red" href="#deleteModalwidget" th:utext="#{form.delete}"></a>
+                                <th:block th:if="${user.isAdmin()}">
+                                    <div class="row hide-to-editWidget" th:classappend="${widgetConfig.getId()}"
+                                         th:attr="data-id=${widgetConfig.getId()}">
+                                        <div class="col s12 center">
+                                            <a class="waves-effect waves-light btn green" id="edit_btnWidget"
+                                               th:classappend="${widgetConfig.getId()}"
+                                               th:attr="data-id=${widgetConfig.getId()}"
+                                               th:utext="#{form.modify}"></a>
+                                            <a class="waves-effect waves-light btn modal-trigger red" id="delete_btn"
+                                               th:classappend="${widgetConfig.getId()}"
+                                               th:attr="data-id=${widgetConfig.getId()}"
+                                               href="#deleteModalWidget" th:utext="#{form.delete}"></a>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="row show-to-editWidget" hidden="hidden">
-                                    <div class="col s12 center">
-                                        <button class="btn green" id="confirm_btnWidget" th:text="#{form.submit}"></button>
-                                        <button class="btn red" id="cancel_btnW0idget" th:text="#{form.cancel}"></button>
+                                    <div class="row show-to-editWidget" hidden="hidden"
+                                         th:classappend="${widgetConfig.getId()}"
+                                         th:attr="data-id=${widgetConfig.getId()}">
+                                        <div class="col s12 center">
+                                            <button class="btn green" id="confirm_btnWidget"
+                                                    th:classappend="${widgetConfig.getId()}"
+                                                    th:attr="data-id=${widgetConfig.getId()}"
+                                                    th:text="#{form.submit}"></button>
+                                            <button class="btn red" id="cancel_btnWidget"
+                                                    th:classappend="${widgetConfig.getId()}"
+                                                    th:attr="data-id=${widgetConfig.getId()}"
+                                                    th:text="#{form.cancel}"></button>
+                                        </div>
                                     </div>
-                                </div>
+                                </th:block>
                             </div>
                         </div>
                     </li>
                 </th:block>
             </ul>
 
-            <div class="row hide-to-edit">
-                <div class="col s12 center">
-                    <a class="waves-effect waves-light btn green" id="edit_btn" th:utext="#{form.modify}"></a>
-                    <a class="waves-effect waves-light btn modal-trigger red" href="#deleteModal" th:utext="#{form.delete}"></a>
+            <th:block th:if="${user.isAdmin()}">
+                <div class="row hide-to-edit">
+                    <div class="col s12 center">
+                        <a class="waves-effect waves-light btn green" id="edit_btn" th:utext="#{form.modify}"></a>
+                        <a class="waves-effect waves-light btn modal-trigger red" href="#delModal"
+                           th:utext="#{form.delete}"></a>
+                    </div>
                 </div>
-            </div>
-            <div class="row show-to-edit" hidden="hidden">
-                <div class="col s12 center">
-                    <button class="btn green" id="confirm_btn" th:text="#{form.submit}"></button>
-                    <button class="btn red" id="cancel_btn" th:text="#{form.cancel}"></button>
+                <div class="row show-to-edit" hidden="hidden">
+                    <div class="col s12 center">
+                        <button class="btn green" id="confirm_btn" th:text="#{form.submit}"></button>
+                        <button class="btn red" id="cancel_btn" th:text="#{form.cancel}"></button>
+                    </div>
                 </div>
-            </div>
+            </th:block>
         </div>
     </div>
+    <th:block th:if="${user.isAdmin()}">
+        <!--Delete Template MODAL-->
+        <div id="delModal" class="modal">
+            <div class="modal-content">
+                <h4 th:text="#{group.messageDelete}"></h4>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-close waves-effect waves-green btn-flat red-text" th:text="#{form.no}"></button>
+                <button class="modal-close waves-effect waves-green btn-flat green-text" id="deleteTemplateBtn"
+                        th:text="#{form.yes}"></button>
 
-    <!--Modify Template MODAL-->
+            </div>
+        </div>
+        <!--Delete Widget MODAL-->
+        <div id="deleteModalWidget" class="modal">
+            <div class="modal-content">
+                <h4 th:text="#{group.messageDelete}"></h4>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-close waves-effect waves-green btn-flat red-text" th:text="#{form.no}"></button>
+                <button class="modal-close waves-effect waves-green btn-flat green-text" id="deleteWidgetBtn"
+                        th:text="#{form.yes}"></button>
 
-    <!--Delete Template MODAL-->
+            </div>
+        </div>
 
-    <!--Modify Widget MODAL-->
 
-    <!--Delete Widget MODAL-->
+    </th:block>
 </main>
 
 <footer class="page-footer" style="padding: 0">
@@ -128,10 +171,15 @@
 <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
 <script th:inline="javascript">
     /*<![CDATA[*/
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
+
+        let modaux = document.querySelectorAll('.modal');
+        M.Modal.init(modaux);
+
         var elems = document.querySelectorAll('.collapsible');
         M.Collapsible.init(elems);
 
+        /*--Management name template--*/
         let modifyTemplate = $("#edit_btn");
         let submitTemplate = $("#confirm_btn");
         let cancelModifyTemplate = $("#cancel_btn");
@@ -139,8 +187,7 @@
         let toHideTemplate = $(".hide-to-edit");
         let toShowTemplate = $(".show-to-edit");
 
-
-        modifyTemplate.click(function(){
+        modifyTemplate.click(function () {
             editableTemplate.removeAttr('disabled');
             editableTemplate.removeClass("grey-text text-darken-2");
             editableTemplate.addClass("validate valid");
@@ -148,17 +195,17 @@
             toShowTemplate.removeAttr("hidden");
         });
 
-        cancelModifyTemplate.click(function(){
+        cancelModifyTemplate.click(function () {
             location.reload();
         });
 
-        submitTemplate.click(function(){
+        submitTemplate.click(function () {
             let modifyTemplateJson = {
-                "name" : $("#name").val()
+                "name": $("#name").val()
             };
 
             var settings = {
-                "url": "api/template?id="+[[${template.getId()}]],
+                "url": "api/template?id=" + [[${template.getId()}]],
                 "method": "PUT",
                 "timeout": 0,
                 "headers": {
@@ -169,9 +216,86 @@
 
             $.ajax(settings).done(function (response) {
                 console.log(response);
+                window.location.reload();
             });
         });
 
+        $('#deleteTemplateBtn').click(function () {
+            let settings = {
+                "url": "/api/template?id=" + [[${template.getId()}]],
+                "method": "DELETE"
+            };
+            $.ajax(settings).done(function (response) {
+                console.log(response);
+                window.location.replace("/media");
+            });
+
+        });
+
+        /*--Management WidgetConfig template--*/
+        let modifyEditConfig = $("#edit_btnWidget");
+        let submitEditConfig = $("#confirm_btnWidget");
+        let cancelModifyEditConfig = $("#cancel_btnWidget");
+        let idToSend;
+        let idToDelete;
+
+        modifyEditConfig.click(function () {
+            idToSend = $(this).attr("data-id");
+            var allWidgets = $("." + idToSend + ".editableWidget");
+            console.log(allWidgets);
+            var changeWidgetConfigSelector = $("." + idToSend + "#confirm_btnWidget");
+            var toHideEditConfigSelector = $("." + idToSend + ".hide-to-editWidget");
+            let toShowEditConfigSelector = $("." + idToSend + ".show-to-editWidget");
+            allWidgets.removeAttr('disabled');
+            allWidgets.addClass("validate valid");
+            changeWidgetConfigSelector.removeClass("grey-text text-darken-2");
+            toHideEditConfigSelector.attr("hidden", "hidden");
+            toShowEditConfigSelector.removeAttr("hidden");
+        });
+
+        cancelModifyEditConfig.click(function () {
+            location.reload();
+        });
+
+        submitEditConfig.click(function () {
+            var allWidgets = $("." + idToSend + ".editableWidget");
+            let modifyEditConfigJson = {
+                "sizeWidth": allWidgets[0].value,
+                "sizeHeight": allWidgets[1].value,
+                "param": ""
+            };
+            console.log(JSON.stringify(modifyEditConfigJson));
+            var settings = {
+                "url": "api/widgetConf?id=" + idToSend,
+                "method": "PUT",
+                "timeout": 0,
+                "headers": {
+                    "Content-Type": "application/json"
+                },
+                "data": JSON.stringify(modifyEditConfigJson),
+            };
+
+            $.ajax(settings).done(function (response) {
+                console.log(response);
+                window.location.reload();
+            });
+        });
+
+        $("#delete_btn").click(function(){
+            idToDelete =  $(this).attr("data-id");
+        });
+
+        $('#deleteWidgetBtn').click(function () {
+            console.log(idToDelete);
+            let settings = {
+                "url": "/api/widgetConf?id=" + idToDelete,
+                "method": "DELETE"
+            };
+            $.ajax(settings).done(function (response) {
+                console.log(response);
+                window.location.reload();
+            });
+        });
     });
     /*]]>*/
 </script>
