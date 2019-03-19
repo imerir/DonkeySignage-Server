@@ -6,6 +6,7 @@ import Donkey.Database.Repository.TemplateRepository;
 import Donkey.Database.Repository.WidgetConfigRepository;
 import Donkey.Storage.Service.StorageService;
 import Donkey.WebSocket.WebSocketUtils;
+import Donkey.Widgets.WidgetConfDefinition;
 import Donkey.Widgets.WidgetInterface;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -66,10 +67,15 @@ public class TemplateController {
             model.addAttribute("template", template);
             model.addAttribute("widgetConfList", widgetConfigRepository.getAllByTemplateId(id));
             ArrayList <String> widgetIdList = new ArrayList<>();
+
             webSocketUtils.getWidgets().forEach((key, value) -> {
                 widgetIdList.add(key);
             });
             model.addAttribute("widgetIdList",widgetIdList);
+
+            model.addAttribute("widgets", webSocketUtils.getWidgets());
+
+
             return "Media/template";
         }
     }

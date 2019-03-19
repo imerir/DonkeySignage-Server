@@ -18,6 +18,7 @@ public class WidgetConfigEntity {
     @JoinColumn(name = "template_id")
     private TemplateEntity template;
 
+    private String name;
     private String widgetId;
     private Integer posX;
     private Integer posY;
@@ -111,5 +112,13 @@ public class WidgetConfigEntity {
         if(widgetConfigEntity.sizeWidth != null)
             this.sizeWidth = widgetConfigEntity.sizeWidth;
 
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

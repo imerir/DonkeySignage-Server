@@ -5,6 +5,7 @@ import java.util.List;
 
 public interface WidgetInterface {
 
+    String getName();
     String getId();
     String getVersion();
     String getTemplate() throws IOException;

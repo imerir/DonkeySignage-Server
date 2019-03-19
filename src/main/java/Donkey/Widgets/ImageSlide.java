@@ -14,6 +14,12 @@ import java.util.*;
 
 public class ImageSlide implements WidgetInterface {
     private Logger logger = LogManager.getLogger();
+
+    @Override
+    public String getName() {
+        return "Image Slides";
+    }
+
     @Override
     public String getId() {
         return "IMAGE_SLIDE";
@@ -59,7 +65,7 @@ public class ImageSlide implements WidgetInterface {
     @Override
     public List<WidgetConfDefinition> getParam() {
 
-        WidgetConfDefinition images = new WidgetConfDefinition("images", WidgetConfDefinition.Type.MEDIA, false, true, "", null);
+        WidgetConfDefinition images = new WidgetConfDefinition("images", ConfType.MEDIA, false, true, "", null);
         return Collections.singletonList(images);
     }
 

@@ -15,6 +15,11 @@ public class Text implements WidgetInterface{
     Logger logger = LogManager.getLogger();
 
     @Override
+    public String getName() {
+        return "Text";
+    }
+
+    @Override
     public String getId() {
         return "TEXT";
     }
@@ -41,8 +46,8 @@ public class Text implements WidgetInterface{
     @JsonIgnore
     @Override
     public List<WidgetConfDefinition> getParam() {
-        WidgetConfDefinition message = new WidgetConfDefinition("message", WidgetConfDefinition.Type.TEXT, true, false, null, null);
-        WidgetConfDefinition font_size = new WidgetConfDefinition("font_size", WidgetConfDefinition.Type.NUMBER, true, false, null, null);
+        WidgetConfDefinition message = new WidgetConfDefinition("message", ConfType.TEXT, true, false, null, null);
+        WidgetConfDefinition font_size = new WidgetConfDefinition("font_size", ConfType.NUMBER, true, false, "12", null);
         return Arrays.asList(message, font_size);
     }
 }

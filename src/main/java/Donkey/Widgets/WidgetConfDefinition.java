@@ -5,16 +5,10 @@ import java.util.List;
 
 public class WidgetConfDefinition {
 
-    public enum Type{
-        MEDIA,
-        TEXT,
-        NUMBER
-    }
-
 
     private String name;
 
-    private Type type;
+    private ConfType type;
 
     private boolean freeValue;
 
@@ -27,7 +21,7 @@ public class WidgetConfDefinition {
 
     public WidgetConfDefinition(){}
 
-    public WidgetConfDefinition(String name, Type type, boolean isFreeValue, boolean isList, Object value, List<Object> valueSet) {
+    public WidgetConfDefinition(String name, ConfType type, boolean isFreeValue, boolean isList, Object value, List<Object> valueSet) {
         this.name = name;
         this.freeValue = isFreeValue;
         this.type = type;
@@ -44,11 +38,11 @@ public class WidgetConfDefinition {
         this.freeValue = freeValue;
     }
 
-    public Type getType() {
+    public ConfType getType() {
         return type;
     }
 
-    public void setType(Type type) {
+    public void setType(ConfType type) {
         this.type = type;
     }
 
