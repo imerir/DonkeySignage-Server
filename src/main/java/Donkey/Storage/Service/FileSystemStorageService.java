@@ -12,6 +12,8 @@ import java.util.stream.Stream;
 import Donkey.Tools.Exception.StorageException;
 import Donkey.Tools.Exception.StorageFileNotFoundException;
 import Donkey.Storage.StorageProperties;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -24,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class FileSystemStorageService implements StorageService {
 
     private final Path rootLocation;
+    private Logger log = LogManager.getLogger();
 
     @Autowired
     public FileSystemStorageService(StorageProperties properties) {
@@ -115,6 +118,37 @@ public class FileSystemStorageService implements StorageService {
     public void deleteAll() {
         FileSystemUtils.deleteRecursively(rootLocation.toFile());
     }
+
+    /**
+     * Delete a file
+     */
+//    public boolean deleteFile(String filename){
+//        try {
+//            log.debug("Filename : " + filename);
+//            Path file = load(filename);
+//            log.debug("file : " + file.toUri());
+//            Resource resource = new UrlResource(file.toUri());
+//            log.debug("resource.exists() : " + resource.exists());
+//            log.debug("resource.isReadable() : " + resource.isReadable());
+//            if (resource.exists() || resource.isReadable()) {
+//                try{
+//                    FileSystemUtils.deleteRecursively(resource.getFile());
+//                    return true;
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                    return false;
+//                }
+//            }
+//            else {
+//                throw new StorageFileNotFoundException(
+//                        "Could not read file: " + filename);
+//
+//            }
+//        }
+//        catch (MalformedURLException e) {
+//            throw new StorageFileNotFoundException("Could not read file: " + filename, e);
+//        }
+//    }
 
     /**
      * Init storage system
