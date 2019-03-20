@@ -1,6 +1,7 @@
 package Donkey.WebSite;
 
 import Donkey.Api.JSON.Template.AddTemplateJson;
+import Donkey.Api.JSON.Template.DeleteFileJson;
 import Donkey.Database.Entity.TemplateEntity;
 import Donkey.Database.Repository.TemplateRepository;
 import Donkey.Database.Repository.WidgetConfigRepository;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -79,4 +81,5 @@ public class TemplateController {
             return "Media/template";
         }
     }
+
 }

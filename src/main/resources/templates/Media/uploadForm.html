@@ -43,11 +43,17 @@
                     <div class="file-field input-field col s12">
                         <div class="btn">
                             <span th:utext="#{media.file}"></span>
-                            <input class="validate" name="file" type="file"/>
+                            <input class="validate" name="file" onchange="readURL(this)" type="file"/>
                         </div>
                         <div class="file-path-wrapper">
-                            <input class="file-path validate" type="text" th:attr="placeholder=#{media.uploadMedia}"/>
+                            <input class="file-path validate"  type="text"
+                                   th:attr="placeholder=#{media.uploadMedia}"/>
                         </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col s12 center">
+                        <img id="preview" width="180"/>
                     </div>
                 </div>
                 <div class="row">
@@ -63,13 +69,13 @@
             </div>
         </div>
         <!--<div class="row">-->
-            <!--<div class="col s12 center">-->
-                <!--<ul>-->
-                    <!--<li th:each="file : ${files}">-->
-                        <!--<a th:href="${file}" th:text="${file}">...</a>-->
-                    <!--</li>-->
-                <!--</ul>-->
-            <!--</div>-->
+        <!--<div class="col s12 center">-->
+        <!--<ul>-->
+        <!--<li th:each="file : ${files}">-->
+        <!--<a th:href="${file}" th:text="${file}">...</a>-->
+        <!--</li>-->
+        <!--</ul>-->
+        <!--</div>-->
         <!--</div>-->
     </div>
 </main>
@@ -81,6 +87,26 @@
 <script th:src="@{/js/materialize.js}"></script>
 <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
 <script th:inline="javascript">
+    /*<![CDATA[*/
+    function readURL(input) {
+        console.log(input);
+        console.log(input.files);
+        console.log(input.files[0]);
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('#preview')
+                    .attr('src', e.target.result);
+            };
+
+            reader.readAsDataURL(input.files[0]);
+        } else {
+            console.log("no way u do dat !");
+        }
+    }
+
+    /*]]>*/
 </script>
 </body>
 </html>
