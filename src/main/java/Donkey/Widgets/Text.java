@@ -31,7 +31,7 @@ public class Text implements WidgetInterface{
 
     @Override
     public String getTemplate() throws IOException {
-        ClassLoader classLoader = MainClass.class.getClassLoader();
+        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
         File file = new File(classLoader.getResource("widgets/text.html").getFile());
 
         return new String(Files.readAllBytes(file.toPath()));
