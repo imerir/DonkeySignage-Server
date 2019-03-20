@@ -32,7 +32,7 @@ public class ImageSlide implements WidgetInterface {
 
     @Override
     public String getTemplate() throws IOException {
-        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+        ClassLoader classLoader = MainClass.class.getClassLoader();
         File file = new File(classLoader.getResource("widgets/image_slides.html").getFile());
         return new String(Files.readAllBytes(file.toPath()));
     }
