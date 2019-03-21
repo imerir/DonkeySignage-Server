@@ -2,9 +2,9 @@ package Donkey.WebSite;
 
 import Donkey.Database.Entity.ScreenEntity;
 import Donkey.Database.Entity.TemporalScreenEntity;
-import Donkey.Database.Entity.UserAndPrivileges.UserEntity;
 import Donkey.Database.Repository.GroupRepository;
 import Donkey.Database.Repository.ScreenRepository;
+import Donkey.Database.Repository.TemplateRepository;
 import Donkey.Database.Repository.TemporalScreenRepository;
 import Donkey.Tools.ScreenTools;
 import Donkey.WebSite.FormClass.Screen.ScreenRegisterForm;
@@ -12,29 +12,28 @@ import Donkey.WebSite.FormClass.Screen.TmpTokenForm;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class ScreenController {
     //TODO Remplacer les methodes POST par du js directement dans html #JSAWARE
 
     private final ScreenRepository screenRegRep;
+    private final TemplateRepository templateRepository;
     private final TemporalScreenRepository tmpRegisterRep;
     private final GroupRepository grpRep;
     private Logger log = LogManager.getLogger();
 
     @Autowired
-    public ScreenController(ScreenRepository screenRegRep, TemporalScreenRepository tmpRegisterRep, GroupRepository grpRep) {
+    public ScreenController(ScreenRepository screenRegRep, TemplateRepository templateRepository, TemporalScreenRepository tmpRegisterRep, GroupRepository grpRep) {
         this.screenRegRep = screenRegRep;
+        this.templateRepository = templateRepository;
         this.tmpRegisterRep = tmpRegisterRep;
         this.grpRep = grpRep;
     }
@@ -131,6 +130,7 @@ public class ScreenController {
 
             ScreenEntity theScreen =  screenRegRep.getScreenEntityById(id);
             model.addAttribute("screen",theScreen);
+            model.addAttribute("templateList",templateRepository.getAllBy());
             return "Screen/screen";
         }else{
             throw new ErrorCode.ResourceNotFoundException();

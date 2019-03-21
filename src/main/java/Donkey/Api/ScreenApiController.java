@@ -52,71 +52,71 @@ public class ScreenApiController {
         this.templateRepository = templateRepository;
     }
 
-    @RequestMapping(value = {"/test"},method = RequestMethod.GET)
-    public String test(HttpServletRequest request){
+    @RequestMapping(value = {"/test"}, method = RequestMethod.GET)
+    public String test(HttpServletRequest request) {
         return IpTools.getInstance().getClientIpAddress(request);
     }
 
     /**
      * Request for obtain the temporary token, add screen in table TemporalScreen
+     *
      * @param request, for obtain the ip address
-     * @param uuid, uniq for every screen
+     * @param uuid,    uniq for every screen
      * @return TemporalRegisterJson, json who contains all informations of screen
      */
     @PostMapping(value = "/getToken")
-    public ResponseEntity<?> getToken(HttpServletRequest request, @RequestBody UuidJson uuid){
+    public ResponseEntity<?> getToken(HttpServletRequest request, @RequestBody UuidJson uuid) {
         TemporalScreenEntity newTmpRegister;
         //log.debug("Post on getToken, value of uuid : " + uuid.getUuid());
-        if(tmpRegisterRep.getTemporalRegisterByUuid(uuid.getUuid()) == null){
-            newTmpRegister = new TemporalScreenEntity(request.getRemoteAddr(), ScreenTools.getInstance().generateCheckToken(),uuid.getUuid(), ScreenTools.getInstance().generateExpirationDateLocalDate());
-        }else
-        {
+        if (tmpRegisterRep.getTemporalRegisterByUuid(uuid.getUuid()) == null) {
+            newTmpRegister = new TemporalScreenEntity(request.getRemoteAddr(), ScreenTools.getInstance().generateCheckToken(), uuid.getUuid(), ScreenTools.getInstance().generateExpirationDateLocalDate());
+        } else {
             newTmpRegister = tmpRegisterRep.getTemporalRegisterByUuid(uuid.getUuid());
             newTmpRegister.setTempToken(ScreenTools.getInstance().generateCheckToken());
             newTmpRegister.setExpirationDate(ScreenTools.getInstance().generateExpirationDateLocalDate());
         }
         tmpRegisterRep.save(newTmpRegister);
-        return new ResponseEntity<>(new TemporalRegisterJson(newTmpRegister.getTempToken(),newTmpRegister.getUuid(), ScreenTools.getInstance().generateExpirationDateStr()),HttpStatus.OK);
+        return new ResponseEntity<>(new TemporalRegisterJson(newTmpRegister.getTempToken(), newTmpRegister.getUuid(), ScreenTools.getInstance().generateExpirationDateStr()), HttpStatus.OK);
     }
 
     /**
      * Check if the screen was add in the table screen_register
+     *
      * @param uuid
      * @return ResponseEntity, send a json and HTTP 200 if add, and 403 if not
      */
     @RequestMapping(value = "/isRegistered", method = RequestMethod.GET)
-    public ResponseEntity<ScreenRegisterJson> isRegistered (@CookieValue(value = "uuid")String uuid){
+    public ResponseEntity<ScreenRegisterJson> isRegistered(@CookieValue(value = "uuid") String uuid) {
         log.trace("Uuid send by cookie : " + uuid);
-        if(uuid != null && !uuid.equals("")){
+        if (uuid != null && !uuid.equals("")) {
             ScreenEntity newScreenRegister = screenRegisterRep.getScreenRegisterByUuid(uuid);
             log.trace("ScreenRegister get in db: " + newScreenRegister);
-            if(newScreenRegister != null){
+            if (newScreenRegister != null) {
                 ScreenRegisterJson newScreenRegisterJson = new ScreenRegisterJson(newScreenRegister.getToken(), newScreenRegister.getUuid(), "");
                 log.trace("Send Json " + newScreenRegisterJson);
                 return new ResponseEntity<>(newScreenRegisterJson, HttpStatus.OK);
-            }else{
+            } else {
                 log.debug("ScreenRegister not in db");
                 return new ResponseEntity<>(HttpStatus.FORBIDDEN);
             }
-        }else{
+        } else {
             log.trace("Bad Cookie");
             return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
         }
     }
 
 
-
     @PostAuthorize("hasPermission(returnObject, 'read')")
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public ResponseEntity<?> getScreen(@RequestParam(name = "id", defaultValue = "-1") int id, Authentication authentication){
+    public ResponseEntity<?> getScreen(@RequestParam(name = "id", defaultValue = "-1") int id, Authentication authentication) {
         UserEntity loggedUser = (UserEntity) authentication.getPrincipal();
-        if(id == -1){
+        if (id == -1) {
             List<ScreenEntity> screenEntityList = new ArrayList<>();
-            if(loggedUser.isAdmin())
+            if (loggedUser.isAdmin())
                 screenEntityList = screenRegisterRep.getAllBy();
-            else{
+            else {
                 List<UserScreenPrivilege> privileges = userScreenPrivilegeRepository.getByUserEntity(loggedUser);
-                for(UserScreenPrivilege privilege : privileges){
+                for (UserScreenPrivilege privilege : privileges) {
                     ScreenEntity screenEntity = privilege.getScreenEntity();
                     screenEntity.setToken(null);
                     screenEntityList.add(screenEntity);
@@ -126,7 +126,7 @@ public class ScreenApiController {
             return new ResponseEntity<>(screenEntityList, HttpStatus.OK);
         }
         ScreenEntity screen = screenRegisterRep.getScreenEntityById(id);
-        if(screen == null){
+        if (screen == null) {
             log.info("[api/screen GET] Screen not found");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -137,22 +137,23 @@ public class ScreenApiController {
 
     /**
      * Add screen to the database
+     *
      * @param addScreenJson
      * @return AddScreenJson
      */
     @RequestMapping(value = "", method = RequestMethod.POST)
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> addScreen (@RequestBody AddScreenJson addScreenJson){
-        if(addScreenJson.uuid != null && !addScreenJson.uuid.isEmpty()){
+    public ResponseEntity<?> addScreen(@RequestBody AddScreenJson addScreenJson) {
+        if (addScreenJson.uuid != null && !addScreenJson.uuid.isEmpty()) {
             ScreenEntity newEntry = new ScreenEntity();
-            if(screenRegisterRep.getScreenRegisterByUuid(addScreenJson.uuid) == null){
+            if (screenRegisterRep.getScreenRegisterByUuid(addScreenJson.uuid) == null) {
                 TemporalScreenEntity tmpReg = tmpRegisterRep.getTemporalRegisterByUuid(addScreenJson.uuid);
                 newEntry.setIp(tmpReg.getIp());
                 newEntry.setUuid(tmpReg.getUuid());
                 newEntry.setName(addScreenJson.name);
                 newEntry.setToken(ScreenTools.getInstance().generateUuid());
                 newEntry.setGroup(grpRep.getGroupEntityById(addScreenJson.groupId));
-            }else{
+            } else {
                 ScreenEntity tmpScreen = screenRegisterRep.getScreenRegisterByUuid(addScreenJson.uuid);
                 newEntry.setName(tmpScreen.getName());
                 newEntry.setUuid(tmpScreen.getUuid());
@@ -167,60 +168,62 @@ public class ScreenApiController {
             groupNeedChange.getScreenList().add(newEntry);
             //Maybe erase before add
             grpRep.save(groupNeedChange);
-            return new ResponseEntity<>(new AddScreenJson(newEntry.getIp(),newEntry.getToken(),newEntry.getUuid(),newEntry.getName(),newEntry.getGroup().getId()),HttpStatus.OK );
-        }else{
-            return new ResponseEntity<>(new Error("Uuid send is null or empty !","UUID_EMPTY_OR_NULL"),HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new AddScreenJson(newEntry.getIp(), newEntry.getToken(), newEntry.getUuid(), newEntry.getName(), newEntry.getGroup().getId()), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(new Error("Uuid send is null or empty !", "UUID_EMPTY_OR_NULL"), HttpStatus.NOT_FOUND);
         }
     }
 
     /**
      * Delete a screen in a database
+     *
      * @param id
      * @return DeleteScreenJson
      */
     @RequestMapping(value = "", method = RequestMethod.DELETE)
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> deleteScreen(@RequestParam(name = "id")int id){
+    public ResponseEntity<?> deleteScreen(@RequestParam(name = "id") int id) {
         ScreenEntity screenToDelete = screenRegisterRep.getScreenEntityById(id);
-        if(screenToDelete != null){
+        if (screenToDelete != null) {
             screenRegisterRep.delete(screenToDelete);
-            if(screenToDelete.getGroup() != null && screenToDelete.getGroup().getId() != -1){
-                return new ResponseEntity<>(new  ScreenJson(screenToDelete.getId(),screenToDelete.getName(),screenToDelete.getGroup().getId()),HttpStatus.OK);
-            }else{
-                return new ResponseEntity<>(new ScreenJson(screenToDelete.getId(),screenToDelete.getName(),-1),HttpStatus.OK);
+            if (screenToDelete.getGroup() != null && screenToDelete.getGroup().getId() != -1) {
+                return new ResponseEntity<>(new ScreenJson(screenToDelete.getId(), screenToDelete.getName(), screenToDelete.getGroup().getId()), HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(new ScreenJson(screenToDelete.getId(), screenToDelete.getName(), -1), HttpStatus.OK);
             }
-        }else{
-            return new ResponseEntity<>(new Error("Screen with id : " + id + " not exist ! ", "SCREEN_NOT_FOUND"),HttpStatus.NOT_FOUND);
+        } else {
+            return new ResponseEntity<>(new Error("Screen with id : " + id + " not exist ! ", "SCREEN_NOT_FOUND"), HttpStatus.NOT_FOUND);
         }
     }
 
     /**
      * Modify a screen
+     *
      * @param modifyScreenJson
      * @return ResponseEntity
      */
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "", method = RequestMethod.PUT)
-    public ResponseEntity<?> modifyScreen(@RequestBody ScreenJson modifyScreenJson){
+    public ResponseEntity<?> modifyScreen(@RequestBody ScreenJson modifyScreenJson) {
         ScreenEntity screenNeedModification = screenRegisterRep.getScreenEntityById(modifyScreenJson.id);
         if (screenNeedModification != null) {
-            if (modifyScreenJson.groupId == -1) {
-                if(modifyScreenJson.name != null && !modifyScreenJson.name.isEmpty())
-                    screenNeedModification.setName(modifyScreenJson.name);
-                screenNeedModification.setGroup(null);
-                screenRegisterRep.save(screenNeedModification);
-                return new ResponseEntity<>(new AddScreenJson(screenNeedModification.getIp(),screenNeedModification.getToken(),screenNeedModification.getUuid(),screenNeedModification.getName(),screenNeedModification.getGroup() == null ? -1 :screenNeedModification.getGroup().getId()),HttpStatus.OK);
-            } else {
-                GroupEntity newGrpParent = grpRep.getGroupEntityById(modifyScreenJson.groupId);
-                if(modifyScreenJson.name != null && !modifyScreenJson.name.isEmpty())
-                    screenNeedModification.setName(modifyScreenJson.name);
-                screenNeedModification.setGroup(newGrpParent);
-                screenNeedModification = screenRegisterRep.save(screenNeedModification);
-                return new ResponseEntity<>(new AddScreenJson(screenNeedModification.getIp(),screenNeedModification.getToken(),screenNeedModification.getUuid(),screenNeedModification.getName(),screenNeedModification.getGroup().getId()),HttpStatus.OK);
+            if (modifyScreenJson.name != null && !modifyScreenJson.name.isEmpty())
+                screenNeedModification.setName(modifyScreenJson.name);
 
-            }
+//            if (modifyScreenJson.templateId == -1)
+//                screenNeedModification.setTemplate(null);
+//            else
+//                screenNeedModification.setTemplate(templateRepository.getById(modifyScreenJson.templateId));
+
+            if (modifyScreenJson.groupId == -1)
+                screenNeedModification.setGroup(null);
+            else
+                screenNeedModification.setGroup(grpRep.getGroupEntityById(modifyScreenJson.groupId));
+
+            screenRegisterRep.save(screenNeedModification);
+            return new ResponseEntity<>(new AddScreenJson(screenNeedModification.getIp(), screenNeedModification.getToken(), screenNeedModification.getUuid(), screenNeedModification.getName(), screenNeedModification.getGroup() == null ? -1 : screenNeedModification.getGroup().getId()), HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(new Error("No Screen with id : " + modifyScreenJson.id,"ID_NOT_FOUND"), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new Error("No Screen with id : " + modifyScreenJson.id, "ID_NOT_FOUND"), HttpStatus.NOT_FOUND);
         }
     }
 
@@ -232,24 +235,32 @@ public class ScreenApiController {
      */
     @RequestMapping(value = "/getGroup", method = RequestMethod.GET)
     public ResponseEntity<?> getGroup(@RequestParam(name = "id") int id) {
-        if(screenRegisterRep.getScreenEntityById(id) != null){
-            if(id != -1 )
+        if (screenRegisterRep.getScreenEntityById(id) != null) {
+            if (id != -1)
                 return new ResponseEntity<>(new GroupJson(grpRep.getGroupEntityById(screenRegisterRep.getScreenEntityById(id).getGroup().getId())), HttpStatus.OK);
             else
-                return new ResponseEntity<>(new GroupJson(-1,"", -1), HttpStatus.OK);
-        }else{
-            return new ResponseEntity<>(new Error("No Screen with id : " + id,"ID_NOT_FOUND"), HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>(new GroupJson(-1, "", -1), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(new Error("No Screen with id : " + id, "ID_NOT_FOUND"), HttpStatus.NOT_FOUND);
         }
 
     }
 
 
     @RequestMapping(value ="/setTemplate", method = RequestMethod.PUT)
-    public ResponseEntity<?> getGroup(@RequestParam(name = "id") int id , @RequestBody HashMap<String, Integer> value){
+    public ResponseEntity<?> setTemplate(@RequestParam(name = "id") int id , @RequestBody HashMap<String, Integer> value){
         ScreenEntity screen = screenRegisterRep.getScreenEntityById(id);
-        TemplateEntity templateEntity = templateRepository.getById(value.get("templateId"));
-        screen.setTemplate(templateEntity);
-        screenRegisterRep.save(screen);
-        return null;
+        if(screen == null ){
+            return new ResponseEntity<>(new Error("No Screen with this id","SCREEN_NOT_FOUND"),HttpStatus.NOT_FOUND); //TODO Add Code Error
+        }else{
+            TemplateEntity templateEntity = templateRepository.getById(value.get("templateId"));
+            if(templateEntity == null && value.get("templateId") != -1){
+                return new ResponseEntity<>(new Error("No Template with this id","TEMPLATE_NOT_FOUND"),HttpStatus.NOT_FOUND);//TODO Add Code Error
+            }else{
+                screen.setTemplate(templateEntity);
+                screenRegisterRep.save(screen);
+                return new ResponseEntity<>(HttpStatus.OK);
+            }
+        }
     }
 }

@@ -1,5 +1,7 @@
 package Donkey.Api.JSON.Screen;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 public class AddScreenJson {
     public String ip;
     public String token;

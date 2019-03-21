@@ -97,6 +97,7 @@
                     <input type="hidden" id="groupId" name="groupId"
                            th:value="${screen.getGroup() == null ? -1 : screen.getGroup().getId()}"/>
                 </div>
+
             </div>
 
             <th:block th:if="${user.isAdmin()}">
@@ -114,8 +115,38 @@
                     </div>
                 </div>
             </th:block>
+            <div class="row">
+                <div class="input-field col s10 offset-s1">
+                    <!--<label th:text="#{media.template}"></label>-->
+                    <select id="templateSelect" class="browser-default">
+                        <th:block th:if="${screen.getTemplate() == null}">
+                            <option th:text="#{group.notAffected}" selected="selected" th:value="-1"></option>
+                            <th:block th:each=" template : ${templateList}">
+                                <option th:value="${template.getId()}" th:text="${template.getName()}"></option>
+                            </th:block>
+                        </th:block>
+                        <th:block th:if="${screen.getTemplate() != null}">
+                            <option th:text="#{group.notAffected}" th:value="-1"></option>
+                            <th:block th:each=" template : ${templateList}">
+                                <th:block th:if="${screen.getTemplate() != null}">
+                                    <th:block th:if="${screen.getTemplate()?.getId() == template.getId()}">
+                                        <option th:value="${template.getId()}" th:text="${template.getName()}"
+                                                selected="selected"></option>
+                                    </th:block>
+                                    <th:block th:if="${screen.getTemplate()?.getId() != template.getId()}">
+                                        <option th:value="${template.getId()}" th:text="${template.getName()}"></option>
+                                    </th:block>
+                                </th:block>
+                            </th:block>
+                        </th:block>
+                    </select>
+                </div>
+                <div class="col s12 center">
+                    <button class="btn green" id="assignateTemplate_btn" onclick="sendTemplateAssignation()"
+                            th:text="#{form.modify}"></button>
+                </div>
 
-
+            </div>
         </div>
     </div>
 
@@ -179,6 +210,10 @@
         let elems = document.querySelectorAll('.modal');
         M.Modal.init(elems);
 
+
+        var select = document.querySelectorAll('select');
+        M.FormSelect.init(select);
+
         $('#deleteBtn').click(function () {
             let settings = {
                 "url": "/api/screen?id=" + screenId,
@@ -204,7 +239,8 @@
 
     function sendForm() {
         let name = $('#name').val();
-        let parentid = $('#groupId').val();
+        let parentId = $('#groupId').val();
+
         var settings = {
             url: "/api/screen/",
             method: "PUT",
@@ -214,12 +250,13 @@
             data: JSON.stringify({
                 id: screenId,
                 name: name,
-                groupId: parentid
+                groupId: parentId
             })
         };
 
         console.log(settings);
         $.ajax(settings).done(function (response) {
+            console.log(response);
             window.location.reload();
         }).fail(function (response) {
             console.log(response);
@@ -231,6 +268,30 @@
         });
     }
 
+    function sendTemplateAssignation() {
+
+        var settings = {
+            url: "/api/screen/setTemplate?id=" + screenId,
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            data: JSON.stringify({"templateId" : $('#templateSelect').val()})
+        };
+
+        console.log(settings);
+        $.ajax(settings).done(function (response) {
+            console.log(response);
+            window.location.reload();
+        }).fail(function (response) {
+            console.log(response);
+            M.toast({
+                html: " <i class=\"material-icons\" style='margin-right: 10px'>warning</i> Update fail",
+                classes: 'red',
+                displayLength: 4000
+            });
+        });
+    }
 
     /*]]>*/
 </script>

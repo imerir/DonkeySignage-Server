@@ -77,7 +77,6 @@ public class TemplateController {
 
             model.addAttribute("widgets", webSocketUtils.getWidgets());
 
-
             return "Media/template";
         }
     }
