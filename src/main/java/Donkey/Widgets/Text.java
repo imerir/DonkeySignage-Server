@@ -1,6 +1,7 @@
 package Donkey.Widgets;
 
 import Donkey.MainClass;
+import Donkey.Tools.FilesTools;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -32,9 +33,8 @@ public class Text implements WidgetInterface{
 
     @Override
     public String getTemplate() throws IOException {
-        File file = new File(this.getClass().getResource("/widgets/text.html").getFile());
 
-        return new String(Files.readAllBytes(file.toPath()));
+        return FilesTools.getINSTANCE().getFileContent("widgets/text.html");
     }
 
     @Override

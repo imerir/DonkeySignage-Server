@@ -2,6 +2,7 @@ package Donkey.Widgets;
 
 import Donkey.MainClass;
 import Donkey.Tools.Base64;
+import Donkey.Tools.FilesTools;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -32,9 +33,7 @@ public class ImageSlide implements WidgetInterface {
 
     @Override
     public String getTemplate() throws IOException {
-        ClassLoader classLoader = MainClass.class.getClassLoader();
-        File file = new File(classLoader.getResource("/widgets/image_slides.html").getFile());
-        return new String(Files.readAllBytes(file.toPath()));
+        return FilesTools.getINSTANCE().getFileContent("widgets/image_slides.html");
     }
 
     @Override
