@@ -76,7 +76,7 @@ function checkAddField(confInput) {
 function sendNewWidget() {
     let param = {};
 
-    let customInput = $(".custom_conf .conf-input");
+    let customInput = $(".custom-conf-input-" + $('#widgetSelect').val());
     for (let elem of customInput) {
         param[elem.id] = elem.value;
     }

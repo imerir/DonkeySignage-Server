@@ -202,7 +202,7 @@
                                 <th:block
                                         th:if="${conf.getType() == T(Donkey.Widgets.ConfType).TEXT || conf.getType() == T(Donkey.Widgets.ConfType).NUMBER }">
                                     <div class="input-field col s10 offset-s1">
-                                        <input class="validate listen" th:classappend="${conf.getValue() == null ? 'custom-conf-input-' + widget.value.getId() : 'valid custom-conf-input-' + widget.value.getId()}"
+                                        <input class="validate listen custom-input" th:classappend="${conf.getValue() == null ? 'custom-conf-input-' + widget.value.getId() : 'valid custom-conf-input-' + widget.value.getId()}"
                                                th:id="${conf.getName()}" min="1"
                                                max="12"
                                                th:type="${#strings.toLowerCase(conf.getType() )}"
@@ -224,7 +224,7 @@
                                             <div class="col s12 center">
                                                 <a class="btn blue media-list-add waves-effect modal-trigger modal-trigger-media" href="#mediaModal" th:text="#{form.add}" th:attr="data-conf-id=${conf.getName()}"></a>
                                             </div>
-                                            <input type="hidden" th:id="${conf.getName()}" class="listen" th:classappend="${'custom-conf-input-' + widget.value.getId()}"/>
+                                            <input type="hidden" th:id="${conf.getName()}" class="listen custom-input" th:classappend="${'custom-conf-input-' + widget.value.getId()}"/>
                                         </div>
                                     </div>
                                 </th:block>
