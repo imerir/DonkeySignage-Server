@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.List;
@@ -31,8 +32,7 @@ public class Text implements WidgetInterface{
 
     @Override
     public String getTemplate() throws IOException {
-        ClassLoader classLoader = MainClass.class.getClassLoader();
-        File file = new File(classLoader.getResource("widgets/text.html").getFile());
+        File file = new File(this.getClass().getResource("/widgets/text.html").getFile());
 
         return new String(Files.readAllBytes(file.toPath()));
     }
