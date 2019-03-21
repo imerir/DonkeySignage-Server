@@ -184,7 +184,9 @@ function addImagesToCollection() {
         mediaDel(this);
     });
 
-    $(".listen").change();
+    let inputs = $(".conf-input,.custom-conf-input-" + $('#widgetSelect').val());
+    checkTextInput();
+    checkAddField(inputs);
 
 
 
@@ -225,14 +227,16 @@ function mediaDel(elem){
     else
         input.removeClass("valid");
 
-    $(".listen").change();
+    let inputs = $(".conf-input,.custom-conf-input-" + $('#widgetSelect').val());
+    checkTextInput();
+    checkAddField(inputs);
 
 
 }
 
 
 function checkTextInput(){
-    let textInput = $("input[type=text].listen");
+    let textInput = $("input[type=text].conf-input,.custom-conf-input-" + $('#widgetSelect').val());
     console.log(textInput);
     for(let input of textInput){
         if(input.value.length > 0)
