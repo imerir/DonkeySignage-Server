@@ -170,7 +170,8 @@ public class SocketHandler extends TextWebSocketHandler {
             }
             ScreenEntity screen = screenRepository.getScreenRegisterByUuid(state.uuid);
             TemplateEntity template = screen.getTemplate();
-            webSocketData.data.put("template", WebSocketUtils.getINSTANCE().templateConvertor(template) );
+
+            webSocketData.data.put("template", template == null ? null : WebSocketUtils.getINSTANCE().templateConvertor(template) );
             String screenStr = objectMapper.writeValueAsString(webSocketData);
             session.sendMessage(new TextMessage(screenStr));
         }

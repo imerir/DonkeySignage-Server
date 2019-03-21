@@ -1,15 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
 
-    let modal = document.querySelectorAll('.modal');
-    M.Modal.init(modal);
-
-    var elems = document.querySelectorAll('.collapsible');
-    M.Collapsible.init(elems);
-
-    var selects = document.querySelectorAll('select');
-    M.FormSelect.init(selects);
-
-    templateEditorListeners();
 
     /*--Management name template--*/
     let modifyTemplate = $("#edit_btn");
@@ -131,81 +121,3 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 
-function templateEditorListeners() {
-
-
-    $('#widgetSelect').change(function () {
-        var id = $(this).val();
-        var conf = $('#' + id + '_conf');
-        $('.custom_conf').attr("hidden", "hidden");
-        conf.removeAttr("hidden");
-
-    });
-
-    var confInput = $(".conf-input");
-    confInput.change(function () {
-
-        setTimeout(function () {
-            var valid = true;
-            for (let elem of confInput) {
-                if (!$(elem).hasClass("valid")) {
-                    valid = false;
-                    break;
-                }
-            }
-
-            if (valid)
-                $("#submitNewWidget").removeClass("disabled");
-            else
-                $("#submitNewWidget").addClass("disabled");
-        }, 100)
-    });
-
-    $('#submitNewWidget').click(function () {
-
-        var param = {};
-
-        var customInput = $(".custom_conf .conf-input");
-        for (let elem of customInput) {
-            param[elem.id] = elem.value;
-        }
-
-        console.log(param);
-        var data = [
-            {
-                "name" : $('#addWidgetName').val(),
-                "widgetId": $('#widgetSelect').val(),
-                "posX": $('#addWidgetPosX').val(),
-                "posY": $('#addWidgetPosY').val(),
-                "sizeWidth": $('#addWidgetSizeWidth').val(),
-                "sizeHeight": $('#addWidgetSizeHeight').val(),
-                "param": JSON.stringify(param)
-            }
-        ];
-
-        console.log(data);
-
-        var settings = {
-            "url": "/api/template/" + templateId + "/widgetConf",
-            "method": "POST",
-            "timeout": 0,
-            "headers": {
-                "Content-Type": "application/json"
-            },
-            "data": JSON.stringify(data),
-        };
-        console.log(settings);
-
-        $.ajax(settings).done(function (response) {
-            location.reload()
-        }).fail(function (response) {
-            console.log(response);
-            M.toast({
-                html: " <i class=\"material-icons\" style='margin-right: 10px'>warning</i> Add fail",
-                classes: 'red',
-                displayLength: 4000
-            });
-        });
-
-    });
-}

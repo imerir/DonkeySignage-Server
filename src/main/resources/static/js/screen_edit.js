@@ -38,6 +38,7 @@ function edit_listeners() {
     $('#cancel_btn').click(function () {
         location.reload();
     })
+
 }
 
 

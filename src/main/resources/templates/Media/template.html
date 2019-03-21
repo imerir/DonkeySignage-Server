@@ -164,31 +164,35 @@
             </div>
             <div class="row">
                 <div class="input-field col s10 offset-s1">
-                    <input class="conf-input validate" id="addWidgetName" min="0" max="12"
+                    <input class="conf-input listen" id="addWidgetName" min="0" max="12"
                            type="Text"/>
                     <label for="addWidgetName" th:text="#{form.name}"></label>
                 </div>
 
                 <div class="input-field col m5 offset-m1 s10 offset-s1">
-                    <input class="conf-input validate" id="addWidgetPosX" min="0" max="12"
-                           type="number"/>
+                    <input class="conf-input listen valid" id="addWidgetPosX" min="0" max="12"
+                           type="number"
+                           value="0"/>
                     <label for="addWidgetPosX" th:text="#{media.posX}"></label>
                 </div>
                 <div class="input-field col  m5 s10 offset-s1">
-                    <input class="conf-input validate" id="addWidgetPosY" min="0" max="12"
-                           type="number"/>
+                    <input class="conf-input listen valid" id="addWidgetPosY" min="0" max="12"
+                           type="number"
+                           value="0"/>
                     <label for="addWidgetPosY" th:text="#{media.posY}"></label>
                 </div>
                 <div class="input-field col m5 offset-m1 s10 offset-s1">
-                    <input class="conf-input validate " id="addWidgetSizeWidth" min="1"
+                    <input class="conf-input listen valid " id="addWidgetSizeWidth" min="1"
                            max="12"
-                           type="number"/>
+                           type="number"
+                           value="1"/>
                     <label for="addWidgetSizeWidth"  th:text="#{media.sizeWidth}"></label>
                 </div>
                 <div class="input-field col  m5 s10 offset-s1">
-                    <input class="validate conf-input validate" id="addWidgetSizeHeight" min="1"
+                    <input class="validate conf-input listen valid" id="addWidgetSizeHeight" min="1"
                            max="12"
-                           type="number"/>
+                           type="number"
+                           value="1"/>
                     <label for="addWidgetSizeHeight" th:text="#{media.sizeHeight}"></label>
                 </div>
                 <div id="custom_param">
@@ -198,7 +202,7 @@
                                 <th:block
                                         th:if="${conf.getType() == T(Donkey.Widgets.ConfType).TEXT || conf.getType() == T(Donkey.Widgets.ConfType).NUMBER }">
                                     <div class="input-field col s10 offset-s1">
-                                        <input class="validate conf-input" th:classappend="${conf.getValue() == null ? '' : 'valid'}"
+                                        <input class="validate listen" th:classappend="${conf.getValue() == null ? 'custom-conf-input-' + widget.value.getId() : 'valid custom-conf-input-' + widget.value.getId()}"
                                                th:id="${conf.getName()}" min="1"
                                                max="12"
                                                th:type="${#strings.toLowerCase(conf.getType() )}"
@@ -207,8 +211,25 @@
                                                th:text="${#strings.capitalize(conf.getName())}"></label>
                                     </div>
                                 </th:block>
+                                <th:block th:if="${conf.getType() == T(Donkey.Widgets.ConfType).MEDIA and conf.isList()}">
 
+                                    <div class="col s10 offset-s1 card-panel">
+                                        <div class="row" style="margin-top: 5px;">
+                                            <div class="col s12 center">
+                                                <h5 th:text="${#strings.capitalize(conf.getName())}"></h5>
+                                            </div>
+                                            <ul class="col s10 offset-s1 collection" th:id="${conf.getName() + '_list'}">
+
+                                            </ul>
+                                            <div class="col s12 center">
+                                                <a class="btn blue media-list-add waves-effect modal-trigger modal-trigger-media" href="#mediaModal" th:text="#{form.add}" th:attr="data-conf-id=${conf.getName()}"></a>
+                                            </div>
+                                            <input type="hidden" th:id="${conf.getName()}" class="listen" th:classappend="${'custom-conf-input-' + widget.value.getId()}"/>
+                                        </div>
+                                    </div>
+                                </th:block>
                             </th:block>
+
                         </div>
                     </th:block>
                 </div>
@@ -246,6 +267,29 @@
                     th:text="#{form.yes}"></button>
         </div>
     </div>
+
+    <!-- Media MODAL-->
+    <div id="mediaModal" class="modal modal-fixed-footer">
+        <div class="modal-content">
+            <div class="row">
+                <div class="col s12 center">
+                    <h4 th:text="#{media.selectMedia}"></h4>
+                </div>
+                <div id="mediaContent">
+
+                </div>
+            </div>
+
+        </div>
+        <div class="modal-footer">
+            <button class="modal-close waves-effect waves-green btn red"
+                    th:text="#{form.cancel}"></button>
+            <button class="waves-effect waves-green btn green modal-close" id="mediaModalConfirm"
+                    th:text="#{form.submit}"></button>
+        </div>
+    </div>
+
+
 </main>
 
 <footer class="page-footer" style="padding: 0">
@@ -254,12 +298,14 @@
 <!--  Scripts-->
 <script th:src="@{/js/materialize.js}"></script>
 <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
-<script th:src="@{/js/template_editor.js}"></script>
 <script th:inline="javascript">
     /*<![CDATA[*/
     var templateId = [[${template.getId()}]];
     /*]]>*/
 </script>
+<script th:src="@{/js/template_editor.js}"></script>
+<script th:src="@{/js/template_add.js}"></script>
+<script th:src="@{/js/template.js}"></script>
 
 </body>
 </html>
