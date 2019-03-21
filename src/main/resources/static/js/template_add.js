@@ -78,7 +78,13 @@ function sendNewWidget() {
 
     let customInput = $(".custom-conf-input-" + $('#widgetSelect').val());
     for (let elem of customInput) {
-        param[elem.id] = elem.value;
+        try{
+            param[elem.id] = JSON.parse(elem.value);
+        }catch (e) {
+            console.log("catch");
+            param[elem.id] = elem.value;
+        }
+
     }
 
     console.log(param);
