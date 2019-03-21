@@ -6,15 +6,14 @@ import Donkey.Api.JSON.Screen.*;
 import Donkey.Api.JSON.UuidJson;
 import Donkey.Database.Entity.GroupEntity;
 import Donkey.Database.Entity.ScreenEntity;
+import Donkey.Database.Entity.TemplateEntity;
 import Donkey.Database.Entity.TemporalScreenEntity;
 import Donkey.Database.Entity.UserAndPrivileges.UserEntity;
 import Donkey.Database.Entity.UserAndPrivileges.UserScreenPrivilege;
-import Donkey.Database.Repository.GroupRepository;
-import Donkey.Database.Repository.ScreenRepository;
-import Donkey.Database.Repository.TemporalScreenRepository;
-import Donkey.Database.Repository.UserScreenPrivilegeRepository;
+import Donkey.Database.Repository.*;
 import Donkey.Tools.IpTools;
 import Donkey.Tools.ScreenTools;
+import com.mysql.fabric.Response;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -39,14 +39,17 @@ public class ScreenApiController {
     private final TemporalScreenRepository tmpRegisterRep;
     private final GroupRepository grpRep;
     private final UserScreenPrivilegeRepository userScreenPrivilegeRepository;
+
+    private final TemplateRepository templateRepository;
     private Logger log = LogManager.getLogger();
 
     @Autowired
-    public ScreenApiController(TemporalScreenRepository tmpRegisterRep, ScreenRepository screenRegisterRep, GroupRepository grpRep, UserScreenPrivilegeRepository userScreenPrivilegeRepository) {
+    public ScreenApiController(TemporalScreenRepository tmpRegisterRep, ScreenRepository screenRegisterRep, GroupRepository grpRep, UserScreenPrivilegeRepository userScreenPrivilegeRepository, TemplateRepository templateRepository) {
         this.tmpRegisterRep = tmpRegisterRep;
         this.screenRegisterRep = screenRegisterRep;
         this.grpRep = grpRep;
         this.userScreenPrivilegeRepository = userScreenPrivilegeRepository;
+        this.templateRepository = templateRepository;
     }
 
     @RequestMapping(value = {"/test"},method = RequestMethod.GET)
@@ -238,5 +241,15 @@ public class ScreenApiController {
             return new ResponseEntity<>(new Error("No Screen with id : " + id,"ID_NOT_FOUND"), HttpStatus.NOT_FOUND);
         }
 
+    }
+
+
+    @RequestMapping(value ="/setTemplate", method = RequestMethod.PUT)
+    public ResponseEntity<?> getGroup(@RequestParam(name = "id") int id , @RequestBody HashMap<String, Integer> value){
+        ScreenEntity screen = screenRegisterRep.getScreenEntityById(id);
+        TemplateEntity templateEntity = templateRepository.getById(value.get("templateId"));
+        screen.setTemplate(templateEntity);
+        screenRegisterRep.save(screen);
+        return null;
     }
 }
