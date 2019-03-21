@@ -39,7 +39,6 @@ public class ScreenApiController {
     private final TemporalScreenRepository tmpRegisterRep;
     private final GroupRepository grpRep;
     private final UserScreenPrivilegeRepository userScreenPrivilegeRepository;
-
     private final TemplateRepository templateRepository;
     private Logger log = LogManager.getLogger();
 

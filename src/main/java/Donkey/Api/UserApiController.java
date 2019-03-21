@@ -7,6 +7,7 @@ import Donkey.Database.Entity.UserAndPrivileges.RolesEntity;
 import Donkey.Database.Entity.UserAndPrivileges.UserEntity;
 import Donkey.Database.Repository.RoleRepository;
 import Donkey.Database.Repository.UserRepository;
+import Donkey.Tools.ScreenTools;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -121,6 +122,19 @@ public class UserApiController {
         }else{
             logger.info("[api/user PUT]" + loggedUser.getUsername() + " access denied !");
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+    }
+
+    @RequestMapping(value = "/resetPassword", method = RequestMethod.PUT)
+    public ResponseEntity<?> resetPassword (@RequestParam(name = "id") int id){
+        UserEntity usrNeedNewPwd = userRepository.getUserEntityById(id);
+        if(usrNeedNewPwd == null){
+            return new ResponseEntity<>(new Error("No user with this id","USER_NOT_FOUND"),HttpStatus.NOT_FOUND);
+        }else{
+            String newPassword = ScreenTools.getInstance().generateUuid().substring(0,8);
+            usrNeedNewPwd.setPassword(encoder.encode(newPassword));
+            userRepository.save(usrNeedNewPwd);
+            return new ResponseEntity<>(newPassword,HttpStatus.OK);
         }
     }
 

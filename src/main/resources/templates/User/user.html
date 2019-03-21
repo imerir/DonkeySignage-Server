@@ -93,6 +93,11 @@
                     <button class="btn red" id="cancel_btn" th:text="#{form.cancel}"></button>
                 </div>
             </div>
+            <div class="row">
+                <div class="col s12 center">
+                    <a class="waves-effect waves-light modal-trigger btn blue" href="#resetPasswordQuestionModal" id="resetPassword_btn" th:utext="#{login.resetPassword}"></a>
+                </div>
+            </div>
         </th:block>
     </div>
 
@@ -109,6 +114,36 @@
                         th:utext="#{form.cancel}"></button>
                 <button id="validateBtn2" class="modal-close waves-effect waves-green btn green"
                         th:utext="#{form.submit}"></button>
+            </div>
+        </div>
+
+        <!-- Reset Password Question MODAL -->
+        <div id="resetPasswordQuestionModal" class="modal">
+            <div class="modal-content">
+                <h4 th:utext="'Are you sure to reset password of user : ' + ${displayUser?.getUsername()} "></h4>
+            </div>
+            <div class="modal-footer">
+                <button id="validResetPassword" href="" class="modal-close waves-effect waves-green btn green"
+                        th:utext="#{form.yes}"></button>
+                <button id="quitBtn3" href="" class="modal-close waves-effect waves-green btn red"
+                        th:utext="#{form.no}"></button>
+            </div>
+        </div>
+
+
+        <!-- Reset Password  MODAL -->
+        <div id="resetPasswordModal" class="modal">
+            <div class="modal-content">
+                <h4 th:utext="'New Password of  ' + ${displayUser?.getUsername()}"></h4>
+                <div class="row">
+                    <div class="col s12 center">
+                        <h4 id="newPassword"></h4>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="quitBtn4" href="" class="modal-close waves-effect waves-green btn red"
+                        th:utext="#{form.cancel}"></button>
             </div>
         </div>
     </th:block>
@@ -144,6 +179,10 @@
             });
 
         });
+
+        $('#validResetPassword').click(function (){
+            resetPassword();
+        });
     });
 
     function sendForm() {
@@ -170,6 +209,38 @@
                 displayLength: 4000
             });
         });
+    }
+
+    function resetPassword(){
+        //TODO Send request to api
+        //TODO Open modal
+        //TODO Display new password in modal
+
+        // var elems = document.getElementById("resetPasswordModal");
+        // var instance = M.FormSelect.init(elems);
+
+        var settings = {
+            url: "/api/resetPassword?id=" + userId,
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        };
+        console.log(settings);
+        $.ajax(settings).done(function (response) {
+            console.log(response);
+            var instance = M.Modal.getInstance($('#resetPasswordModal')[0]);
+            instance.open();
+            document.getElementById('newPassword').innerHTML = response;
+        }).fail(function (response) {
+            console.log(response);
+            M.toast({
+                html: " <i class=\"material-icons\" style='margin-right: 10px'>warning</i> Reset fail",
+                classes: 'red',
+                displayLength: 4000
+            });
+        });
+
     }
     /*]]>*/
 </script>
