@@ -10,5 +10,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     let selects = document.querySelectorAll('select');
     M.FormSelect.init(selects);
+
+    let side = document.querySelectorAll('#slide-edit');
+    M.Sidenav.init(side, {edge: 'right'});
     templateAddListeners();
 });

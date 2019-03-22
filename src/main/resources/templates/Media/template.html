@@ -13,8 +13,11 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
     <link href="/css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
     <style>
-
-
+        @media only screen and (min-width: 993px) {
+            main {
+                padding-right: 300px !important;
+            }
+        }
     </style>
 
 
@@ -25,8 +28,8 @@
     <div th:replace="navbar :: navbar ('Template')"></div>
 </header>
 
-<main class="container">
-    <!--write your stuff here-->
+<main class="" style="margin-left: 5px; margin-right: 5px;">
+
     <div class="card-panel col s10 offset-s1">
         <div class="row">
             <div class="row">
@@ -41,79 +44,21 @@
             <div class="input-field col s10 offset-s1">
                 <input class="editableTemplate grey-text text-darken-2" placeholder="Placeholder" id="name" type="text"
                        disabled="disabled" th:value="${template.getName()}"/>
-                <label for="name" class="grey-text" th:text="#{login.username}"></label>
+                <label for="name" class="grey-text" th:text="#{form.name}"></label>
             </div>
         </div>
         <div class="row">
-            <ul class="collapsible popout">
-                <th:block th:each="widgetConfig : ${widgetConfList}">
-                    <li>
-                        <div class="collapsible-header" th:text="${widgetConfig.getName()}"></div>
-                        <div class="collapsible-body">
-                            <div class="row">
-                                <div class="input-field col s10">
-                                    <input class="editableWidget grey-text text-darken-2 "
-                                           th:classappend="${widgetConfig.getId()}" placeholder="Placeholder" id="posX"
-                                           type="number"
-                                           disabled="disabled" th:value="${widgetConfig.getPosX()}"/>
-                                    <label for="posX" class="grey-text" th:text="#{media.posX}"></label>
-                                </div>
-                                <div class="input-field col s10">
-                                    <input class="editableWidget grey-text text-darken-2"
-                                           th:classappend="${widgetConfig.getId()}" placeholder="Placeholder" id="posY"
-                                           type="text"
-                                           disabled="disabled" th:value="${widgetConfig.getPosY()}"/>
-                                    <label for="posY" class="grey-text" th:text="#{media.posY}"></label>
-                                </div>
-                                <div class="input-field col s10">
-                                    <input class="editableWidget grey-text text-darken-2" placeholder="Placeholder"
-                                           id="sizeWidth"
-                                           type="text"
-                                           disabled="disabled" th:classappend="${widgetConfig.getId()}"
-                                           th:value="${widgetConfig.getSizeWidth()}"/>
-                                    <label for="sizeWidth" class="grey-text" th:text="#{media.sizeWidth}"></label>
-                                </div>
-                                <div class="input-field col s10 ">
-                                    <input class="editableWidget grey-text text-darken-2" placeholder="Placeholder"
-                                           id="sizeHeigth" type="text"
-                                           disabled="disabled" th:classappend="${widgetConfig.getId()}"
-                                           th:value="${widgetConfig.getSizeHeight()}"/>
-                                    <label for="sizeWidth" class="grey-text" th:text="#{media.sizeHeight}"></label>
-                                </div>
+            <div class="col s10 offset-s1">
+                <ul class="collection with-header">
+                    <li class="collection-header"><h4 th:text="#{media.widgetList}"></h4></li>
+                    <th:block th:each="widgetConfig : ${widgetConfList}">
 
-                                <div class="row hide-to-editWidget" th:classappend="${widgetConfig.getId()}"
-                                     th:attr="data-id=${widgetConfig.getId()}">
-                                    <div class="col s12 center">
-                                        <a class="waves-effect waves-light btn green" id="edit_btnWidget"
-                                           th:classappend="${widgetConfig.getId()}"
-                                           th:attr="data-id=${widgetConfig.getId()}"
-                                           th:utext="#{form.modify}"></a>
-                                        <a class="waves-effect waves-light btn modal-trigger red" id="delete_btn"
-                                           th:classappend="${widgetConfig.getId()}"
-                                           th:attr="data-id=${widgetConfig.getId()}"
-                                           href="#deleteModalWidget" th:utext="#{form.delete}"></a>
-                                    </div>
-                                </div>
-                                <div class="row show-to-editWidget" hidden="hidden"
-                                     th:classappend="${widgetConfig.getId()}"
-                                     th:attr="data-id=${widgetConfig.getId()}">
-                                    <div class="col s12 center">
-                                        <button class="btn green" id="confirm_btnWidget"
-                                                th:classappend="${widgetConfig.getId()}"
-                                                th:attr="data-id=${widgetConfig.getId()}"
-                                                th:text="#{form.submit}"></button>
-                                        <button class="btn red" id="cancel_btnWidget"
-                                                th:classappend="${widgetConfig.getId()}"
-                                                th:attr="data-id=${widgetConfig.getId()}"
-                                                th:text="#{form.cancel}"></button>
-                                    </div>
-                                </div>
+                        <a href="#" class="collection-item widget_item" th:attr="data-id=${widgetConfig.getId()}" th:text="${widgetConfig.getName()}">
+                        </a>
 
-                            </div>
-                        </div>
-                    </li>
-                </th:block>
-            </ul>
+                    </th:block>
+                </ul>
+            </div>
 
             <div class="row">
                 <div class="col s12 center">
@@ -124,20 +69,70 @@
 
             <div class="row hide-to-edit">
                 <div class="col s12 center">
-                    <a class="waves-effect waves-light btn green" id="edit_btn" th:utext="#{form.modify}"></a>
                     <a class="waves-effect waves-light btn modal-trigger red" href="#delModal"
                        th:utext="#{form.delete}"></a>
                 </div>
             </div>
-
-            <div class="row show-to-edit" hidden="hidden">
-                <div class="col s12 center">
-                    <button class="btn green" id="confirm_btn" th:text="#{form.submit}"></button>
-                    <button class="btn red" id="cancel_btn" th:text="#{form.cancel}"></button>
-                </div>
-            </div>
         </div>
     </div>
+
+    <!-- Right side, edit-->
+    <ul id="slide-edit" class="sidenav sidenav-fixed" style="padding-top: 15px">
+        <th:block th:each="widgetConfig : ${widgetConfList}">
+            <div th:classappend="${'widget_' + widgetConfig.getId()}" class="modify-conf" hidden="hidden">
+                <div class="row">
+                    <div class="input-field col s10 offset-s1">
+                        <input class="validate modify-input listen-edit valid" th:classappend="${'modify_w_' + widgetConfig.getId() }" th:id="${widgetConfig.getId() + '_name'}" min="0" max="12"
+                               type="Text"
+                               th:value="${widgetConfig.getName()}"/>
+                        <label th:for="${widgetConfig.getId() + '_name'}" th:text="#{form.name}"></label>
+                    </div>
+                    <div class="input-field col s10 offset-s1">
+                        <input type="Text" class="" disabled="disabled"
+                               th:value="${widgetConfig.getWidgetId()}"/>
+                        <label th:for="${widgetConfig.getId() + '_name'}" th:text="#{media.widget}"></label>
+                    </div>
+
+                    <div class="input-field col s5 offset-s1">
+                        <input class="validate modify-input listen-edit valid" th:classappend="${'modify_w_' + widgetConfig.getId() }" th:id="${widgetConfig.getId() + '_posX'}" min="0" max="12"
+                               type="number"
+                               th:value="${widgetConfig.getPosX()}"/>
+                        <label th:for="${widgetConfig.getId() + '_posX'}" th:text="#{media.posX}"></label>
+                    </div>
+                    <div class="input-field col  s5">
+                        <input class="validate modify-input listen-edit valid" th:classappend="${'modify_w_' + widgetConfig.getId() }" th:id="${widgetConfig.getId() + '_posY'}" min="0" max="12"
+                               type="number"
+                               th:value="${widgetConfig.getPosY()}"/>
+                        <label th:for="${widgetConfig.getId() + '_posY'}" th:text="#{media.posY}"></label>
+                    </div>
+                    <div class="input-field col s5 offset-s1">
+                        <input class="validate modify-input listen-edit valid " th:classappend="${'modify_w_' + widgetConfig.getId() }" th:id="${widgetConfig.getId() + '_width'}" min="1"
+                               max="12"
+                               type="number"
+                               th:value="${widgetConfig.getSizeWidth()}"/>
+                        <label th:for="${widgetConfig.getId() + '_width'}" th:text="#{media.sizeWidth}"></label>
+                    </div>
+                    <div class="input-field col s5">
+                        <input class="validate modify-input listen-edit valid" th:classappend="${'modify_w_' + widgetConfig.getId() }" th:id="${widgetConfig.getId() + '_height'}" min="1"
+                               max="12"
+                               type="number"
+                               th:value="${widgetConfig.getSizeHeight()}"/>
+                        <label th:for="${widgetConfig.getId() + '_height'}" th:text="#{media.sizeHeight}"></label>
+                    </div>
+                    <div class="col s12 center">
+                        <a class="btn green modify-submit" th:text="#{form.submit}" th:attr="data-widget=${widgetConfig.getId()}"></a>
+                        <a class="btn red delete_btn modal-trigger" th:text="#{form.delete}" th:attr="data-widget=${widgetConfig.getId()} " href="#deleteModalWidget" ></a>
+                    </div>
+                </div>
+            </div>
+        </th:block>
+
+        <li class="modify-conf center">
+            <h5 th:text="#{media.selectWidget}"></h5>
+        </li>
+    </ul>
+
+
 
 
     <!--Adding Template MODAL-->
@@ -153,7 +148,8 @@
                 <div class="input-field col s10 offset-s1">
                     <select id="widgetSelect" class="">
                         <th:block th:each=" widget : ${widgets}">
-                            <option th:text="${#strings.capitalize(widget.value.getName())}" th:value="${widget.value.getId()}"></option>
+                            <option th:text="${#strings.capitalize(widget.value.getName())}"
+                                    th:value="${widget.value.getId()}"></option>
                         </th:block>
                     </select>
                     <label th:text="#{media.widget}"></label>
@@ -186,7 +182,7 @@
                            max="12"
                            type="number"
                            value="1"/>
-                    <label for="addWidgetSizeWidth"  th:text="#{media.sizeWidth}"></label>
+                    <label for="addWidgetSizeWidth" th:text="#{media.sizeWidth}"></label>
                 </div>
                 <div class="input-field col  m5 s10 offset-s1">
                     <input class="validate conf-input listen valid" id="addWidgetSizeHeight" min="1"
@@ -202,7 +198,8 @@
                                 <th:block
                                         th:if="${conf.getType() == T(Donkey.Widgets.ConfType).TEXT || conf.getType() == T(Donkey.Widgets.ConfType).NUMBER }">
                                     <div class="input-field col s10 offset-s1">
-                                        <input class="validate listen custom-input" th:classappend="${conf.getValue() == null ? 'custom-conf-input-' + widget.value.getId() : 'valid custom-conf-input-' + widget.value.getId()}"
+                                        <input class="validate listen custom-input"
+                                               th:classappend="${conf.getValue() == null ? 'custom-conf-input-' + widget.value.getId() : 'valid custom-conf-input-' + widget.value.getId()}"
                                                th:id="${conf.getName()}" min="1"
                                                max="12"
                                                th:type="${#strings.toLowerCase(conf.getType() )}"
@@ -211,20 +208,25 @@
                                                th:text="${#strings.capitalize(conf.getName())}"></label>
                                     </div>
                                 </th:block>
-                                <th:block th:if="${conf.getType() == T(Donkey.Widgets.ConfType).MEDIA and conf.isList()}">
+                                <th:block
+                                        th:if="${conf.getType() == T(Donkey.Widgets.ConfType).MEDIA and conf.isList()}">
 
                                     <div class="col s10 offset-s1 card-panel">
                                         <div class="row" style="margin-top: 5px;">
                                             <div class="col s12 center">
                                                 <h5 th:text="${#strings.capitalize(conf.getName())}"></h5>
                                             </div>
-                                            <ul class="col s10 offset-s1 collection" th:id="${conf.getName() + '_list'}">
+                                            <ul class="col s10 offset-s1 collection"
+                                                th:id="${conf.getName() + '_list'}">
 
                                             </ul>
                                             <div class="col s12 center">
-                                                <a class="btn blue media-list-add waves-effect modal-trigger modal-trigger-media" href="#mediaModal" th:text="#{form.add}" th:attr="data-conf-id=${conf.getName()}"></a>
+                                                <a class="btn blue media-list-add waves-effect modal-trigger modal-trigger-media"
+                                                   href="#mediaModal" th:text="#{form.add}"
+                                                   th:attr="data-conf-id=${conf.getName()}"></a>
                                             </div>
-                                            <input type="hidden" th:id="${conf.getName()}" class="listen custom-input" th:classappend="${'custom-conf-input-' + widget.value.getId()}"/>
+                                            <input type="hidden" th:id="${conf.getName()}" class="listen custom-input"
+                                                   th:classappend="${'custom-conf-input-' + widget.value.getId()}"/>
                                         </div>
                                     </div>
                                 </th:block>
@@ -255,6 +257,7 @@
                     th:text="#{form.yes}"></button>
         </div>
     </div>
+
     <!--Delete Widget MODAL-->
     <div id="deleteModalWidget" class="modal">
         <div class="modal-content">
