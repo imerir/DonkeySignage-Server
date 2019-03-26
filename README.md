@@ -49,7 +49,7 @@ We use Gradle for this project.
 
 ## Doc
 - [Javadoc](https://jenkins.donkeysignage.imerir.org/job/DonkeySignage-Server/job/master/Javadoc/)
-- [Postman](https://documenter.getpostman.com/view/4264362/S11NMH17)
+- [Postman](https://documenter.getpostman.com/view/6579831/S17tRTwV)
 
 ## Jenkins
 - [Jenkins](https://jenkins.donkeysignage.imerir.org)
