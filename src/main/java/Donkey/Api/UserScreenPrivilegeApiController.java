@@ -30,6 +30,11 @@ public class UserScreenPrivilegeApiController {
         this.userScreenPrivilegeRepository = userScreenPrivilegeRepository;
     }
 
+    /**
+     * Get all privilege of screen
+     * @param usrScreenPrivilegeJson
+     * @return ResponseEntity
+     */
     @RequestMapping(value = "" , method = RequestMethod.GET)
     public ResponseEntity<?> getPrivileges (@RequestBody UserScreenPrivilegeJson usrScreenPrivilegeJson){
         if(usrScreenPrivilegeJson.screenId != null && usrScreenPrivilegeJson.userId != null){
@@ -59,6 +64,11 @@ public class UserScreenPrivilegeApiController {
         }
     }
 
+    /**
+     * Delete a user screen privilege
+     * @param usrScreenPrivilegeJson
+     * @return
+     */
     @RequestMapping(value = "" , method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteUserPrivilegeOnScreen (@RequestBody UserScreenPrivilegeJson usrScreenPrivilegeJson){
         if(usrScreenPrivilegeJson.screenId != null && usrScreenPrivilegeJson.userId != null
@@ -72,6 +82,11 @@ public class UserScreenPrivilegeApiController {
         }
     }
 
+    /**
+     * Modify a user screen privilege
+     * @param usrScreenPrivilegeJson
+     * @return
+     */
     @RequestMapping(value = "" , method = RequestMethod.POST)
     public ResponseEntity<?> addUserPriviligeOnScreen (@RequestBody UserScreenPrivilegeJson usrScreenPrivilegeJson){
         if(usrScreenPrivilegeJson.screenId != null && usrScreenPrivilegeJson.userId != null

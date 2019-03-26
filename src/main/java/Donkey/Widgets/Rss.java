@@ -27,7 +27,7 @@ public class Rss implements WidgetInterface {
 
     @Override
     public String getTemplate() throws IOException {
-        return FilesTools.getINSTANCE().getFileContent("widgets/image_slides.html");
+        return FilesTools.getINSTANCE().getFileContent("widgets/rss.html");
     }
 
     @Override

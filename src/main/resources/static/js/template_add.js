@@ -11,8 +11,6 @@ function templateAddListeners() {
         updateWidgetAdd(id);
         let input = $(".conf-input,.custom-conf-input-" + $('#widgetSelect').val());
         checkAddField(input);
-
-
     });
 
 
