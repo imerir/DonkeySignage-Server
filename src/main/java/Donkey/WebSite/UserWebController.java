@@ -30,11 +30,21 @@ public class UserWebController {
         this.userRepository = userRepository;
     }
 
+    /**
+     * Display page login
+     * @return
+     */
     @RequestMapping("/login")
     public String login(){
         return "login";
     }
 
+    /**
+     * Display form for adding a user
+     * @param model
+     * @param authentication
+     * @return
+     */
     @RequestMapping(value = "/addUser", method = RequestMethod.GET)
     public String createUser(Model model, Authentication authentication){
         model.addAttribute("addUserForm", new AddUserForm());
@@ -42,7 +52,13 @@ public class UserWebController {
         return "User/addUser";
     }
 
-
+    /**
+     * Display user page with all user present in db
+     * @param model
+     * @param id
+     * @param authentication
+     * @return
+     */
     @RequestMapping(value = "/user", method = RequestMethod.GET)
     public String showUser(Model model, @RequestParam(name = "id", defaultValue = "-1") int id, Authentication authentication){
         if(id == -1){
@@ -54,6 +70,12 @@ public class UserWebController {
         return "User/user";
     }
 
+    /**
+     * Display myAccount page
+     * @param model
+     * @param authentication
+     * @return
+     */
     @RequestMapping(value = "/myAccount", method = RequestMethod.GET)
     public String myAccount(Model model, Authentication authentication){
         return "User/myAccount";

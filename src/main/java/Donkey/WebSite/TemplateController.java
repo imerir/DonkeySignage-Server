@@ -37,6 +37,12 @@ public class TemplateController {
         this.widgetConfigRepository = widgetConfigRepository;
     }
 
+    /**
+     * Display media page
+     * @param model
+     * @param authentication
+     * @return media.html
+     */
     @RequestMapping(value = "/media", method = RequestMethod.GET)
     public String getFileMedia(Model model, Authentication authentication) {
         model.addAttribute("files", storageService.loadAll().map(
@@ -47,12 +53,24 @@ public class TemplateController {
         return "Media/media";
     }
 
+    /**
+     * Display form for adding a widget to a template
+     * @param model
+     * @param authentication
+     * @return addTemplate.html
+     */
     @RequestMapping(value = "/addTemplate", method = RequestMethod.GET)
     public String addTemplate(Model model, Authentication authentication) {
         model.addAttribute("addTemplateForm", new AddTemplateJson());
         return "Media/addTemplate";
     }
 
+    /**
+     * Display template
+     * @param model
+     * @param id
+     * @return
+     */
     @RequestMapping(value = "/template", method = RequestMethod.GET)
     public String getTemplate(Model model, @RequestParam(name = "id") int id) {
         TemplateEntity template = templateRepository.getById(id);
