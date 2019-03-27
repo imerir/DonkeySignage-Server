@@ -113,8 +113,15 @@
                 "data": JSON.stringify(deleteFileJson),
             };
             $.ajax(settings).done(function (response) {
-                window.location.reload(); //TODO change road to template with id
-            });//TODO gestion erreur
+                window.location.reload();
+            }).fail(function (response) {
+                console.log(response);
+                M.toast({
+                    html: " <i class=\"material-icons\" style='margin-right: 10px'>warning</i> Delete fail",
+                    classes: 'red',
+                    displayLength: 4000
+                });
+            });
         });
 
     });

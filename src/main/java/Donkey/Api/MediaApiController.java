@@ -25,6 +25,10 @@ public class MediaApiController {
         this.storageService = storageService;
     }
 
+    /**
+     * Get all file in storage server
+     * @return all files from server in a list
+     */
     @RequestMapping(value = "", method = RequestMethod.GET)
     public ResponseEntity<?> getMedial(){
 

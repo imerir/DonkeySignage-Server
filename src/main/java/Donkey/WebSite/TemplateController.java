@@ -1,30 +1,23 @@
 package Donkey.WebSite;
 
 import Donkey.Api.JSON.Template.AddTemplateJson;
-import Donkey.Api.JSON.Template.DeleteFileJson;
 import Donkey.Database.Entity.TemplateEntity;
 import Donkey.Database.Repository.TemplateRepository;
 import Donkey.Database.Repository.WidgetConfigRepository;
 import Donkey.Storage.Service.StorageService;
 import Donkey.WebSocket.WebSocketUtils;
-import Donkey.Widgets.WidgetConfDefinition;
-import Donkey.Widgets.WidgetInterface;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
@@ -44,6 +37,12 @@ public class TemplateController {
         this.widgetConfigRepository = widgetConfigRepository;
     }
 
+    /**
+     * Display media page
+     * @param model
+     * @param authentication
+     * @return media.html
+     */
     @RequestMapping(value = "/media", method = RequestMethod.GET)
     public String getFileMedia(Model model, Authentication authentication) {
         model.addAttribute("files", storageService.loadAll().map(
@@ -54,12 +53,24 @@ public class TemplateController {
         return "Media/media";
     }
 
+    /**
+     * Display form for adding a widget to a template
+     * @param model
+     * @param authentication
+     * @return addTemplate.html
+     */
     @RequestMapping(value = "/addTemplate", method = RequestMethod.GET)
     public String addTemplate(Model model, Authentication authentication) {
         model.addAttribute("addTemplateForm", new AddTemplateJson());
         return "Media/addTemplate";
     }
 
+    /**
+     * Display template
+     * @param model
+     * @param id
+     * @return
+     */
     @RequestMapping(value = "/template", method = RequestMethod.GET)
     public String getTemplate(Model model, @RequestParam(name = "id") int id) {
         TemplateEntity template = templateRepository.getById(id);

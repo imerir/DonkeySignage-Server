@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class ScreenController {
-    //TODO Remplacer les methodes POST par du js directement dans html #JSAWARE
 
     private final ScreenRepository screenRegRep;
     private final TemplateRepository templateRepository;

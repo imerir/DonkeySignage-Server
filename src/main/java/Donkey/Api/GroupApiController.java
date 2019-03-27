@@ -95,9 +95,7 @@ public class GroupApiController {
                 }
                 groupRepository.delete(grpToDelete);
             }
-
             if(grpToDelete.getParent() == null)
-                //TODO remove this
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             else
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);

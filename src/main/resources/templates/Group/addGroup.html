@@ -3,7 +3,6 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
-    <!--TODO <meta name="description" content=""/>-->
     <title>Add Group - Donkey Signage</title>
     <link rel="icon"
           type="image/x-icon"
@@ -120,7 +119,14 @@
             $.ajax(settings).done(function (response) {
                 console.log(response);
                 window.location.replace("/group?id="+response.id);
-            }); //TODO gestion erreur
+            }).fail(function (response) {
+                console.log(response);
+                M.toast({
+                    html: " <i class=\"material-icons\" style='margin-right: 10px'>warning</i> Add fail",
+                    classes: 'red',
+                    displayLength: 4000
+                });
+            });
         });
 
         let name = $('#name');

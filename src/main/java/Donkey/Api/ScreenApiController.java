@@ -250,11 +250,11 @@ public class ScreenApiController {
     public ResponseEntity<?> setTemplate(@RequestParam(name = "id") int id , @RequestBody HashMap<String, Integer> value){
         ScreenEntity screen = screenRegisterRep.getScreenEntityById(id);
         if(screen == null ){
-            return new ResponseEntity<>(new Error("No Screen with this id","SCREEN_NOT_FOUND"),HttpStatus.NOT_FOUND); //TODO Add Code Error
+            return new ResponseEntity<>(new Error("No Screen with this id","SCREEN_NOT_FOUND"),HttpStatus.NOT_FOUND);
         }else{
             TemplateEntity templateEntity = templateRepository.getById(value.get("templateId"));
             if(templateEntity == null && value.get("templateId") != -1){
-                return new ResponseEntity<>(new Error("No Template with this id","TEMPLATE_NOT_FOUND"),HttpStatus.NOT_FOUND);//TODO Add Code Error
+                return new ResponseEntity<>(new Error("No Template with this id","TEMPLATE_NOT_FOUND"),HttpStatus.NOT_FOUND);
             }else{
                 screen.setTemplate(templateEntity);
                 screenRegisterRep.save(screen);

@@ -89,8 +89,15 @@
             };
 
             $.ajax(settings).done(function (response) {
-                window.location.replace("/media"); //TODO change road to template with id
-            });//TODO gestion erreur
+                window.location.replace("/media");
+            }).fail(function (response) {
+                console.log(response);
+                M.toast({
+                    html: " <i class=\"material-icons\" style='margin-right: 10px'>warning</i> Post fail",
+                    classes: 'red',
+                    displayLength: 4000
+                });
+            });
         });
     });
     /*]]>*/

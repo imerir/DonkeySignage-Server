@@ -212,13 +212,6 @@
     }
 
     function resetPassword(){
-        //TODO Send request to api
-        //TODO Open modal
-        //TODO Display new password in modal
-
-        // var elems = document.getElementById("resetPasswordModal");
-        // var instance = M.FormSelect.init(elems);
-
         var settings = {
             url: "/api/resetPassword?id=" + userId,
             method: "PUT",
