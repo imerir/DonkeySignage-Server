@@ -1,17 +1,17 @@
 package Donkey.Widgets;
 
-import Donkey.MainClass;
 import Donkey.Tools.FilesTools;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Text implements WidgetInterface{
     Logger logger = LogManager.getLogger();
@@ -49,5 +49,13 @@ public class Text implements WidgetInterface{
         WidgetConfDefinition message = new WidgetConfDefinition("message", ConfType.TEXT, true, false, null, null);
         WidgetConfDefinition font_size = new WidgetConfDefinition("font_size", ConfType.NUMBER, true, false, "12", null);
         return Arrays.asList(message, font_size);
+    }
+
+    @Override
+    public Map<String, Object> getParam(String jsonValue) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        HashMap<String,Object> parsed;
+        parsed = objectMapper.readValue(jsonValue, new TypeReference<Map<String, Object>>(){});
+        return  parsed;
     }
 }

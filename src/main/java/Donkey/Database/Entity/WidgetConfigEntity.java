@@ -112,6 +112,12 @@ public class WidgetConfigEntity {
         if(widgetConfigEntity.sizeWidth != null)
             this.sizeWidth = widgetConfigEntity.sizeWidth;
 
+        if(widgetConfigEntity.template != null)
+            this.template = widgetConfigEntity.template;
+
+        if(widgetConfigEntity.name != null)
+            this.name = widgetConfigEntity.name;
+
     }
 
     public String getName() {

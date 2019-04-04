@@ -1,6 +1,5 @@
 package Donkey.Widgets;
 
-import Donkey.MainClass;
 import Donkey.Tools.Base64;
 import Donkey.Tools.FilesTools;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,7 +9,6 @@ import org.apache.logging.log4j.Logger;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.*;
 
 public class ImageSlide implements WidgetInterface {
@@ -68,7 +66,13 @@ public class ImageSlide implements WidgetInterface {
         return Collections.singletonList(images);
     }
 
+    @Override
+    public HashMap<String, Object> getParam(String jsonValue) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.readValue(jsonValue, Params.class);
+        return null;
 
+    }
 
 
     public static class Params{

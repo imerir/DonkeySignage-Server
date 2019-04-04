@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 public class Rss implements WidgetInterface {
     private Logger logger = LogManager.getLogger();
@@ -37,6 +38,11 @@ public class Rss implements WidgetInterface {
 
     @Override
     public List<WidgetConfDefinition> getParam() {
+        return null;
+    }
+
+    @Override
+    public Map<String, Object> getParam(String jsonValue) throws IOException {
         return null;
     }
 }

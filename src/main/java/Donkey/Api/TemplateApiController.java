@@ -156,6 +156,7 @@ public class TemplateApiController {
             logger.info("[/widgetConf PUT] Widget not found");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+
         widgetConfigEntity.update(widget);
 
         widgetConfigEntity = widgetConfigRepository.save(widgetConfigEntity);
