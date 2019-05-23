@@ -33,7 +33,6 @@ public class WebSocketUtils {
      */
     public HashMap<String, WidgetInterface> getWidgets(){
         if(widgets.isEmpty()){
-            widgets.clear();
             ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningCandidateComponentProvider( false);
             provider.addIncludeFilter(new AssignableTypeFilter(WidgetInterface.class));
             Set<BeanDefinition> beans = provider.findCandidateComponents("Donkey");

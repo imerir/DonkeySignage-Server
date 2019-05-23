@@ -87,7 +87,7 @@ function sendNewWidget() {
 
     console.log(param);
     let data =
-        {
+        [{
             "name" : $('#addWidgetName').val(),
             "widgetId": $('#widgetSelect').val(),
             "posX": $('#addWidgetPosX').val(),
@@ -95,7 +95,7 @@ function sendNewWidget() {
             "sizeWidth": $('#addWidgetSizeWidth').val(),
             "sizeHeight": $('#addWidgetSizeHeight').val(),
             "param": JSON.stringify(param)
-        };
+        }];
 
     console.log(data);
 

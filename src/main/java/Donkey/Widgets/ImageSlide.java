@@ -2,6 +2,7 @@ package Donkey.Widgets;
 
 import Donkey.Tools.Base64;
 import Donkey.Tools.FilesTools;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -69,8 +70,8 @@ public class ImageSlide implements WidgetInterface {
     @Override
     public HashMap<String, Object> getParam(String jsonValue) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.readValue(jsonValue, Params.class);
-        return null;
+        HashMap<String,Object> parsed = objectMapper.readValue(jsonValue, new TypeReference<Map<String, Object>>() {});
+        return parsed;
 
     }
 

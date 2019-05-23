@@ -135,7 +135,9 @@
 
 
                     <th:block th:with="wInfo=${widgets[widgetConfig.getWidgetId()]}">
+                        <!--/*@thymesVar id="wInfo" type="Donkey.Widgets.WidgetInterface"*/-->
                         <th:block th:each="confEdit : ${wInfo.getParam()}">
+                            <!--/*@thymesVar id="confEdit" type="Donkey.Widgets.WidgetConfDefinition"*/-->
                             <th:block
                                     th:if="${confEdit.getType() == T(Donkey.Widgets.ConfType).TEXT || confEdit.getType() == T(Donkey.Widgets.ConfType).NUMBER }">
                                 <div class="input-field col s10 offset-s1">
@@ -144,33 +146,36 @@
                                            th:type="${#strings.toLowerCase(confEdit.getType() )}"
                                            th:id="${'modify_custom_' + widgetConfig.getId() + '_' + confEdit.getName()}"
                                            th:attr="data-name=${confEdit.getName()}"
-                                           th:value="${wInfo.getParam(widgetConfig.getParam()).get(confEdit.getName())}"/>
+                                           th:value="${widgetConfig.getParam()}"/>
                                     <label th:for="${'modify_custom_' + widgetConfig.getId() + '_' + confEdit.getName()}"
                                            th:text="${#strings.capitalize(confEdit.getName())}"></label>
                                 </div>
                             </th:block>
-                            <!--<th:block-->
-                                    <!--th:if="${confEdit.getType() == T(Donkey.Widgets.ConfType).MEDIA and confEdit.isList()}">-->
+                            <th:block
+                                    th:if="${confEdit.getType() == T(Donkey.Widgets.ConfType).MEDIA and confEdit.isList()}">
 
-                                <!--<div class="col s10 offset-s1 card-panel">-->
-                                    <!--<div class="row" style="margin-top: 5px;">-->
-                                        <!--<div class="col s12 center">-->
-                                            <!--<h5 th:text="${#strings.capitalize(confEdit.getName())}"></h5>-->
-                                        <!--</div>-->
-                                        <!--<ul class="col s10 offset-s1 collection"-->
-                                            <!--th:id="${confEdit.getName() + '_list'}">-->
+                                <div class="col s10 offset-s1 card-panel">
+                                    <div class="row" style="margin-top: 5px;">
+                                        <div class="col s12 center">
+                                            <h5 th:text="${#strings.capitalize(confEdit.getName())}"></h5>
+                                        </div>
+                                        <ul class="col s10 offset-s1 collection"
+                                            th:id="${'' + widgetConfig.getId() + '_' + confEdit.getName() + '_list'}">
 
-                                        <!--</ul>-->
-                                        <!--<div class="col s12 center">-->
-                                            <!--<a class="btn blue media-list-add waves-effect modal-trigger modal-trigger-media"-->
-                                               <!--href="#mediaModal" th:text="#{form.add}"-->
-                                               <!--th:attr="data-conf-id=${confEdit.getName()}"></a>-->
-                                        <!--</div>-->
-                                        <!--<input type="hidden" th:id="${confEdit.getName()}" class="listen custom-input-edit"-->
-                                               <!--th:classappend="${'custom-conf-input-' + widgetConfig.getWidgetId()}"/>-->
-                                    <!--</div>-->
-                                <!--</div>-->
-                            <!--</th:block>-->
+                                        </ul>
+                                        <div class="col s12 center">
+                                            <a class="btn blue media-list-add waves-effect modal-trigger modal-trigger-media"
+                                               href="#mediaModal" th:text="#{form.add}"
+                                               th:attr="data-conf-id=${confEdit.getName()}"></a>
+                                        </div>
+                                        <input type="hidden" class="listen-edit"
+                                               th:id="${'modify_custom_' + widgetConfig.getId() + '_' + confEdit.getName()}"
+                                               th:attr="data-name=${confEdit.getName()}"
+                                               th:classappend="${'modify_custom_' + widgetConfig.getId()}"
+                                               th:value="${T(Donkey.Tools.Json).stringify(wInfo.getParam(widgetConfig.getParam()).get(confEdit.getName()))}"/>
+                                    </div>
+                                </div>
+                            </th:block>
                         </th:block>
                     </th:block>
 
