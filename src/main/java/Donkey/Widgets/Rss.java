@@ -1,5 +1,6 @@
 package Donkey.Widgets;
 
+import Donkey.Database.Entity.WidgetConfigEntity;
 import Donkey.Tools.FilesTools;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -44,5 +45,10 @@ public class Rss implements WidgetInterface {
     @Override
     public Map<String, WidgetConfDefinition> getParam(String jsonValue) throws IOException {
         return null;
+    }
+
+    @Override
+    public boolean needUpdate(WidgetConfigEntity widgetConf) {
+        return false;
     }
 }

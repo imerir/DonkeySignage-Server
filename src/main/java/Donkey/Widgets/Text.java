@@ -1,5 +1,6 @@
 package Donkey.Widgets;
 
+import Donkey.Database.Entity.WidgetConfigEntity;
 import Donkey.Tools.FilesTools;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -61,4 +62,11 @@ public class Text implements WidgetInterface{
         map.put("font_size", new WidgetConfDefinition("font_size", ConfType.NUMBER, true, false, parsed.get("font_size"), ((Integer)parsed.get("font_size")).toString(),  null));
         return  map;
     }
+
+    @Override
+    public boolean needUpdate(WidgetConfigEntity widgetConf) {
+        return false;
+    }
+
+
 }

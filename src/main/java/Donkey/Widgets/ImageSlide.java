@@ -1,5 +1,6 @@
 package Donkey.Widgets;
 
+import Donkey.Database.Entity.WidgetConfigEntity;
 import Donkey.Tools.Base64;
 import Donkey.Tools.FilesTools;
 import Donkey.Tools.Json;
@@ -76,6 +77,11 @@ public class ImageSlide implements WidgetInterface {
         map.put("message", new WidgetConfDefinition("images", ConfType.MEDIA, false, true, parsed.get("images"), Json.stringify(parsed.get("images")), null));
         return map;
 
+    }
+
+    @Override
+    public boolean needUpdate(WidgetConfigEntity widgetConf) {
+        return false;
     }
 
 
