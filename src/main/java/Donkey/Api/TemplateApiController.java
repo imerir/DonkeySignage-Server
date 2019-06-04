@@ -144,8 +144,8 @@ public class TemplateApiController {
             widget.setTemplate(templateEntity);
         }
 
-        widgetConfigRepository.save(widgetList);
-        return new ResponseEntity<>(templateRepository.getById(templateId), HttpStatus.CREATED);
+        Iterable<WidgetConfigEntity> widget = widgetConfigRepository.save(widgetList);
+        return new ResponseEntity<>(widget, HttpStatus.CREATED);
 
     }
 

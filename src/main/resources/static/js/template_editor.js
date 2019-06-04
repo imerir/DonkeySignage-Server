@@ -1,11 +1,6 @@
 let selectedEditWidget = -1;
 
 
-document.addEventListener('DOMContentLoaded', function () {
-
-    templateEditorListeners();
-    
-});
 
 function templateEditorListeners() {
 
@@ -21,30 +16,27 @@ function templateEditorListeners() {
 
     });
 
-    $(".delete_btn").click(function () {
-        idToDelete = $(this).attr("data-widget");
+    $(".delMedia").click(function () {
+        mediaDel(this);
     });
 
     $('#deleteWidgetBtn').click(function () {
-        console.log(idToDelete);
+        console.log(selectedEditWidget);
         let settings = {
-            "url": "/api/widgetConf?id=" + idToDelete,
+            "url": "/api/widgetConf?id=" + selectedEditWidget,
             "method": "DELETE"
         };
         $.ajax(settings).done(function (response) {
-            console.log(response);
             window.location.reload();
         });
     });
     let listWidget = $('.widget_item');
 
     listWidget.click(function () {
-        let id = $(this).attr("data-id");
-        console.log(id);
+        let id = $(this)[0].id;
         listWidget.removeClass("active");
         $(this).addClass("active");
         $(".modify-conf").attr("hidden", "hidden");
-        console.log($('.widget_' + id));
         $('.widget_' + id).removeAttr("hidden");
         selectedEditWidget = id;
     });
@@ -52,6 +44,7 @@ function templateEditorListeners() {
 
     let editInputs = $(".listen-edit");
     editInputs.change(function () {
+        console.log("change");
         setTimeout(function () {
             let input = $(".modify_"+selectedEditWidget+",.modify_custom_" + selectedEditWidget);
             console.log(input);
@@ -105,6 +98,7 @@ function templateEditorListeners() {
         };
 
         $.ajax(settings).done(function () {
+            window.location.href = "#" + id;
             location.reload()
         }).fail(function (response) {
             console.log(response);
@@ -114,15 +108,17 @@ function templateEditorListeners() {
                 displayLength: 4000
             });
         });
-    })
+    });
+    console.log(window.location.hash);
 
-
+    if(window.location.hash) {
+        $(window.location.hash).click();
+    }
 }
 
 
 function checkTextInputEdit(){
     let textInput = $("input[type=text].modify_"+selectedEditWidget+",.modify_custom_" + selectedEditWidget);
-    console.log(textInput);
     for(let input of textInput){
         if(input.value.length > 0)
             $(input).addClass("valid");

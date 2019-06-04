@@ -14,4 +14,5 @@ document.addEventListener('DOMContentLoaded', function () {
     let side = document.querySelectorAll('#slide-edit');
     M.Sidenav.init(side, {edge: 'right'});
     templateAddListeners();
+    templateEditorListeners();
 });
