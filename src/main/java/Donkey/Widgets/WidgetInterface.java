@@ -11,7 +11,7 @@ public interface WidgetInterface {
     String getTemplate() throws IOException;
     String convertParam(String paramStr) throws IOException;
     List<WidgetConfDefinition> getParam();
-    Map<String, Object> getParam(String jsonValue) throws IOException;
+    Map<String, WidgetConfDefinition> getParam(String jsonValue) throws IOException;
 
 
 

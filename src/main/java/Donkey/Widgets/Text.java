@@ -46,16 +46,19 @@ public class Text implements WidgetInterface{
     @JsonIgnore
     @Override
     public List<WidgetConfDefinition> getParam() {
-        WidgetConfDefinition message = new WidgetConfDefinition("message", ConfType.TEXT, true, false, null, null);
-        WidgetConfDefinition font_size = new WidgetConfDefinition("font_size", ConfType.NUMBER, true, false, "12", null);
+        WidgetConfDefinition message = new WidgetConfDefinition("message", ConfType.TEXT, true, false, "", "",  null);
+        WidgetConfDefinition font_size = new WidgetConfDefinition("font_size", ConfType.NUMBER, true, false, "12", "",null);
         return Arrays.asList(message, font_size);
     }
 
     @Override
-    public Map<String, Object> getParam(String jsonValue) throws IOException {
+    public Map<String, WidgetConfDefinition> getParam(String jsonValue) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         HashMap<String,Object> parsed;
         parsed = objectMapper.readValue(jsonValue, new TypeReference<Map<String, Object>>(){});
-        return  parsed;
+        Map<String, WidgetConfDefinition> map = new HashMap<>();
+        map.put("message", new WidgetConfDefinition("message", ConfType.TEXT, true, false, parsed.get("message"), (String) parsed.get("message"), null));
+        map.put("font_size", new WidgetConfDefinition("font_size", ConfType.NUMBER, true, false, parsed.get("font_size"), ((Integer)parsed.get("font_size")).toString(),  null));
+        return  map;
     }
 }

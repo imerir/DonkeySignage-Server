@@ -12,6 +12,8 @@ public class WidgetConfDefinition {
 
     private boolean freeValue;
 
+    private String rawValue;
+
     private boolean list;
 
     private Object value;
@@ -21,13 +23,14 @@ public class WidgetConfDefinition {
 
     public WidgetConfDefinition(){}
 
-    public WidgetConfDefinition(String name, ConfType type, boolean isFreeValue, boolean isList, Object value, List<Object> valueSet) {
+    public WidgetConfDefinition(String name, ConfType type, boolean isFreeValue, boolean isList, Object value, String rawValue, List<Object> valueSet) {
         this.name = name;
         this.freeValue = isFreeValue;
         this.type = type;
         this.list = isList;
         this.value = value;
         this.valueSet = valueSet;
+        this.rawValue = rawValue;
     }
 
     public boolean isFreeValue() {
@@ -76,5 +79,13 @@ public class WidgetConfDefinition {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getRawValue() {
+        return rawValue;
+    }
+
+    public void setRawValue(String rawValue) {
+        this.rawValue = rawValue;
     }
 }

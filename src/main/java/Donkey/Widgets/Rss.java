@@ -42,7 +42,7 @@ public class Rss implements WidgetInterface {
     }
 
     @Override
-    public Map<String, Object> getParam(String jsonValue) throws IOException {
+    public Map<String, WidgetConfDefinition> getParam(String jsonValue) throws IOException {
         return null;
     }
 }
