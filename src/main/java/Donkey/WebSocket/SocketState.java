@@ -14,8 +14,8 @@ public class SocketState {
     private SocketState(){}
 
 
-    HashMap<String, Info> logged = new HashMap<>();
-    List<Info> notLogged = new ArrayList<>();
+    public HashMap<String, Info> logged = new HashMap<>();
+    public List<Info> notLogged = new ArrayList<>();
 
 
 

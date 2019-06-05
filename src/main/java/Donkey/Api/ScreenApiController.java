@@ -13,6 +13,7 @@ import Donkey.Database.Entity.UserAndPrivileges.UserScreenPrivilege;
 import Donkey.Database.Repository.*;
 import Donkey.Tools.IpTools;
 import Donkey.Tools.ScreenTools;
+import Donkey.WebSocket.WebSocketUtils;
 import com.mysql.fabric.Response;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -257,7 +258,8 @@ public class ScreenApiController {
                 return new ResponseEntity<>(new Error("No Template with this id","TEMPLATE_NOT_FOUND"),HttpStatus.NOT_FOUND);
             }else{
                 screen.setTemplate(templateEntity);
-                screenRegisterRep.save(screen);
+                screen = screenRegisterRep.save(screen);
+                WebSocketUtils.getINSTANCE().notifyScreen(screen);
                 return new ResponseEntity<>(HttpStatus.OK);
             }
         }

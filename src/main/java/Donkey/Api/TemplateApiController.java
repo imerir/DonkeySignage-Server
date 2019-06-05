@@ -2,10 +2,12 @@ package Donkey.Api;
 
 
 import Donkey.Api.JSON.Error;
+import Donkey.Database.Entity.ScreenEntity;
 import Donkey.Database.Entity.TemplateEntity;
 import Donkey.Database.Entity.WidgetConfigEntity;
 import Donkey.Database.Repository.TemplateRepository;
 import Donkey.Database.Repository.WidgetConfigRepository;
+import Donkey.WebSocket.WebSocketUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -134,7 +137,7 @@ public class TemplateApiController {
     public ResponseEntity<?> addWidgetConf(@PathVariable(value = "templateId") int templateId, @RequestBody List<WidgetConfigEntity> widgetList){
         TemplateEntity templateEntity = templateRepository.getById(templateId);
         if(templateEntity == null){
-            logger.info("[api/template/{}/widgetConf POST] Template not found");
+            logger.info("[api/template/{}/widgetConf POST] Template not found", templateId);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
@@ -144,8 +147,15 @@ public class TemplateApiController {
             widget.setTemplate(templateEntity);
         }
 
-        Iterable<WidgetConfigEntity> widget = widgetConfigRepository.save(widgetList);
-        return new ResponseEntity<>(widget, HttpStatus.CREATED);
+        Iterable<WidgetConfigEntity> widgetUpdatedList = widgetConfigRepository.save(widgetList);
+        List<ScreenEntity> notified = new ArrayList<>();
+        for(WidgetConfigEntity widgetConf : widgetUpdatedList){
+            List<ScreenEntity> screens = widgetConf.getTemplate().getScreen();
+            notifyScreens(screens, notified);
+        }
+
+
+        return new ResponseEntity<>(widgetUpdatedList, HttpStatus.CREATED);
 
     }
 
@@ -160,6 +170,10 @@ public class TemplateApiController {
         widgetConfigEntity.update(widget);
 
         widgetConfigEntity = widgetConfigRepository.save(widgetConfigEntity);
+
+        List<ScreenEntity> notified = new ArrayList<>();
+        List<ScreenEntity> screens = widgetConfigEntity.getTemplate().getScreen();
+        notifyScreens(screens, notified);
         return new ResponseEntity<>(widgetConfigEntity, HttpStatus.OK);
 
     }
@@ -173,10 +187,22 @@ public class TemplateApiController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-
+        List<ScreenEntity> notified = new ArrayList<>();
+        List<ScreenEntity> screens = widgetConfigEntity.getTemplate().getScreen();
         widgetConfigRepository.delete(widgetConfigEntity);
+        notifyScreens(screens, notified);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
+    }
+
+    private void notifyScreens(List<ScreenEntity> screenEntities, List<ScreenEntity> alreadyNotifiedScreens){
+        WebSocketUtils webSocketUtils = WebSocketUtils.getINSTANCE();
+        for(ScreenEntity screen : screenEntities){
+            if(!alreadyNotifiedScreens.contains(screen)){
+                alreadyNotifiedScreens.add(screen);
+                webSocketUtils.notifyScreen(screen);
+            }
+        }
     }
 
 

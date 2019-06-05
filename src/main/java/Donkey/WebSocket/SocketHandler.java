@@ -36,8 +36,8 @@ public class SocketHandler extends TextWebSocketHandler {
 
     private Logger logger = LogManager.getLogger();
     private ObjectMapper objectMapper = new ObjectMapper();
+    private WebSocketUtils webSocketUtils = WebSocketUtils.getINSTANCE();
 
-    private ScreenRepository screenRepository;
 
 
     public SocketHandler(){
@@ -99,12 +99,12 @@ public class SocketHandler extends TextWebSocketHandler {
                     }
                     response.data = tmpMap;
                     session.sendMessage(new TextMessage(objectMapper.writeValueAsString(response)));
-                    sendWidgetManifest(session);
+                    webSocketUtils.sendWidgetManifest(session);
                     break;
 
                 case "CONFIG":
 
-                    sendConfig(session);
+                    webSocketUtils.sendConfig(session);
                     break;
 
             }
@@ -138,44 +138,7 @@ public class SocketHandler extends TextWebSocketHandler {
     }
 
 
-    private void sendWidgetManifest(WebSocketSession session) throws IOException {
-        SocketState states = SocketState.getINSTANCE();
-        SocketState.Info state = states.getLoggedBySocket(session);
-        if(state != null){
-            HashMap<String, WidgetInterface> widgets = WebSocketUtils.getINSTANCE().getWidgets();
-            WebSocketData webSocketData = new WebSocketData();
-            webSocketData.type = "MANIFEST";
-            webSocketData.data = new HashMap<>();
-            webSocketData.data.put("list", widgets.values());
-            String strWidget = objectMapper.writeValueAsString(webSocketData);
-            session.sendMessage(new TextMessage(strWidget));
-        }
 
-
-
-    }
-
-
-    private void sendConfig(WebSocketSession session) throws IOException {
-        SocketState states = SocketState.getINSTANCE();
-        SocketState.Info state = states.getLoggedBySocket(session);
-        if(state != null){
-            WebSocketData webSocketData = new WebSocketData();
-            webSocketData.type = "CONFIG";
-            webSocketData.data = new HashMap<>();
-
-            if(screenRepository == null){
-                ApplicationContext context = SpringContext.getAppContext();
-                screenRepository = (ScreenRepository) context.getBean("screenRepository");
-            }
-            ScreenEntity screen = screenRepository.getScreenRegisterByUuid(state.uuid);
-            TemplateEntity template = screen.getTemplate();
-
-            webSocketData.data.put("template", template == null ? null : WebSocketUtils.getINSTANCE().templateConvertor(template) );
-            String screenStr = objectMapper.writeValueAsString(webSocketData);
-            session.sendMessage(new TextMessage(screenStr));
-        }
-    }
 
 
 

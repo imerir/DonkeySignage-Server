@@ -20,10 +20,12 @@ public class WidgetConfDefinition {
 
     private List<Object> valueSet;
 
+    private boolean needDownload;
+
 
     public WidgetConfDefinition(){}
 
-    public WidgetConfDefinition(String name, ConfType type, boolean isFreeValue, boolean isList, Object value, String rawValue, List<Object> valueSet) {
+    public WidgetConfDefinition(String name, ConfType type, boolean isFreeValue, boolean isList, boolean neeedDownlaod, Object value, String rawValue, List<Object> valueSet) {
         this.name = name;
         this.freeValue = isFreeValue;
         this.type = type;
@@ -31,6 +33,7 @@ public class WidgetConfDefinition {
         this.value = value;
         this.valueSet = valueSet;
         this.rawValue = rawValue;
+        this.needDownload = neeedDownlaod;
     }
 
     public boolean isFreeValue() {
@@ -87,5 +90,13 @@ public class WidgetConfDefinition {
 
     public void setRawValue(String rawValue) {
         this.rawValue = rawValue;
+    }
+
+    public boolean isNeedDownload() {
+        return needDownload;
+    }
+
+    public void setNeedDownload(boolean needDownload) {
+        this.needDownload = needDownload;
     }
 }

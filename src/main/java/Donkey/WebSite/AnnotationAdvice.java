@@ -3,8 +3,6 @@ package Donkey.WebSite;
 import Donkey.Database.Entity.UserAndPrivileges.UserEntity;
 import Donkey.Database.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContext;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,7 +12,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.Set;
 
 @ControllerAdvice(annotations = Controller.class)
 public class AnnotationAdvice {
