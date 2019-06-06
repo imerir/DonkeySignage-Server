@@ -1,11 +1,17 @@
 package Donkey.Widgets;
 
 import Donkey.Database.Entity.WidgetConfigEntity;
+import Donkey.WebSocket.WebSocketUtils;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+
+/**
+ * Interface used to create a widget.
+ * Each class that implement the interface will be automatically loaded by {@link WebSocketUtils#getWidgets()}
+ */
 public interface WidgetInterface {
     /**
      * Return the human friendly name.

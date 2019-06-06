@@ -70,7 +70,8 @@ public class WebSocketUtils {
             try {
                 aWidget.setParam(widgets.get(aWidget.getWidgetId()).convertParam(aWidget.getParam()));
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.catching(e);
+                //TODO send error to widget to display a message ?????
             }
 
         }
