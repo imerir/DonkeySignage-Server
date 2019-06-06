@@ -6,7 +6,7 @@
 
 <script>
     var id = $id;
-    var paramStr = '$param';
+    var paramStr = '$param'; //TODO change to api POST
     var param = JSON.parse(paramStr);
     $("#" + id).each(function () {
         $(this)[0].innerHTML = $(this)[0].innerHTML.replace(/\$message/g, param.message);

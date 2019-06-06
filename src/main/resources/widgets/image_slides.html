@@ -1,17 +1,23 @@
-<div id="$id" class="slider carousel-slider" style="width: 100%; height: 100%">
-    <ul class="slides">
+<div id="$id" class="slider carousel-slider" style="width: 100%; height: 100%;">
+    <ul class="slides" >
         <li>
 
         </li>
     </ul>
 </div>
 
+<style>
+    .slider .slides li img {
+        background-size: 100% auto;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+</style>
 
 <script>
     var id = $id;
-    var paramStr = '$param';
+    var paramStr = '$param'; //TODO change to api POST
     var param = JSON.parse(paramStr);
-    debugger;
     var heigth = document.getElementById(id).clientHeight;
     console.log(param);
     var imgHtml = "";

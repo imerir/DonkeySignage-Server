@@ -1,0 +1,73 @@
+<div id="$id" class="valign-wrapper" style="width: 100%; height: 100%">
+    <div class="center-align valign-wrapper" style="width: 100%; height: 100%">
+        <ul id="list_$id" class="collection">
+
+        </ul>
+    </div>
+</div>
+
+<script>
+    $.post("/api/getTemplate?id=$id", (config) => {
+        let param = config.param;
+
+        let html = "";
+        let now = new Date(Date.now());
+        let monday = getMonday(now);
+        let sunday = new Date();
+        sunday.setDate(monday.getDate() + 6);
+        sunday.setHours(23);
+        sunday.setMinutes(59);
+        console.log(sunday.toLocaleString("fr-FR"));
+        let list = [];
+        param.forEach(function (event) {
+            let start = new Date(event.dtstart * 1000);
+            let end = new Date(event.dtend * 1000);
+
+            if(start > monday && start < sunday)
+                list.push(event);
+
+
+
+        });
+
+        list.sort(compareDate);
+
+        list.forEach(function (ev) {
+            let start = new Date(ev.dtstart * 1000);
+            let end = new Date(ev.dtend * 1000);
+            html += "<li class='collection-item "+((now > start && now < end) ? "green" : "") + "'>"+ev.summary+ " - " + start.toLocaleString("fr-FR") +  " - " + end.toLocaleTimeString("fr-FR")+"</li>";
+        });
+
+
+        $('#list_$id').html(html);
+        console.log(param);
+
+
+
+
+        function getMonday(d) {
+            d = new Date(d);
+            let day = d.getDay();
+            let diff = d.getDate() - day + (day === 0 ? -6:1);
+            let result  = new Date(d.setDate(diff));
+            result.setHours(0);
+            result.setMinutes(1);
+            console.log(result.toLocaleString("fr-FR"));
+            return result;
+        }
+
+
+
+        function compareDate(a, b){
+            let startA = new Date(a.dtstart * 1000);
+            let startB = new Date(b.dtstart * 1000);
+            if(startA < startB)
+                return -1;
+            if(startA  > startB)
+                return 1;
+            return 0;
+
+        }
+    });
+
+</script>
