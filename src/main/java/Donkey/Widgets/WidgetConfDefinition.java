@@ -23,8 +23,33 @@ public class WidgetConfDefinition {
     private boolean needDownload;
 
 
-    public WidgetConfDefinition(){}
+    /**
+     * Constructor for definition only (set value to null)
+     * @param name
+     * @param type
+     * @param freeValue
+     * @param list
+     * @param valueSet If is not a free value, set the possible value.
+     */
+    public WidgetConfDefinition(String name, ConfType type, boolean freeValue, boolean list, List<Object> valueSet) {
+        this.name = name;
+        this.type = type;
+        this.freeValue = freeValue;
+        this.list = list;
+        this.valueSet = valueSet;
+    }
 
+    /**
+     *
+     * @param name
+     * @param type
+     * @param isFreeValue
+     * @param isList
+     * @param neeedDownlaod
+     * @param value
+     * @param rawValue
+     * @param valueSet
+     */
     public WidgetConfDefinition(String name, ConfType type, boolean isFreeValue, boolean isList, boolean neeedDownlaod, Object value, String rawValue, List<Object> valueSet) {
         this.name = name;
         this.freeValue = isFreeValue;
