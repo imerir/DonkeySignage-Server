@@ -75,6 +75,8 @@ dependencies {
         exclude group:"org.springframework.boot", module: "spring-boot-starter-logging"
     }
     compile 'mysql:mysql-connector-java'
+    compile 'net.sf.biweekly:biweekly:0.6.3'
+
 
 //    testCompile('org.springframework.boot:spring-boot-starter-test')
 //    testCompile('com.jayway.jsonpath:json-path')
