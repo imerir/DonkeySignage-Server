@@ -1,15 +1,64 @@
-<div id="$id" class="valign-wrapper" style="width: 100%; height: 100%">
-    <div class="center-align valign-wrapper" style="width: 100%; height: 100%">
-        <ul id="list_$id" class="collection">
-
-        </ul>
+<div id="$id" style="width: 100%; height: 100%">
+    <div id="grid_$id" class="grid_$id" style="width: 100%; height: 100%">
+    </div>
+    <div id="back_grid_$id" class="grid_$id back_grid_$id" style="width: 100%; height: 100%">
     </div>
 </div>
 
-<script>
-    $.post("/api/getTemplate?id=$id", (config) => {
-        let param = config.param;
+<style>
+    .grid_$id{
+        grid-template-columns: 7% repeat(7,1fr);
+        display: grid;
+        border-style: solid;
+        border-radius: 7px;
+    }
+    .back_grid_$id{
+        position: relative;
+        top: -100%;
+        z-index: -1;
+    }
 
+    
+    .calendarCase{
+        height: calc(100% - 2px);
+        width: calc(100% - 2px);
+        border-style: solid;
+        border-width: 2px;
+        padding: 2px;
+        margin: 2px;
+        -webkit-border-radius: 10px;
+        -moz-border-radius: 10px;
+        border-radius: 10px;
+        background: white;
+    }
+
+    .backCellEnd{
+        border-bottom: black solid 2px;
+        border-left: lightgray solid 1px;
+    }
+    .backCell{
+        border-bottom: lightgray solid 2px;
+        border-left: lightgray solid 1px;
+    }
+    .backCellLeft{
+        border-right: black solid 2px;
+    }
+
+    .day{
+        border-style: solid;
+        border-width: 1px;
+        border-color: rgba(127,126,128,0.44);
+    }
+</style>
+
+<script>
+    $.get("/api/getWidgetConf?id=$id", (config) => {
+        let param = config.param;
+        let calendars = param.calendars;
+        let toRemoveStart = param.day_start * 60 / 15 - 1;
+        let toRemoveEnd = (24 - param.day_end) * 60 / 15 +1;
+        let daylength = 96 - toRemoveEnd - toRemoveStart;
+        $(".grid_$id").css( "grid-template-rows", "7% repeat("+daylength+",1fr)");
         let html = "";
         let now = new Date(Date.now());
         let monday = getMonday(now);
@@ -17,12 +66,12 @@
         sunday.setDate(monday.getDate() + 6);
         sunday.setHours(23);
         sunday.setMinutes(59);
-        console.log(sunday.toLocaleString("fr-FR"));
-        let list = [];
-        param.forEach(function (event) {
-            let start = new Date(event.dtstart * 1000);
-            let end = new Date(event.dtend * 1000);
+        createBackGrid(daylength,param.day_start, 7);
 
+
+        let list = [];
+        calendars.forEach(function (event) {
+            let start = new Date(event.dtstart * 1000);
             if(start > monday && start < sunday)
                 list.push(event);
 
@@ -31,15 +80,24 @@
         });
 
         list.sort(compareDate);
-
         list.forEach(function (ev) {
             let start = new Date(ev.dtstart * 1000);
             let end = new Date(ev.dtend * 1000);
-            html += "<li class='collection-item "+((now > start && now < end) ? "green" : "") + "'>"+ev.summary+ " - " + start.toLocaleString("fr-FR") +  " - " + end.toLocaleTimeString("fr-FR")+"</li>";
+            let startMin = start.getMinutes() + start.getHours() * 60;
+            let endMin = end.getMinutes() + end.getHours() * 60;
+            let startPos = startMin / 15 - toRemoveStart + 1;
+            let endPos = endMin /15 - toRemoveStart + 1;
+            let dayPos = start.getDay() + 1 ;
+            console.log(start.toLocaleDateString("FR-fr", { weekday: 'long' }));
+            if(dayPos === 0){
+                dayPos = 8;
+            }
+            let options = {hour: "numeric", minute: "numeric"};
+            html += "<div class='"+((now > start && now < end) ? "green" : "") + " calendarCase' style='grid-area: "+startPos+" / "+dayPos+" / "+ endPos +"/ "+dayPos+";text-align: center'>"+ev.summary+ " <br/> " + start.toLocaleString("fr-FR",options) +  " - " + end.toLocaleTimeString("fr-FR", options)+"</div>";
         });
 
 
-        $('#list_$id').html(html);
+        $('#grid_$id').html(html);
         console.log(param);
 
 
@@ -67,6 +125,56 @@
                 return 1;
             return 0;
 
+        }
+
+        function getWeekDays(locale)
+        {
+            let baseDate = new Date(Date.UTC(2017, 0, 2));
+            let weekDays = [];
+            for(i = 0; i < 7; i++)
+            {
+                weekDays.push(baseDate.toLocaleDateString(locale, { weekday: 'long' }));
+                baseDate.setDate(baseDate.getDate() + 1);
+            }
+            return weekDays;
+        }
+
+        function createBackGrid(nbrRow, startHour, nbrDay){
+            let html = "";
+            let days = getWeekDays("fr-FR");
+            let j = 2;
+            html += "<div style='grid-area: 1 / 1 / 1 / 1; border-right: black solid 2px' class='backCellEnd'></div>";
+            days.forEach(function(day){
+                html += "<div style='grid-area: 1 / "+j+" / 1 / "+j+"; text-align: center;' class='backCellEnd'>"+day+"</div>";
+                j++;
+            });
+
+            let dayOffset = 0;
+            for(let row = 2; row<=nbrRow+1 ;row++){
+                for(let day = 1; day<= nbrDay+1; day++){
+                    if((row-1) % 4 === 0 && row !== nbrRow  + 1){
+                        if(day === 1 ){
+                            html += "<div style='grid-area: "+row+" / "+day+" / "+row+" / "+day+";' class='backCellEnd backCellLeft'></div>"
+                        }
+                        else{
+                            html += "<div style='grid-area: "+row+" / "+day+" / "+row+" / "+day+";' class='backCellEnd'></div>"
+                        }
+
+                    }
+                    else{
+                        if(day === 1 && (row+2) % 4 === 0){
+                            html += "<div style='grid-area: "+row+" / "+day+" / "+row+" / "+day+";' class='backCell backCellLeft'>"+(startHour + dayOffset)+":00</div>";
+                            dayOffset++;
+                        }else if( day ===1){
+                            html += "<div style='grid-area: "+row+" / "+day+" / "+row+" / "+day+";' class='backCell backCellLeft'></div>"
+                        }else
+                            html += "<div style='grid-area: "+row+" / "+day+" / "+row+" / "+day+";' class='backCell'></div>"
+                    }
+
+
+                }
+            }
+            $("#back_grid_$id").html(html);
         }
     });
 

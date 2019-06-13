@@ -52,7 +52,11 @@ public class Calendar implements WidgetInterface{
             HashMap<String, Object> conf = Json.loadObject(paramStr);
             List<CalEvent> events = convertIcal((String) conf.get("URL"));
 //            TODO Add Name of canlendar et for multible calandar
-            return Json.stringify(events);
+            HashMap<String, Object> toReturn = new HashMap<>();
+            toReturn.put("day_start", conf.get("day_start"));
+            toReturn.put("day_end", conf.get("day_end"));
+            toReturn.put("calendars", events);
+            return Json.stringify(toReturn);
         } catch (IOException e) {
             logger.catching(e);
             return null;
@@ -64,15 +68,21 @@ public class Calendar implements WidgetInterface{
     @Override
     public List<WidgetConfDefinition> getParam() {
         WidgetConfDefinition url = new WidgetConfDefinition("URL", ConfType.TEXT, true, false, false, "", "",  null);
+        WidgetConfDefinition dayStart = new WidgetConfDefinition("day_start", ConfType.NUMBER, true, false, false, "7", "",  null);
+        WidgetConfDefinition dayEnd = new WidgetConfDefinition("day_end", ConfType.NUMBER, true, false, false, "19", "",  null);
 
-        return Collections.singletonList(url);
+        return Arrays.asList(url, dayStart, dayEnd);
     }
 
     @Override
     public Map<String, WidgetConfDefinition> getParam(String jsonValue) throws IOException {
         HashMap<String, Object> parsed = Json.loadObject(jsonValue);
         Map<String, WidgetConfDefinition> map = new HashMap<>();
-        map.put("message", new WidgetConfDefinition("URL", ConfType.TEXT, true, false, false, parsed.get("URL"), (String) parsed.get("URL"), null));
+        map.put("URL", new WidgetConfDefinition("URL", ConfType.TEXT, true, false, false, parsed.get("URL"), (String) parsed.get("URL"), null));
+
+        map.put("day_start", new WidgetConfDefinition("day_start", ConfType.NUMBER, true, false, false, parsed.get("day_start"),  Integer.toString((Integer)parsed.get("day_start")), null));
+
+        map.put("day_end", new WidgetConfDefinition("day_end", ConfType.NUMBER, true, false, false, parsed.get("day_end"), Integer.toString((Integer) parsed.get("day_end")), null));
         return  map;
     }
 
