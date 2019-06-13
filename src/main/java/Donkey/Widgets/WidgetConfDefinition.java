@@ -5,7 +5,7 @@ import java.util.List;
 
 public class WidgetConfDefinition {
 
-
+//    TODO Add redable name
     private String name;
 
     private ConfType type;
@@ -45,12 +45,12 @@ public class WidgetConfDefinition {
      * @param type
      * @param isFreeValue
      * @param isList
-     * @param neeedDownlaod
+     * @param needDownload
      * @param value
      * @param rawValue
      * @param valueSet
      */
-    public WidgetConfDefinition(String name, ConfType type, boolean isFreeValue, boolean isList, boolean neeedDownlaod, Object value, String rawValue, List<Object> valueSet) {
+    public WidgetConfDefinition(String name, ConfType type, boolean isFreeValue, boolean isList, boolean needDownload, Object value, String rawValue, List<Object> valueSet) {
         this.name = name;
         this.freeValue = isFreeValue;
         this.type = type;
@@ -58,7 +58,7 @@ public class WidgetConfDefinition {
         this.value = value;
         this.valueSet = valueSet;
         this.rawValue = rawValue;
-        this.needDownload = neeedDownlaod;
+        this.needDownload = needDownload;
     }
 
     public boolean isFreeValue() {
