@@ -1,5 +1,5 @@
 <div id="$id" class="slider carousel-slider" style="width: 100%; height: 100%;">
-    <ul class="slides" >
+    <ul class="slides" style="border-radius: 10px">
         <li>
 
         </li>
@@ -15,18 +15,19 @@
 </style>
 
 <script>
-    var id = $id;
-    var paramStr = '$param'; //TODO change to api POST
-    var param = JSON.parse(paramStr);
-    var heigth = document.getElementById(id).clientHeight;
-    console.log(param);
-    var imgHtml = "";
-    param.images.forEach(function (item) {
-        imgHtml += " <li>\n" +
-            "            <img src='data:image/png;base64,"+item+"'/>\n" +
-            "        </li>";
+
+    $.get("/api/getWidgetConf?id=$id", (config) => {
+        let param = config.param;
+        let heigth = document.getElementById("$id").clientHeight;
+        console.log(param);
+        let imgHtml = "";
+        param.images.forEach(function (item) {
+            imgHtml += " <li>\n" +
+                "            <img src='data:image/png;base64," + item + "'/>\n" +
+                "        </li>";
+        });
+        document.getElementById("$id").querySelector(".slides").innerHTML = imgHtml;
+        let elems = document.querySelectorAll('.slider');
+        M.Slider.init(elems, {height: heigth, indicators: false});
     });
-    document.getElementById(id).querySelector(".slides").innerHTML = imgHtml;
-    var elems = document.querySelectorAll('.slider');
-    var instances = M.Slider.init(elems, {height: heigth, indicators: false});
 </script>

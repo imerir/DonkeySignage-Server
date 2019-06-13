@@ -5,13 +5,13 @@
 </div>
 
 <script>
-    var id = $id;
-    var paramStr = '$param'; //TODO change to api POST
-    var param = JSON.parse(paramStr);
-    $("#" + id).each(function () {
-        $(this)[0].innerHTML = $(this)[0].innerHTML.replace(/\$message/g, param.message);
-        $(this)[0].innerHTML = $(this)[0].innerHTML.replace(/\$font_size/g, param.font_size);
+    $.get("/api/getWidgetConf?id=$id", (config) => {
+        let param = config.param;
+        $("#$id").each(function () {
+            $(this)[0].innerHTML = $(this)[0].innerHTML.replace(/\$message/g, param.message);
+            $(this)[0].innerHTML = $(this)[0].innerHTML.replace(/\$font_size/g, param.font_size);
 
+        });
     });
 
 
