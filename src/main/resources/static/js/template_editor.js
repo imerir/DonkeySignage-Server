@@ -66,11 +66,15 @@ function templateEditorListeners() {
         let customInput = $(".modify_custom_" + id);
         let param = {};
         for (let elem of customInput) {
-            try{
-                param[$(elem).attr("data-name")] = JSON.parse(elem.value);
-            }catch (e) {
-                console.log("catch");
-                param[$(elem).attr("data-name")] = elem.value;
+            if(elem.type === 'checkbox'){
+                param[elem.getAttribute("data-name")] = elem.checked;
+            }else{
+                try{
+                    param[elem.getAttribute("data-name")] = JSON.parse(elem.value);
+                }catch (e) {
+                    console.log("catch");
+                    param[elem.getAttribute("data-name")] = elem.value;
+                }
             }
 
         }
@@ -89,7 +93,7 @@ function templateEditorListeners() {
 
 
         let settings = {
-            "url": "http://localhost:8080/api/widgetConf?id="+id,
+            "url": "/api/widgetConf?id="+id,
             "method": "PUT",
             "headers": {
                 "Content-Type": "application/json"

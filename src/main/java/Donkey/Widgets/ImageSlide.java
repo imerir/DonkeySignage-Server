@@ -74,7 +74,7 @@ public class ImageSlide implements WidgetInterface {
         ObjectMapper objectMapper = new ObjectMapper();
         HashMap<String,Object> parsed = objectMapper.readValue(jsonValue, new TypeReference<Map<String, Object>>() {});
         Map<String, WidgetConfDefinition> map = new HashMap<>();
-        map.put("message", new WidgetConfDefinition("images", ConfType.MEDIA, false, true, false,parsed.get("images"), Json.stringify(parsed.get("images")), null));
+        map.put("images", new WidgetConfDefinition("images", ConfType.MEDIA, false, true, false,parsed.get("images"), Json.stringify(parsed.get("images")), null));
         return map;
 
     }

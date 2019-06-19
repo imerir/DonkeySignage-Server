@@ -7,31 +7,26 @@ import biweekly.ICalendar;
 import biweekly.component.VEvent;
 import biweekly.io.text.ICalReader;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.*;
 
-public class Calendar implements WidgetInterface{
+public class RaplaCalendar implements WidgetInterface{
     Logger logger = LogManager.getLogger();
 
     @Override
     public String getName() {
-        return "Calendar";
+        return "Rapla Calendar";
     }
 
     @Override
     public String getId() {
-        return "CALENDAR";
+        return "RAPLA_CALENDAR";
     }
 
     @Override
@@ -42,7 +37,7 @@ public class Calendar implements WidgetInterface{
     @Override
     public String getTemplate() throws IOException {
 
-        return FilesTools.getINSTANCE().getFileContent("widgets/calendar.html");
+        return FilesTools.getINSTANCE().getFileContent("widgets/rapla_calendar.html");
     }
 
     @Override
@@ -50,11 +45,12 @@ public class Calendar implements WidgetInterface{
 
         try {
             HashMap<String, Object> conf = Json.loadObject(paramStr);
-            List<CalEvent> events = convertIcal((String) conf.get("URL"));
+            List<RaplaCalEvent> events = convertIcal((String) conf.get("URL"));
 //            TODO Add Name of canlendar et for multible calandar
             HashMap<String, Object> toReturn = new HashMap<>();
             toReturn.put("day_start", conf.get("day_start"));
             toReturn.put("day_end", conf.get("day_end"));
+            toReturn.put("weekend", conf.get("weekend"));
             toReturn.put("calendars", events);
             return Json.stringify(toReturn);
         } catch (IOException e) {
@@ -70,8 +66,9 @@ public class Calendar implements WidgetInterface{
         WidgetConfDefinition url = new WidgetConfDefinition("URL", ConfType.TEXT, true, false, false, "", "",  null);
         WidgetConfDefinition dayStart = new WidgetConfDefinition("day_start", ConfType.NUMBER, true, false, false, "7", "",  null);
         WidgetConfDefinition dayEnd = new WidgetConfDefinition("day_end", ConfType.NUMBER, true, false, false, "19", "",  null);
+        WidgetConfDefinition weekEnd = new WidgetConfDefinition("weekend", ConfType.BOOL, true, false, false, "true", "", null);
 
-        return Arrays.asList(url, dayStart, dayEnd);
+        return Arrays.asList(dayStart, dayEnd, weekEnd, url);
     }
 
     @Override
@@ -83,6 +80,7 @@ public class Calendar implements WidgetInterface{
         map.put("day_start", new WidgetConfDefinition("day_start", ConfType.NUMBER, true, false, false, parsed.get("day_start"),  Integer.toString((Integer)parsed.get("day_start")), null));
 
         map.put("day_end", new WidgetConfDefinition("day_end", ConfType.NUMBER, true, false, false, parsed.get("day_end"), Integer.toString((Integer) parsed.get("day_end")), null));
+        map.put("weekend", new WidgetConfDefinition("weekend", ConfType.BOOL, true, false, false, parsed.get("weekend"), Boolean.toString((Boolean) parsed.get("weekend")), null));
         return  map;
     }
 
@@ -91,7 +89,7 @@ public class Calendar implements WidgetInterface{
         return false;
     }
 
-    class CalEvent{
+    class RaplaCalEvent {
         public long lastEdit;
         public long created;
         public long dtstart;
@@ -101,7 +99,7 @@ public class Calendar implements WidgetInterface{
         public String summary;
         public String location;
 
-        public CalEvent(long lastEdit, long created, long dtstart, long dtstamp, long dtend, String uid, String summary, String location) {
+        public RaplaCalEvent(long lastEdit, long created, long dtstart, long dtstamp, long dtend, String uid, String summary, String location) {
             this.lastEdit = lastEdit/1000;
             this.created = created/1000;
             this.dtstart = dtstart/1000;
@@ -113,7 +111,7 @@ public class Calendar implements WidgetInterface{
         }
     }
 
-    private List<CalEvent> convertIcal(String url) throws IOException {
+    private List<RaplaCalEvent> convertIcal(String url) throws IOException {
         URL urlC = new URL(url);
         URLConnection yc = urlC.openConnection();
         InputStreamReader in =new InputStreamReader(yc.getInputStream());
@@ -122,9 +120,9 @@ public class Calendar implements WidgetInterface{
 
         List<ICalendar> calendarList = reader.readAll();
         reader.close();
-        List<CalEvent> list = new ArrayList<>();
+        List<RaplaCalEvent> list = new ArrayList<>();
         for(VEvent event : calendarList.get(0).getEvents()){
-            list.add(new CalEvent(event.getLastModified().getValue().getTime(), event.getCreated().getValue().getTime(), event.getDateStart().getValue().getTime(), event.getDateTimeStamp().getValue().getTime(), event.getDateEnd().getValue().getTime(), event.getUid().getValue(), event.getSummary().getValue(), event.getLocation().getValue()));
+            list.add(new RaplaCalEvent(event.getLastModified().getValue().getTime(), event.getCreated().getValue().getTime(), event.getDateStart().getValue().getTime(), event.getDateTimeStamp().getValue().getTime(), event.getDateEnd().getValue().getTime(), event.getUid().getValue(), event.getSummary().getValue(), event.getLocation().getValue()));
         }
 
         return list;

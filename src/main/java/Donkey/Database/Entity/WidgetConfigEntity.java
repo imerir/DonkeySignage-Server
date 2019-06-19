@@ -18,6 +18,7 @@ public class WidgetConfigEntity {
     @JoinColumn(name = "template_id")
     private TemplateEntity template;
 
+    //TODO add lastUpdate
     private String name;
     private String widgetId;
     private Integer posX;

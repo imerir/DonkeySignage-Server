@@ -69,12 +69,17 @@ function sendNewWidget() {
 
     let customInput = $(".custom-conf-input-" + $('#widgetSelect').val());
     for (let elem of customInput) {
-        try{
-            param[elem.getAttribute("data-name")] = JSON.parse(elem.value);
-        }catch (e) {
-            console.log("catch");
-            param[elem.getAttribute("data-name")] = elem.value;
+        if(elem.type === 'checkbox'){
+            param[elem.getAttribute("data-name")] = elem.checked;
+        }else{
+            try{
+                param[elem.getAttribute("data-name")] = JSON.parse(elem.value);
+            }catch (e) {
+                console.log("catch");
+                param[elem.getAttribute("data-name")] = elem.value;
+            }
         }
+
 
     }
 
@@ -99,6 +104,7 @@ function sendNewWidget() {
         "data": JSON.stringify(data),
     };
     console.log(settings);
+    debugger;
     $.ajax(settings).done(function (response) {
         let id = response[0].id;
         window.location.href = "#" + id;
