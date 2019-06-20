@@ -5,7 +5,8 @@ import java.util.List;
 
 public class WidgetConfDefinition {
 
-//    TODO Add redable name
+    private String id;
+
     private String name;
 
     private ConfType type;
@@ -25,13 +26,15 @@ public class WidgetConfDefinition {
 
     /**
      * Constructor for definition only (set value to null)
+     * @param id
      * @param name
      * @param type
      * @param freeValue
      * @param list
      * @param valueSet If is not a free value, set the possible value.
      */
-    public WidgetConfDefinition(String name, ConfType type, boolean freeValue, boolean list, List<Object> valueSet) {
+    public WidgetConfDefinition(String id, String name, ConfType type, boolean freeValue, boolean list, List<Object> valueSet) {
+        this.id = id;
         this.name = name;
         this.type = type;
         this.freeValue = freeValue;
@@ -41,6 +44,7 @@ public class WidgetConfDefinition {
 
     /**
      *
+     * @param id
      * @param name
      * @param type
      * @param isFreeValue
@@ -50,7 +54,8 @@ public class WidgetConfDefinition {
      * @param rawValue
      * @param valueSet
      */
-    public WidgetConfDefinition(String name, ConfType type, boolean isFreeValue, boolean isList, boolean needDownload, Object value, String rawValue, List<Object> valueSet) {
+    public WidgetConfDefinition(String id, String name, ConfType type, boolean isFreeValue, boolean isList, boolean needDownload, Object value, String rawValue, List<Object> valueSet) {
+        this.id = id;
         this.name = name;
         this.freeValue = isFreeValue;
         this.type = type;
@@ -123,5 +128,13 @@ public class WidgetConfDefinition {
 
     public void setNeedDownload(boolean needDownload) {
         this.needDownload = needDownload;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

@@ -65,7 +65,7 @@ public class ImageSlide implements WidgetInterface {
     @Override
     public List<WidgetConfDefinition> getParam() {
 
-        WidgetConfDefinition images = new WidgetConfDefinition("images", ConfType.MEDIA, false, true, false,null, "", null);
+        WidgetConfDefinition images = new WidgetConfDefinition("images", "Images", ConfType.MEDIA, false, true, false,null, "", null);
         return Collections.singletonList(images);
     }
 
@@ -74,7 +74,7 @@ public class ImageSlide implements WidgetInterface {
         ObjectMapper objectMapper = new ObjectMapper();
         HashMap<String,Object> parsed = objectMapper.readValue(jsonValue, new TypeReference<Map<String, Object>>() {});
         Map<String, WidgetConfDefinition> map = new HashMap<>();
-        map.put("images", new WidgetConfDefinition("images", ConfType.MEDIA, false, true, false,parsed.get("images"), Json.stringify(parsed.get("images")), null));
+        map.put("images", new WidgetConfDefinition("images", "Images", ConfType.MEDIA, false, true, false,parsed.get("images"), Json.stringify(parsed.get("images")), null));
         return map;
 
     }

@@ -47,8 +47,8 @@ public class Text implements WidgetInterface{
     @JsonIgnore
     @Override
     public List<WidgetConfDefinition> getParam() {
-        WidgetConfDefinition message = new WidgetConfDefinition("message", ConfType.TEXT, true, false, false, "", "",  null);
-        WidgetConfDefinition font_size = new WidgetConfDefinition("font_size", ConfType.NUMBER, true, false, false, "12", "",null);
+        WidgetConfDefinition message = new WidgetConfDefinition("message", "Message", ConfType.TEXT, true, false, false, "", "",  null);
+        WidgetConfDefinition font_size = new WidgetConfDefinition("font_size", "Font Size", ConfType.NUMBER, true, false, false, "12", "",null);
         return Arrays.asList(message, font_size);
     }
 
@@ -58,8 +58,8 @@ public class Text implements WidgetInterface{
         HashMap<String,Object> parsed;
         parsed = objectMapper.readValue(jsonValue, new TypeReference<Map<String, Object>>(){});
         Map<String, WidgetConfDefinition> map = new HashMap<>();
-        map.put("message", new WidgetConfDefinition("message", ConfType.TEXT, true, false, false, parsed.get("message"), (String) parsed.get("message"), null));
-        map.put("font_size", new WidgetConfDefinition("font_size", ConfType.NUMBER, true, false, false, parsed.get("font_size"), ((Integer)parsed.get("font_size")).toString(),  null));
+        map.put("message", new WidgetConfDefinition("message", "Message",ConfType.TEXT, true, false, false, parsed.get("message"), (String) parsed.get("message"), null));
+        map.put("font_size", new WidgetConfDefinition("font_size", "Font Size", ConfType.NUMBER, true, false, false, parsed.get("font_size"), ((Integer)parsed.get("font_size")).toString(),  null));
         return  map;
     }
 

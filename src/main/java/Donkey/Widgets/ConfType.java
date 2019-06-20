@@ -4,5 +4,6 @@ public enum ConfType {
     MEDIA,
     TEXT,
     NUMBER,
-    BOOL
+    BOOL,
+    MAP
 }
