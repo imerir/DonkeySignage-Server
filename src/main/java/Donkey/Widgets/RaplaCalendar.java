@@ -45,6 +45,16 @@ public class RaplaCalendar implements WidgetInterface{
 
         try {
             HashMap<String, Object> conf = Json.loadObject(paramStr);
+            HashMap<String, String> calendars = (HashMap<String, String>) conf.get("URLS");
+            HashMap<String, List<RaplaCalEvent>> convertedCal = new HashMap<>();
+            for(Map.Entry<String, String> entry : calendars.entrySet()){
+                List<RaplaCalEvent> events = null;
+                try{
+                    events = convertIcal(entry.getValue());
+                }catch (IOException ignored){}
+                convertedCal.put(entry.getKey(), events);
+            }
+
             List<RaplaCalEvent> events = convertIcal((String) conf.get("URL"));
 //            TODO Add Name of canlendar et for multible calandar
             HashMap<String, Object> toReturn = new HashMap<>();
@@ -63,10 +73,10 @@ public class RaplaCalendar implements WidgetInterface{
     @JsonIgnore
     @Override
     public List<WidgetConfDefinition> getParam() {
-        WidgetConfDefinition url = new WidgetConfDefinition("URL", ConfType.TEXT, true, false, false, "", "",  null);
-        WidgetConfDefinition dayStart = new WidgetConfDefinition("day_start", ConfType.NUMBER, true, false, false, "7", "",  null);
-        WidgetConfDefinition dayEnd = new WidgetConfDefinition("day_end", ConfType.NUMBER, true, false, false, "19", "",  null);
-        WidgetConfDefinition weekEnd = new WidgetConfDefinition("weekend", ConfType.BOOL, true, false, false, "true", "", null);
+        WidgetConfDefinition url = new WidgetConfDefinition("URLS", "Calendar name : Calendar URL", ConfType.MAP, true, false, false, "", "",  null);
+        WidgetConfDefinition dayStart = new WidgetConfDefinition("day_start", "Day start at (Hour):", ConfType.NUMBER, true, false, false, "7", "",  null);
+        WidgetConfDefinition dayEnd = new WidgetConfDefinition("day_end", "Day end at (hour):", ConfType.NUMBER, true, false, false, "19", "",  null);
+        WidgetConfDefinition weekEnd = new WidgetConfDefinition("weekend", "Show weekend:", ConfType.BOOL, true, false, false, "true", "", null);
 
         return Arrays.asList(dayStart, dayEnd, weekEnd, url);
     }
@@ -75,12 +85,12 @@ public class RaplaCalendar implements WidgetInterface{
     public Map<String, WidgetConfDefinition> getParam(String jsonValue) throws IOException {
         HashMap<String, Object> parsed = Json.loadObject(jsonValue);
         Map<String, WidgetConfDefinition> map = new HashMap<>();
-        map.put("URL", new WidgetConfDefinition("URL", ConfType.TEXT, true, false, false, parsed.get("URL"), (String) parsed.get("URL"), null));
+        map.put("URLS", new WidgetConfDefinition("URLS", "Calendar name | Calendar URL", ConfType.MAP, true, false, false, parsed.get("URLS"), Json.stringify(parsed.get("URLS")), null));
 
-        map.put("day_start", new WidgetConfDefinition("day_start", ConfType.NUMBER, true, false, false, parsed.get("day_start"),  Integer.toString((Integer)parsed.get("day_start")), null));
+        map.put("day_start", new WidgetConfDefinition("day_start", "Day start at (Hour):", ConfType.NUMBER, true, false, false, parsed.get("day_start"),  Integer.toString((Integer)parsed.get("day_start")), null));
 
-        map.put("day_end", new WidgetConfDefinition("day_end", ConfType.NUMBER, true, false, false, parsed.get("day_end"), Integer.toString((Integer) parsed.get("day_end")), null));
-        map.put("weekend", new WidgetConfDefinition("weekend", ConfType.BOOL, true, false, false, parsed.get("weekend"), Boolean.toString((Boolean) parsed.get("weekend")), null));
+        map.put("day_end", new WidgetConfDefinition("day_end", "Day end at (hour):", ConfType.NUMBER, true, false, false, parsed.get("day_end"), Integer.toString((Integer) parsed.get("day_end")), null));
+        map.put("weekend", new WidgetConfDefinition("weekend", "Show weekend:", ConfType.BOOL, true, false, false, parsed.get("weekend"), Boolean.toString((Boolean) parsed.get("weekend")), null));
         return  map;
     }
 

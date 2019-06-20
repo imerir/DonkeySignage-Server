@@ -15,4 +15,5 @@ document.addEventListener('DOMContentLoaded', function () {
     M.Sidenav.init(side, {edge: 'right'});
     templateAddListeners();
     templateEditorListeners();
+    mapTypeListeners();
 });

@@ -16,6 +16,7 @@
         position: relative;
         top: -100%;
         z-index: -1;
+        border-radius: 7px;
     }
 
 
@@ -27,8 +28,7 @@
     .calendarCase{
         height: calc(100% - 6px);
         width: calc(100% - 6px);
-        border: darkslategray dashed 2px;
-        padding: 2px;
+        border: darkslategray dashed 1px;
         margin: 3px;
         -webkit-border-radius: 10px;
         -moz-border-radius: 10px;
@@ -78,6 +78,22 @@
     .noLeft{
         border-left: none;
     }
+
+    .calendarCase .row{
+        margin-bottom: 4px;
+    }
+
+    .custom-divider{
+        height: 1px;
+        overflow: hidden;
+        border-top: darkslategray dashed 1px;
+        padding: 0 !important;
+    }
+
+    .activeDay .custom-divider{
+        border-top: darkslategray solid 2px;
+    }
+
 </style>
 
 <script>
@@ -127,7 +143,7 @@
             text += summary + "<br/>";
             let resource = ev.summary.match(/\[(.*)]+/);
             if(resource)
-                text += resource[1] + "<br/>";
+                resource = resource[1] + "<br/>";
 
             let places = ev.location;
             if(places)
@@ -136,9 +152,31 @@
                 dayPos = 8;
             }
             let options = {hour: "numeric", minute: "numeric"};
-            html += "<div class='"+((now > start && now < end) ? "activeDay" : "") + " calendarCase' style='grid-area: "+startPos+" / "+dayPos+" / "+ endPos +"/ "+dayPos+";text-align: center'>"
-                    + start.toLocaleString("fr-FR",options) +  " - " + end.toLocaleTimeString("fr-FR", options)
-                    + "<br/>" + text + "</div>";
+            html += "<div class='"+((now > start && now < end) ? "activeDay" : "") + " calendarCase' style='grid-area: "+startPos+" / "+dayPos+" / "+ endPos +"/ "+dayPos+";text-align: center'>" +
+                "<div class='row'>" +
+                "<div class='col s12'>" +
+                start.toLocaleString("fr-FR",options) +  " - " + end.toLocaleTimeString("fr-FR", options)+
+                "</div>" +
+                "</div>"+
+                "<div class='row'><div class='col s12 custom-divider'></div></div>"+
+                "<div class='row'>" +
+                "<div class='col s12'>" +
+                summary +
+                "</div>" +
+                "</div>"+
+                "<div class='row'><div class='col s12 custom-divider' style='border-top-style: dotted'></div></div>"+
+                "<div class='row'>" +
+                "<div class='col s12'>" +
+                resource +
+                "</div>" +
+                "</div>"+
+                "<div class='row'><div class='col s12 custom-divider' style='border-top-style: dotted'></div></div>"+
+                "<div class='row'>" +
+                "<div class='col s12'>" +
+                places +
+                "</div>" +
+                "</div>"+
+                "</div>";
         });
 
 

@@ -18,6 +18,20 @@
                 padding-right: 300px !important;
             }
         }
+
+        .customScroll::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .customScroll::-webkit-scrollbar-thumb {
+            background: #7e7e7e;
+            border-radius: 15px;
+        }
+
+        .customScroll::-webkit-scrollbar-track {
+            background: #ddd;
+            border-radius: 15px;
+        }
     </style>
 
 
@@ -53,7 +67,8 @@
                     <li class="collection-header"><h4 th:text="#{media.widgetList}"></h4></li>
                     <th:block th:each="widgetConfig : ${widgetConfList}">
 
-                        <a th:href="${'#' + widgetConfig.getId()}" class="collection-item widget_item" th:id="${widgetConfig.getId()}"
+                        <a th:href="${'#' + widgetConfig.getId()}" class="collection-item widget_item"
+                           th:id="${widgetConfig.getId()}"
                            th:text="${widgetConfig.getName()}">
                         </a>
 
@@ -78,7 +93,8 @@
     </div>
 
     <!-- Right side, edit-->
-    <ul id="slide-edit" class="sidenav sidenav-fixed" style="padding-top: 15px">
+    <ul id="slide-edit" class="sidenav sidenav-fixed customScroll"
+        style="padding-top: 15px; margin-bottom: 0; padding-bottom: 0 ">
         <th:block th:each="widgetConfig : ${widgetConfList}">
             <div th:classappend="${'widget_' + widgetConfig.getId()}" class="modify-conf" hidden="hidden">
                 <div class="row">
@@ -121,7 +137,8 @@
                                max="12"
                                type="number"
                                th:value="${widgetConfig.getSizeWidth()}"/>
-                        <label th:for="${'modify_' + widgetConfig.getId() + '_width'}" th:text="#{media.sizeWidth}"></label>
+                        <label th:for="${'modify_' + widgetConfig.getId() + '_width'}"
+                               th:text="#{media.sizeWidth}"></label>
                     </div>
                     <div class="input-field col s5">
                         <input class="validate modify-input listen-edit valid"
@@ -130,7 +147,8 @@
                                max="12"
                                type="number"
                                th:value="${widgetConfig.getSizeHeight()}"/>
-                        <label th:for="${'modify_' + widgetConfig.getId() + '_height'}" th:text="#{media.sizeHeight}"></label>
+                        <label th:for="${'modify_' + widgetConfig.getId() + '_height'}"
+                               th:text="#{media.sizeHeight}"></label>
                     </div>
 
 
@@ -138,7 +156,8 @@
                         <!--/*@thymesVar id="wInfo" type="Donkey.Widgets.WidgetInterface"*/-->
                         <th:block th:each="confOrdered : ${wInfo.getParam()}">
                             <!--/*@thymesVar id="confOrdered" type="Donkey.Widgets.WidgetConfDefinition"*/-->
-                            <th:block th:with="confEdit=${wInfo.getParam(widgetConfig.getParam()).get(confOrdered.getName())}">
+                            <th:block
+                                    th:with="confEdit=${wInfo.getParam(widgetConfig.getParam()).get(confOrdered.getId())}">
                                 <!--/*@thymesVar id="confEdit" type="Donkey.Widgets.WidgetConfDefinition"*/-->
                                 <th:block
                                         th:if="${confEdit.getType() == T(Donkey.Widgets.ConfType).TEXT || confEdit.getType() == T(Donkey.Widgets.ConfType).NUMBER }">
@@ -146,22 +165,24 @@
                                         <input class="validate listen-edit valid"
                                                th:classappend="${'modify_custom_' + widgetConfig.getId()}"
                                                th:type="${#strings.toLowerCase(confEdit.getType() )}"
-                                               th:id="${'modify_custom_' + widgetConfig.getId() + '_' + confEdit.getName()}"
-                                               th:attr="data-name=${confEdit.getName()}"
+                                               th:id="${'modify_custom_' + widgetConfig.getId() + '_' + confEdit.getId()}"
+                                               th:attr="data-name=${confEdit.getId()}"
                                                th:value="${confEdit.getValue()}"/>
-                                        <label th:for="${'modify_custom_' + widgetConfig.getId() + '_' + confEdit.getName()}"
+                                        <label th:for="${'modify_custom_' + widgetConfig.getId() + '_' + confEdit.getId()}"
                                                th:text="${#strings.capitalize(confEdit.getName())}"></label>
                                     </div>
                                 </th:block>
                                 <th:block th:if="${confEdit.getType()  == T(Donkey.Widgets.ConfType).BOOL}">
-                                    <div class="input-field col s10 offset-s1" style="margin-bottom: 20px; margin-top: 5px">
-                                        <span th:text="${#strings.capitalize(confEdit.getName())}" class="grey-text"></span>
+                                    <div class="input-field col s10 offset-s1"
+                                         style="margin-bottom: 20px; margin-top: 5px">
+                                        <span th:text="${#strings.capitalize(confEdit.getName())}"
+                                              class="grey-text"></span>
                                         <div class="switch" style="display: inline-block">
                                             <label>
                                                 <input class=""
                                                        th:classappend="${'modify_custom_' + widgetConfig.getId()}"
-                                                       th:id="${'modify_custom_' + widgetConfig.getId() + '_' + confEdit.getName()}"
-                                                       th:attr="data-name=${confEdit.getName()}"
+                                                       th:id="${'modify_custom_' + widgetConfig.getId() + '_' + confEdit.getId()}"
+                                                       th:attr="data-name=${confEdit.getId()}"
                                                        type="checkbox"
                                                        th:checked="${confEdit.getValue()}"/>
                                                 <span class="lever"></span>
@@ -179,13 +200,13 @@
                                                 <h5 th:text="${#strings.capitalize(confEdit.getName())}"></h5>
                                             </div>
                                             <ul class="col s12 collection"
-                                                th:id="${'' + widgetConfig.getId() + '_' + confEdit.getName() + '_list'}">
+                                                th:id="${'' + widgetConfig.getId() + '_' + confEdit.getId() + '_list'}">
                                                 <th:block th:each="media : ${confEdit.getValue()}">
                                                     <li class='collection-item' data-id=''>
                                                         <div th:inline="text">
                                                             [[${media}]]
                                                             <a href='#' class='secondary-content delMedia'
-                                                               th:attr="data-id=${media}, data-target=${'modify_custom_' + widgetConfig.getId() + '_' + confEdit.getName()}, data-list=${'' + widgetConfig.getId() + '_' + confEdit.getName() + '_list'}">
+                                                               th:attr="data-id=${media}, data-target=${'modify_custom_' + widgetConfig.getId() + '_' + confEdit.getId()}, data-list=${'' + widgetConfig.getId() + '_' + confEdit.getId() + '_list'}">
                                                                 <i class='material-icons red-text'>delete</i>
                                                             </a>
                                                         </div>
@@ -196,16 +217,68 @@
                                             <div class="col s12 center">
                                                 <a class="btn blue waves-effect modal-trigger modal-trigger-media"
                                                    href="#mediaModal" th:text="#{form.add}"
-                                                   th:attr="data-input=${'modify_custom_' + widgetConfig.getId() + '_' + confEdit.getName()}, data-list=${'' + widgetConfig.getId() + '_' + confEdit.getName() + '_list'}"></a>
+                                                   th:attr="data-input=${'modify_custom_' + widgetConfig.getId() + '_' + confEdit.getId()}, data-list=${'' + widgetConfig.getId() + '_' + confEdit.getId() + '_list'}"></a>
                                             </div>
                                             <input type="hidden" class="listen-edit"
-                                                   th:id="${'modify_custom_' + widgetConfig.getId() + '_' + confEdit.getName()}"
-                                                   th:attr="data-name=${confEdit.getName()}"
+                                                   th:id="${'modify_custom_' + widgetConfig.getId() + '_' + confEdit.getId()}"
+                                                   th:attr="data-name=${confEdit.getId()}"
                                                    th:classappend="${'modify_custom_' + widgetConfig.getId()}"
                                                    th:value="${confEdit.getRawValue()}"/>
                                         </div>
                                     </div>
                                 </th:block>
+
+                                <th:block
+                                        th:if="${confEdit.getType() == T(Donkey.Widgets.ConfType).MAP }">
+
+                                    <div class="col s12 card-panel">
+                                        <div class="row" style="margin-top: 5px;">
+                                            <div class="col s12 center">
+                                                <h6 th:text="${#strings.capitalize(confEdit.getName())}"></h6>
+                                            </div>
+                                            <ul class="col s12 collection"
+                                                th:id="${'map_' + widgetConfig.getId() + '_' + confEdit.getId()}"
+                                                style="padding: 0px">
+                                                <th:block th:each="calendar : ${confEdit.getValue()}">
+
+                                                    <li class='collection-item' data-id='' style="padding: 5px">
+                                                        <div class="row" style="margin: 0">
+                                                            <div class="col s4">
+                                                                <input type="text" class="listen-map"
+                                                                       th:classappend="${'key_' + widgetConfig.getId() + '_' + confEdit.getId()}"
+                                                                       th:value="${calendar.key}"
+                                                                       th:attr="data-target=${'modify_custom_' + widgetConfig.getId() + '_' + confEdit.getId()}"/>
+                                                            </div>
+                                                            <div class="col s8">
+                                                                <input type="text" class="listen-map"
+                                                                       th:classappend="${'value_' + widgetConfig.getId() + '_' + confEdit.getId()}"
+                                                                       th:value="${calendar.value}"
+                                                                       th:attr="data-target=${'modify_custom_' + widgetConfig.getId() + '_' + confEdit.getId()}"/>
+                                                            </div>
+                                                            <!--                                                            <a href='#' class='secondary-content delMedia'-->
+                                                            <!--                                                               th:attr="data-id=${media}, data-target=${'modify_custom_' + widgetConfig.getId() + '_' + confEdit.getId()}, data-list=${'' + widgetConfig.getId() + '_' + confEdit.getId() + '_list'}">-->
+                                                            <!--                                                                <i class='material-icons red-text'>delete</i>-->
+                                                            <!--                                                            </a>-->
+                                                        </div>
+                                                    </li>
+                                                </th:block>
+
+                                            </ul>
+                                            <div class="col s12 center">
+                                                <a class="btn blue waves-effect map_add"
+                                                   th:text="#{form.add}"
+                                                   th:attr="data-map=${'map_' + widgetConfig.getId() + '_' + confEdit.getId()}"></a>
+                                            </div>
+                                            <input type="hidden" class="listen-edit"
+                                                   th:id="${'modify_custom_' + widgetConfig.getId() + '_' + confEdit.getId()}"
+                                                   th:attr="data-name=${confEdit.getId()}"
+                                                   th:classappend="${'modify_custom_' + widgetConfig.getId()}"
+                                                   th:value="${confEdit.getRawValue()}"/>
+                                        </div>
+                                    </div>
+                                </th:block>
+
+
                             </th:block>
                         </th:block>
                     </th:block>
@@ -294,12 +367,12 @@
                                     <div class="input-field col s10 offset-s1">
                                         <input class="validate listen custom-input"
                                                th:classappend="${conf.getValue() == null ? 'custom-conf-input-' + widget.value.getId() : 'valid custom-conf-input-' + widget.value.getId()}"
-                                               th:id="${conf.getName()}" min="1"
+                                               th:id="${conf.getId()}" min="1"
                                                max="12"
                                                th:type="${#strings.toLowerCase(conf.getType() )}"
                                                th:value="${conf.getValue()}"
-                                                th:attr="data-name = ${conf.getName()}"/>
-                                        <label th:for="${conf.getName()}"
+                                               th:attr="data-name = ${conf.getId()}"/>
+                                        <label th:for="${conf.getId()}"
                                                th:text="${#strings.capitalize(conf.getName())}"></label>
                                     </div>
                                 </th:block>
@@ -312,32 +385,34 @@
                                                 <h5 th:text="${#strings.capitalize(conf.getName())}"></h5>
                                             </div>
                                             <ul class="col s10 offset-s1 collection"
-                                                th:id="${conf.getName() + '_list'}">
+                                                th:id="${conf.getId() + '_list'}">
 
                                             </ul>
                                             <div class="col s12 center">
                                                 <a class="btn blue waves-effect modal-trigger modal-trigger-media"
                                                    href="#mediaModal" th:text="#{form.add}"
-                                                   th:attr="data-input=${'add_'+conf.getName()}, data-list=${conf.getName() + '_list'}"></a>
+                                                   th:attr="data-input=${'add_'+conf.getId()}, data-list=${conf.getId() + '_list'}"></a>
                                             </div>
-                                            <input type="hidden" th:id="${'add_'+conf.getName()}" class="listen custom-input"
+                                            <input type="hidden" th:id="${'add_'+conf.getId()}"
+                                                   class="listen custom-input"
                                                    th:classappend="${'custom-conf-input-' + widget.value.getId()}"
-                                                    th:attr="data-name= ${conf.getName()}"/>
+                                                   th:attr="data-name= ${conf.getId()}"/>
                                         </div>
                                     </div>
                                 </th:block>
                                 <th:block th:if="${conf.getType() == T(Donkey.Widgets.ConfType).BOOL}">
                                     <div class="input-field col s10 offset-s1">
                                         <div class="switch">
-                                            <span th:text="${#strings.capitalize(conf.getName())}" class="grey-text"></span>
+                                            <span th:text="${#strings.capitalize(conf.getName())}"
+                                                  class="grey-text"></span>
                                             <div class="switch" style="display: inline-block">
                                                 <label>
                                                     <input class="custom-input"
                                                            th:classappend="${conf.getValue() == null ? 'custom-conf-input-' + widget.value.getId() : 'valid custom-conf-input-' + widget.value.getId()}"
-                                                           th:id="${conf.getName()}" min="1"
+                                                           th:id="${conf.getId()}" min="1"
                                                            type="checkbox"
                                                            th:checked="${conf.getValue()}"
-                                                           th:attr="data-name = ${conf.getName()}"/>
+                                                           th:attr="data-name = ${conf.getId()}"/>
                                                     <span class="lever"></span>
                                                 </label>
                                             </div>
@@ -422,6 +497,7 @@
     /*]]>*/
 </script>
 <script th:src="@{/js/MediaModal.js}"></script>
+<script th:src="@{/js/template_map_type.js}"></script>
 <script th:src="@{/js/template_editor.js}"></script>
 <script th:src="@{/js/template_add.js}"></script>
 <script th:src="@{/js/template.js}"></script>
