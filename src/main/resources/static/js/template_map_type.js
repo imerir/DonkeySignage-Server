@@ -37,7 +37,7 @@ function mapTypeListeners() {
 function recontructMap(inputId, keySelector, valueSelector) {
     let keyList = [];
     $(keySelector).each(function () {
-        keyList.push(this.value);
+        keyList.push(this.value.replace(/\s/g, '_'));
     });
 
     let obj = {};

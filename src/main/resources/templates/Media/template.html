@@ -246,7 +246,7 @@
                                                             <div class="col s4">
                                                                 <input type="text" class="listen-map"
                                                                        th:classappend="${'key_' + widgetConfig.getId() + '_' + confEdit.getId()}"
-                                                                       th:value="${calendar.key}"
+                                                                       th:value="${#strings.replace(calendar.key, '_', ' ')}"
                                                                        th:attr="data-target=${'modify_custom_' + widgetConfig.getId() + '_' + confEdit.getId()}"/>
                                                             </div>
                                                             <div class="col s8">

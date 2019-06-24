@@ -54,14 +54,11 @@ public class RaplaCalendar implements WidgetInterface{
                 }catch (IOException ignored){}
                 convertedCal.put(entry.getKey(), events);
             }
-
-            List<RaplaCalEvent> events = convertIcal((String) conf.get("URL"));
-//            TODO Add Name of canlendar et for multible calandar
             HashMap<String, Object> toReturn = new HashMap<>();
             toReturn.put("day_start", conf.get("day_start"));
             toReturn.put("day_end", conf.get("day_end"));
             toReturn.put("weekend", conf.get("weekend"));
-            toReturn.put("calendars", events);
+            toReturn.put("calendars", convertedCal);
             return Json.stringify(toReturn);
         } catch (IOException e) {
             logger.catching(e);

@@ -1,31 +1,49 @@
-<div id="$id" style="width: 100%; height: 100%" class="z-depth-3">
-    <div id="grid_$id" class="grid_$id" style="width: 100%; height: 100%">
-    </div>
-    <div id="back_grid_$id" class="grid_$id back_grid_$id" style="width: 100%; height: 100%">
-    </div>
+<div id="$id" style="width: 100%; height: 100%; border-radius: 7px" class="z-depth-3">
+    <ul class="tabs tabs-fixed-width tab-demo z-depth-1" id="tabs_$id">
+    </ul>
+
 </div>
 
 <style>
-    .grid_$id{
+    .grid_$id {
         display: grid;
         border-style: solid;
+        border-top: solid lightgray;
         border-width: 2px;
         border-radius: 7px;
     }
-    .back_grid_$id{
+
+    #tabs_$id{
+        border-style: solid;
+        border-width: 2px;
+        border-bottom: none;
+        border-radius: 7px 7px 0 0;
+    }
+
+    .tabs .tab a{
+        background: #E6EBF4;
+        color: black;
+    }
+
+    .tabs .tab a.active {
+        background-color: #36393E;
+        color: white;
+    }
+
+    .back_grid_$id {
         position: relative;
         top: -100%;
         z-index: -1;
-        border-radius: 7px;
+        border-radius: 0 0 7px 7px;
     }
 
 
-    .greyContainer{
+    .greyContainer {
         background-color: #36393E !important;
     }
 
-    
-    .calendarCase{
+
+    .calendarCase {
         height: calc(100% - 6px);
         width: calc(100% - 6px);
         border: darkslategray dashed 1px;
@@ -34,226 +52,322 @@
         -moz-border-radius: 10px;
         border-radius: 10px;
         background: rgba(50, 205, 50, 0.85);
-        ;
+        font-size: 13px;
     }
 
 
-
-    .activeDay{
+    .activeDay {
         border: black solid 2px;
     }
 
-    .backCellEnd{
+    .backCellEnd {
         border-bottom: white solid 2px;
         border-left: lightgray solid 1px;
         background: #E6EBF4;
     }
-    .backCell{
+
+    .backCell {
         border-bottom: lightgray solid 2px;
         border-left: lightgray solid 1px;
         background: #E6EBF4;
     }
-    .backCellLeft{
+
+    .backCellLeft {
         border-right: white solid 2px;
         border-left: none;
         background: #E6EBF4;
 
     }
 
-    .day{
+    .day {
         border-style: solid;
         border-width: 1px;
-        border-color: rgba(127,126,128,0.44);
+        border-color: rgba(127, 126, 128, 0.44);
     }
-    .dateContainer{
+
+    .dateContainer {
         height: 100%;
         display: flex;
         justify-content: center;
         align-content: center;
         flex-direction: column;
         font-weight: bold;
-        border-left: white solid 2px ;
+        border-left: white solid 2px;
 
     }
-    .noLeft{
+
+    .noLeft {
         border-left: none;
     }
 
-    .calendarCase .row{
+    .calendarCase .row {
         margin-bottom: 4px;
     }
 
-    .custom-divider{
+    .custom-divider {
         height: 1px;
         overflow: hidden;
         border-top: darkslategray dashed 1px;
         padding: 0 !important;
     }
 
-    .activeDay .custom-divider{
+    .activeDay .custom-divider {
         border-top: darkslategray solid 2px;
+    }
+
+    .tabs-content {
+        height: calc(100% - 48px) !important;
+    }
+
+    .indicator {
+        display: none;
     }
 
 </style>
 
 <script>
+    var activeEvents_$id = {};
+    var calendars_$id;
+    var monday_$id;
+    var sunday_$id;
+    var toRemoveStart_$id;
+    var gridList_$id = [];
+    var selectedGrid_$id = 0;
     $.get("/api/getWidgetConf?id=$id", (config) => {
         let param = config.param;
         console.log(config);
-        let calendars = param.calendars;
-        let toRemoveStart = param.day_start * 60 / 15 - 1;
-        let toRemoveEnd = (24 - param.day_end) * 60 / 15 +1;
-        let daylength = 96 - toRemoveEnd - toRemoveStart;
+        calendars_$id = param.calendars;
+        toRemoveStart_$id = param.day_start * 60 / 15 - 1;
+        let toRemoveEnd = (24 - param.day_end) * 60 / 15 + 1;
+        let dayLength = 96 - toRemoveEnd - toRemoveStart_$id;
         let nbrDay = param.weekend ? 7 : 5;
-        $(".grid_$id").css( "grid-template-rows", "7% repeat("+daylength+",1fr)");
-        $(".grid_$id").css( "grid-template-columns", "7% repeat("+nbrDay+",1fr)");
-        let html = "";
         let now = new Date(Date.now());
-        let monday = getMonday(now);
-        let sunday = new Date();
-        sunday.setDate(monday.getDate() + 6);
-        sunday.setHours(23);
-        sunday.setMinutes(59);
+        monday_$id = getMonday_$id(now);
+        sunday_$id = new Date();
+        sunday_$id.setDate(monday_$id.getDate() + 6);
+        sunday_$id.setHours(23);
+        sunday_$id.setMinutes(59);
 
 
-        createBackGrid(daylength,param.day_start, nbrDay, monday);
+        let toShow = {};
+        for (let name in calendars_$id) {
+            createGrids_$id(name, dayLength, param.day_start, nbrDay, monday_$id);
+        }
+
+        drawEvents_$id();
 
 
-        let list = [];
-        calendars.forEach(function (event) {
-            let start = new Date(event.dtstart * 1000);
-            if(start > monday && start < sunday)
-                list.push(event);
+        console.log(param);
+
+        setInterval(updateDisplay_$id, 5000);
+        setInterval(nextGrid_$id, 20000);
 
 
 
-        });
+    });
 
-        list.sort(compareDate);
-        list.forEach(function (ev) {
-            let start = new Date(ev.dtstart * 1000);
-            let end = new Date(ev.dtend * 1000);
-            let startMin = start.getMinutes() + start.getHours() * 60;
-            let endMin = end.getMinutes() + end.getHours() * 60;
-            let startPos = startMin / 15 - toRemoveStart + 1;
-            let endPos = endMin /15 - toRemoveStart + 1;
-            let dayPos = start.getDay() + 1 ;
-            let text = "";
-            let summary = ev.summary.replace(/\[(.*)]+/, "");
-            text += summary + "<br/>";
-            let resource = ev.summary.match(/\[(.*)]+/);
-            if(resource)
-                resource = resource[1] + "<br/>";
+    function createGrids_$id(name, nbrRow, startHour, nbrDay, monday) {
+        let tab = "<li class=\"tab\"><a href=\"#container_" + name + "_$id\">" + name.replace(/_/g, ' ') + "</a></li>";
+        $("#tabs_$id").append(tab);
+        gridList_$id.push("container_" + name + "_$id");
 
-            let places = ev.location;
-            if(places)
-                text += places + "<br/>";
-            if(dayPos === 0){
-                dayPos = 8;
+        let grids = "<div id='container_" + name + "_$id' style='height: 100%;'>" +
+            "<div id=\"grid_" + name + "_$id\" class=\"grid_$id\" style=\"width: 100%; height: 100%\;  grid-template-rows: 7% repeat(" + nbrRow + ",1fr);  grid-template-columns: 7% repeat(" + nbrDay + ",1fr)\">\n" +
+            "</div>\n" +
+            "<div id=\"back_grid_" + name + "_$id\" class=\"grid_$id back_grid_$id\" style=\"width: 100%; height: 100%\; grid-template-rows: 7% repeat(" + nbrRow + ",1fr);  grid-template-columns: 7% repeat(" + nbrDay + ",1fr)\">\n" +
+            "</div></div>";
+        $('#$id').append(grids);
+        let html = "";
+        let dateClone = new Date(monday.getTime());
+
+        html += "<div style='grid-area: 1 / 1 / 1 / 1; border-right: white solid 2px' class='backCellEnd noLeft greyContainer'></div>";
+        for (let j = 0; j < nbrDay; j++) {
+            html += "<div style='grid-area: 1 / " + (j + 2) + " / 1 / " + (j + 2) + ";' class='backCellEnd center dateContainer greyContainer white-text " + (j === 0 ? 'noLeft' : '') + "'><p style='margin: 0'>" + getWeekDay_$id(dateClone, "fr-FR") + "</p><p style='margin: 0'>" + getDate_$id(dateClone, "fr-FR") + "</p></div>";
+            dateClone.setDate(dateClone.getDate() + 1);
+        }
+        ;
+
+        let dayOffset = 0;
+        for (let row = 2; row <= nbrRow + 1; row++) {
+            for (let day = 1; day <= nbrDay + 1; day++) {
+                if ((row - 1) % 4 === 0 && row !== nbrRow + 1 && day !== 1) {
+                    html += "<div style='grid-area: " + row + " / " + day + " / " + row + " / " + day + ";' class='backCellEnd'></div>"
+
+
+                } else {
+                    if (day === 1 && (row + 2) % 4 === 0) {
+                        html += "<div style='grid-area: " + row + " / " + day + " / " + (row + 4) + " / " + day + ";overflow: hidden; font-size: 18px' class='backCellLeft " + (row + 2 === nbrRow ? "" : "backCellEnd") + " center greyContainer white-text'>" + (startHour + dayOffset) + ":00</div>";
+                        dayOffset++;
+                    } else if (day !== 1) {
+                        html += "<div style='grid-area: " + row + " / " + day + " / " + row + " / " + day + ";' class='backCell'></div>"
+                    }
+
+                }
+
+
             }
-            let options = {hour: "numeric", minute: "numeric"};
-            html += "<div class='"+((now > start && now < end) ? "activeDay" : "") + " calendarCase' style='grid-area: "+startPos+" / "+dayPos+" / "+ endPos +"/ "+dayPos+";text-align: center'>" +
+        }
+        $("#back_grid_" + name + "_$id").html(html);
+
+        M.Tabs.init(document.querySelector("#tabs_$id"), {swipeable: true});
+    }
+
+
+    function fillCalendar_$id(name, ev, now, toRemoveStart) {
+        let start = new Date(ev.dtstart * 1000);
+        let end = new Date(ev.dtend * 1000);
+        let startMin = start.getMinutes() + start.getHours() * 60;
+        let endMin = end.getMinutes() + end.getHours() * 60;
+        let startPos = startMin / 15 - toRemoveStart + 1;
+        let endPos = endMin / 15 - toRemoveStart + 1;
+        let dayPos = start.getDay() + 1;
+        let summary = ev.summary.replace(/\[(.*)]+/, "");
+        let resource = ev.summary.match(/\[(.*)]+/);
+        if (resource)
+            resource = resource[1];
+        let places = ev.location;
+        if (dayPos === 0) {
+            dayPos = 8;
+        }
+        let options = {hour: "numeric", minute: "numeric"};
+        let html;
+        if (end.getHours() - start.getHours() >= 2) {
+            html = "<div class='" + ((now > start && now < end) ? "activeDay" : "") + " calendarCase' style='grid-area: " + startPos + " / " + dayPos + " / " + endPos + "/ " + dayPos + ";text-align: center'>" +
                 "<div class='row'>" +
                 "<div class='col s12'>" +
-                start.toLocaleString("fr-FR",options) +  " - " + end.toLocaleTimeString("fr-FR", options)+
+                start.toLocaleString("fr-FR", options) + " - " + end.toLocaleTimeString("fr-FR", options) +
                 "</div>" +
-                "</div>"+
-                "<div class='row'><div class='col s12 custom-divider'></div></div>"+
+                "</div>" +
+                "<div class='row'><div class='col s12 custom-divider'></div></div>" +
                 "<div class='row'>" +
                 "<div class='col s12'>" +
                 summary +
                 "</div>" +
-                "</div>"+
-                "<div class='row'><div class='col s12 custom-divider' style='border-top-style: dotted'></div></div>"+
+                "</div>" +
+                "<div class='row'><div class='col s12 custom-divider' style='border-top-style: dotted'></div></div>" +
                 "<div class='row'>" +
                 "<div class='col s12'>" +
-                resource +
+                (resource ? resource : "---") +
                 "</div>" +
-                "</div>"+
-                "<div class='row'><div class='col s12 custom-divider' style='border-top-style: dotted'></div></div>"+
+                "</div>" +
+                "<div class='row'><div class='col s12 custom-divider' style='border-top-style: dotted'></div></div>" +
                 "<div class='row'>" +
                 "<div class='col s12'>" +
                 places +
                 "</div>" +
-                "</div>"+
+                "</div>" +
                 "</div>";
-        });
-
-
-        $('#grid_$id').html(html);
-        console.log(param);
-
-
-
-
-        function getMonday(d) {
-            d = new Date(d);
-            let day = d.getDay();
-            let diff = d.getDate() - day + (day === 0 ? -6:1);
-            let result  = new Date(d.setDate(diff));
-            result.setHours(0);
-            result.setMinutes(1);
-            console.log(result.toLocaleString("fr-FR"));
-            return result;
+        } else {
+            html = "<div class='" + ((now > start && now < end) ? "activeDay" : "") + " calendarCase' style='grid-area: " + startPos + " / " + dayPos + " / " + endPos + "/ " + dayPos + ";text-align: center'>" +
+                "<div class='row'>" +
+                "<div class='col s12'>" +
+                start.toLocaleString("fr-FR", options) + " - " + places +
+                "</div>" +
+                "</div>" +
+                "<div class='row'>" +
+                "<div class='col s12'>" +
+                summary +
+                "</div>" +
+                "</div>" +
+                "</div>";
         }
+        $('#grid_' + name + '_$id').append(html);
+        return (now > start && now < end);
+
+    }
+
+    function getMonday_$id(d) {
+        d = new Date(d);
+        let day = d.getDay();
+        let diff = d.getDate() - day + (day === 0 ? -6 : 1);
+        let result = new Date(d.setDate(diff));
+        result.setHours(0);
+        result.setMinutes(1);
+        console.log(result.toLocaleString("fr-FR"));
+        return result;
+    }
 
 
+    function compareDate_$id(a, b) {
+        let startA = new Date(a.dtstart * 1000);
+        let startB = new Date(b.dtstart * 1000);
+        if (startA < startB)
+            return -1;
+        if (startA > startB)
+            return 1;
+        return 0;
 
-        function compareDate(a, b){
-            let startA = new Date(a.dtstart * 1000);
-            let startB = new Date(b.dtstart * 1000);
-            if(startA < startB)
-                return -1;
-            if(startA  > startB)
-                return 1;
-            return 0;
+    }
 
-        }
+    function getWeekDay_$id(day, locale) {
+        let str = day.toLocaleDateString(locale, {weekday: 'long'});
+        return str.charAt(0).toUpperCase() + str.slice(1);
 
-        function getWeekDay(day, locale)
-        {
-            let str = day.toLocaleDateString(locale, { weekday: 'long' });
-            return  str.charAt(0).toUpperCase() + str.slice(1);
+    }
 
-        }
-
-        function getDate(day, locale){
-            return day.toLocaleDateString(locale, { day: 'numeric', month: 'short', year: 'numeric' });
-        }
-
-        function createBackGrid(nbrRow, startHour, nbrDay, monday){
-            let html = "";
-            let dateClone = new Date(monday.getTime());
-
-            html += "<div style='grid-area: 1 / 1 / 1 / 1; border-right: white solid 2px' class='backCellEnd noLeft greyContainer'></div>";
-            for(let j = 0; j<nbrDay; j++){
-                html += "<div style='grid-area: 1 / "+(j+2)+" / 1 / "+(j+2)+";' class='backCellEnd center dateContainer greyContainer white-text "+ (j===0 ? 'noLeft' : '') +"'><p style='margin: 0'>"+ getWeekDay(dateClone, "fr-FR") +"</p><p style='margin: 0'>"+getDate(dateClone, "fr-FR")+"</p></div>";
-                dateClone.setDate(dateClone.getDate() + 1);
-            };
-
-            let dayOffset = 0;
-            for(let row = 2; row<=nbrRow+1 ;row++){
-                for(let day = 1; day<= nbrDay+1; day++){
-                    if((row-1) % 4 === 0 && row !== nbrRow  + 1 && day !== 1){
-                        html += "<div style='grid-area: "+row+" / "+day+" / "+row+" / "+day+";' class='backCellEnd'></div>"
+    function getDate_$id(day, locale) {
+        return day.toLocaleDateString(locale, {day: 'numeric', month: 'short', year: 'numeric'});
+    }
 
 
-                    }
-                    else{
-                        if(day === 1 && (row+2) % 4 === 0 ){
-                            html += "<div style='grid-area: "+row+" / "+day+" / "+(row+4)+" / "+day+";overflow: hidden; font-size: 18px' class='backCellLeft "+(row+2 === nbrRow ?  "" : "backCellEnd") +" center greyContainer white-text'>"+(startHour + dayOffset)+":00</div>";
-                            dayOffset++;
-                        }else if( day !==1){
-                            html += "<div style='grid-area: "+row+" / "+day+" / "+row+" / "+day+";' class='backCell'></div>"
-                        }
+    function needUpdate_$id(lastActiveEvent) {
+        let now = new Date(Date.now());
+        let start = new Date(lastActiveEvent.dtstart * 1000);
+        let end = new Date(lastActiveEvent.dtend * 1000);
+        return !(now > start && now < end);
+    }
 
-                    }
-
-
-                }
+    function updateDisplay_$id() {
+        for (let name in activeEvents_$id) {
+            if (needUpdate_$id(activeEvents_$id[name])) {
+                console.log("need update");
+                drawEvents_$id();
+                break;
             }
-            $("#back_grid_$id").html(html);
         }
-    });
+    }
+
+
+    function drawEvents_$id() {
+        let now = new Date(Date.now());
+        let toShow = {};
+        for (let name in calendars_$id) {
+            let ev = calendars_$id[name];
+            if (ev != null) {
+                ev.forEach(function (event) {
+                    let start = new Date(event.dtstart * 1000);
+                    if (start > monday_$id && start < sunday_$id) {
+                        if (toShow[name] === undefined)
+                            toShow[name] = [];
+                        toShow[name].push(event);
+                    }
+                });
+            } else {
+                toShow[name] = [];
+            }
+        }
+
+        for (let name in toShow) {
+            let list = toShow[name];
+            list.sort(compareDate_$id);
+            $('#grid_' + name + '_$id').empty();
+            list.forEach(function (ev) {
+                let activeEv = fillCalendar_$id(name, ev, now, toRemoveStart_$id);
+                if (activeEv)
+                    activeEvents_$id[name] = ev;
+
+            })
+        }
+    }
+
+    function nextGrid_$id() {
+        selectedGrid_$id += 1;
+        if (selectedGrid_$id >= gridList_$id.length)
+            selectedGrid_$id = 0;
+        M.Tabs.getInstance(document.querySelector("#tabs_$id")).select(gridList_$id[selectedGrid_$id]);
+
+
+    }
+
 
 </script>
