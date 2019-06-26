@@ -54,6 +54,7 @@ public class RaplaCalendar implements WidgetInterface{
             HashMap<String, Object> conf = Json.loadObject(paramStr);
             HashMap<String, String> calendars = (HashMap<String, String>) conf.get("URLS");
             HashMap<String, List<RaplaCalEvent>> convertedCal = new HashMap<>();
+            //check no cal
             for(Map.Entry<String, String> entry : calendars.entrySet()){
                 List<RaplaCalEvent> events = null;
                 try{
@@ -173,6 +174,7 @@ public class RaplaCalendar implements WidgetInterface{
 
     private List<RaplaCalEvent> convertIcal(String url) throws IOException {
         URL urlC = new URL(url);
+        logger.debug(url);
         URLConnection yc = urlC.openConnection();
         InputStreamReader in =new InputStreamReader(yc.getInputStream());
 
