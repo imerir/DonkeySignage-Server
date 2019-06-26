@@ -46,7 +46,7 @@ public class WebSocketUtils {
             ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningCandidateComponentProvider( false);
             provider.addIncludeFilter(new AssignableTypeFilter(WidgetInterface.class));
             Set<BeanDefinition> beans = provider.findCandidateComponents("Donkey");
-            logger.info("Listing widgets...");
+            logger.debug("Listing widgets...");
             for(BeanDefinition bean : beans){
                 try {
                     WidgetInterface w = (WidgetInterface) Class.forName(bean.getBeanClassName(),true, Thread.currentThread().getContextClassLoader()).getConstructor().newInstance();

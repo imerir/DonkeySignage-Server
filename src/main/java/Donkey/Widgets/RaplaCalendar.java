@@ -1,19 +1,26 @@
 package Donkey.Widgets;
 
 import Donkey.Database.Entity.WidgetConfigEntity;
+import Donkey.Database.Repository.ScreenRepository;
+import Donkey.Database.Repository.WidgetConfigRepository;
+import Donkey.SpringContext;
 import Donkey.Tools.FilesTools;
 import Donkey.Tools.Json;
 import biweekly.ICalendar;
 import biweekly.component.VEvent;
+import biweekly.component.VTimezone;
 import biweekly.io.text.ICalReader;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.context.ApplicationContext;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 
 public class RaplaCalendar implements WidgetInterface{
@@ -93,11 +100,57 @@ public class RaplaCalendar implements WidgetInterface{
 
     @Override
     public boolean needUpdate(WidgetConfigEntity widgetConf) {
+
+        try {
+            String param = widgetConf.getParam();
+            Date lastEdit = widgetConf.getLastUpdate();
+            if(lastEdit == null)
+                return true;
+            HashMap<String, Object> conf = Json.loadObject(param);
+            HashMap<String, String> calendars = (HashMap<String, String>) conf.get("URLS");
+            int totalSize = 0;
+            for(Map.Entry<String, String> entry : calendars.entrySet()){
+                try{
+                    List<RaplaCalEvent> events = convertIcal(entry.getValue());
+                    totalSize += events.size();
+                    for(RaplaCalEvent event : events){
+                        if(event.lastEdit.getTime() > lastEdit.getTime()) //TODO Correct bug whit UTC on rapla ??????
+                            return true;
+                    }
+                }catch (IOException ignored){}
+            }
+            if(conf.get("lastSize") != null){
+                int lastSize = (int) conf.get("lastSize");
+                if(lastSize != totalSize){
+                    conf.put("lastSize", totalSize);
+                    ApplicationContext context = SpringContext.getAppContext();
+                    WidgetConfigRepository widgetConfigRepository = (WidgetConfigRepository) context.getBean("widgetConfigRepository");
+                    widgetConf.setParam(Json.stringify(conf));
+                    widgetConfigRepository.save(widgetConf);
+                    return true;
+
+                }
+            }
+            else{
+                conf.put("lastSize", totalSize);
+                ApplicationContext context = SpringContext.getAppContext();
+                WidgetConfigRepository widgetConfigRepository = (WidgetConfigRepository) context.getBean("widgetConfigRepository");
+                widgetConf.setParam(Json.stringify(conf));
+                widgetConfigRepository.save(widgetConf);
+                return true;
+            }
+        } catch (IOException e) {
+            logger.error("Fail to load json config.");
+            return false;
+        }
+
+
+
         return false;
     }
 
     class RaplaCalEvent {
-        public long lastEdit;
+        public Date lastEdit;
         public long created;
         public long dtstart;
         public long dtstamp;
@@ -106,8 +159,8 @@ public class RaplaCalendar implements WidgetInterface{
         public String summary;
         public String location;
 
-        public RaplaCalEvent(long lastEdit, long created, long dtstart, long dtstamp, long dtend, String uid, String summary, String location) {
-            this.lastEdit = lastEdit/1000;
+        public RaplaCalEvent(Date lastEdit, long created, long dtstart, long dtstamp, long dtend, String uid, String summary, String location) {
+            this.lastEdit = lastEdit;
             this.created = created/1000;
             this.dtstart = dtstart/1000;
             this.dtstamp = dtstamp/1000;
@@ -128,8 +181,14 @@ public class RaplaCalendar implements WidgetInterface{
         List<ICalendar> calendarList = reader.readAll();
         reader.close();
         List<RaplaCalEvent> list = new ArrayList<>();
+        VTimezone timezone = (VTimezone) calendarList.get(0).getTimezoneInfo().getComponents().toArray()[0];
+        String tzstr = timezone.getTimezoneId().getValue();
+        int offset = LocalDateTime.now().atZone(ZoneId.of(tzstr)).getOffset().getTotalSeconds();
         for(VEvent event : calendarList.get(0).getEvents()){
-            list.add(new RaplaCalEvent(event.getLastModified().getValue().getTime(), event.getCreated().getValue().getTime(), event.getDateStart().getValue().getTime(), event.getDateTimeStamp().getValue().getTime(), event.getDateEnd().getValue().getTime(), event.getUid().getValue(), event.getSummary().getValue(), event.getLocation().getValue()));
+            Calendar lastModified = Calendar.getInstance();
+            lastModified.setTime(event.getLastModified().getValue());
+            lastModified.add(Calendar.SECOND, offset);
+            list.add(new RaplaCalEvent(lastModified.getTime(), event.getCreated().getValue().getTime(), event.getDateStart().getValue().getTime(), event.getDateTimeStamp().getValue().getTime(), event.getDateEnd().getValue().getTime(), event.getUid().getValue(), event.getSummary().getValue(), event.getLocation().getValue()));
         }
 
         return list;

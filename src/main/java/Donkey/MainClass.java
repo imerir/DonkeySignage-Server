@@ -1,19 +1,31 @@
 package Donkey;
 
+import Donkey.Database.Repository.WidgetConfigRepository;
 import Donkey.Storage.Service.StorageService;
 import Donkey.Storage.StorageProperties;
+import Donkey.Tools.WidgetUpdateChecker;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.scheduling.annotation.EnableScheduling;
+
+import java.util.Timer;
 
 
 @SpringBootApplication
 @EnableConfigurationProperties(StorageProperties.class)
+@EnableScheduling
 public class MainClass {
+
+
     public static void main(String args[]){
         SpringApplication.run(MainClass.class, args);
+
     }
 
     @Bean

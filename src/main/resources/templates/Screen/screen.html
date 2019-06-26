@@ -116,9 +116,10 @@
                 </div>
             </th:block>
             <div class="row">
+
                 <div class="input-field col s10 offset-s1">
-                    <!--<label th:text="#{media.template}"></label>-->
-                    <select id="templateSelect" class="browser-default">
+
+                    <select id="templateSelect" class="">
                         <th:block th:if="${screen.getTemplate() == null}">
                             <option th:text="#{group.notAffected}" selected="selected" th:value="-1"></option>
                             <th:block th:each=" template : ${templateList}">
@@ -140,10 +141,11 @@
                             </th:block>
                         </th:block>
                     </select>
+                    <label th:text="#{media.template}"> </label>
                 </div>
                 <div class="col s12 center">
                     <button class="btn green" id="assignateTemplate_btn" onclick="sendTemplateAssignation()"
-                            th:text="#{form.modify}"></button>
+                            th:text="#{form.submit}"></button>
                 </div>
 
             </div>

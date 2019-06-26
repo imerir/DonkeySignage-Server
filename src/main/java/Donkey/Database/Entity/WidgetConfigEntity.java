@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -18,15 +19,17 @@ public class WidgetConfigEntity {
     @JoinColumn(name = "template_id")
     private TemplateEntity template;
 
-    //TODO add lastUpdate
     private String name;
     private String widgetId;
     private Integer posX;
     private Integer posY;
     private Integer sizeWidth;
     private Integer sizeHeight;
-
     private String param;
+
+    @Column(columnDefinition = "DATETIME")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date lastUpdate;
 
 
     public int getId() {
@@ -127,5 +130,13 @@ public class WidgetConfigEntity {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Date getLastUpdate() {
+        return lastUpdate;
+    }
+
+    public void setLastUpdate(Date lastUpdate) {
+        this.lastUpdate = lastUpdate;
     }
 }
