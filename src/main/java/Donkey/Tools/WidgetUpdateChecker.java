@@ -44,17 +44,17 @@ public class WidgetUpdateChecker {
 
 
     @Transactional
-    @Scheduled(fixedDelay = 5000)
+    @Scheduled(fixedDelay = 30000)
     public void run() {
         if(!ready)
             return;
-        logger.debug("Check for widget update...");
+        logger.trace("Check for widget update...");
         HashMap<String, WidgetInterface> widgets = WebSocketUtils.getINSTANCE().getWidgets();
         List<WidgetConfigEntity> entites = widgetConfigRepository.getAllBy();
         List<ScreenEntity> toNotify = new ArrayList<>();
         for(WidgetConfigEntity conf : entites){
             boolean needUpdate = widgets.get(conf.getWidgetId()).needUpdate(conf);
-            logger.debug("Need Update "+ conf.getId() + ": " + needUpdate);
+            logger.trace("Need Update "+ conf.getId() + ": " + needUpdate);
             if(needUpdate){
                 List<ScreenEntity> screens = conf.getTemplate().getScreen();
                 for(ScreenEntity aScreen : screens){
