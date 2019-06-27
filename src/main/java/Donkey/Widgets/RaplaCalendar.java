@@ -182,7 +182,7 @@ public class RaplaCalendar implements WidgetInterface{
 
         List<ICalendar> calendarList = reader.readAll();
         reader.close();
-        List<RaplaCalEvent> list = new ArrayList<>();{
+        List<RaplaCalEvent> list = new ArrayList<>();
         if(calendarList == null || calendarList.isEmpty()){
             logger.info("Calendar is empty or read error ?");
             return new ArrayList<>();
