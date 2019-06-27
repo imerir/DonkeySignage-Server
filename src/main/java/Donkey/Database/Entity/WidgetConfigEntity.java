@@ -25,6 +25,7 @@ public class WidgetConfigEntity {
     private Integer posY;
     private Integer sizeWidth;
     private Integer sizeHeight;
+    @Column(length = 4048)
     private String param;
 
     @Column(columnDefinition = "DATETIME")
