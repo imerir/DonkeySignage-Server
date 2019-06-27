@@ -17,6 +17,8 @@ import org.springframework.context.ApplicationContext;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.net.URL;
 import java.net.URLConnection;
 import java.time.LocalDateTime;
@@ -173,8 +175,11 @@ public class RaplaCalendar implements WidgetInterface{
     }
 
     private List<RaplaCalEvent> convertIcal(String url) throws IOException {
+        if(!pingHost(url, 1000)){
+            logger.warn("Calendar unreachable (url: " + url + ")" );
+            return new ArrayList<>();
+        }
         URL urlC = new URL(url);
-        logger.debug(url);
         URLConnection yc = urlC.openConnection();
         InputStreamReader in =new InputStreamReader(yc.getInputStream());
 
@@ -199,6 +204,40 @@ public class RaplaCalendar implements WidgetInterface{
         }
 
         return list;
+    }
+
+    public boolean pingHost(String url, int timeout) {
+        boolean isSSL = false;
+        if(url.startsWith("https")){
+            url = url.replace("https://", "");
+            isSSL = true;
+        }else{
+            url = url.replace("http://", "");
+        }
+        int endHost = url.indexOf('/');
+        String host;
+        if(endHost != -1){
+            host = url.substring(0, endHost);
+        }
+        else
+            host = url;
+
+        int port;
+        if(host.contains(":")){
+            String portStr = host.substring(host.indexOf(':')).replace(":", "");
+            port = Integer.parseInt(portStr);
+            host = host.substring(0, host.indexOf(':'));
+        }else{
+            port = isSSL ? 443 : 80;
+
+        }
+
+        try (Socket socket = new Socket()) {
+            socket.connect(new InetSocketAddress(host, port), timeout);
+            return true;
+        } catch (IOException e) {
+            return false; // Either timeout or unreachable or failed DNS lookup.
+        }
     }
 
 
