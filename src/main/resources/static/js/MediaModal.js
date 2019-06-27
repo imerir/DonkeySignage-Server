@@ -65,7 +65,7 @@ function addImagesToCollection() {
     for(let img of images){
         ids.push(img.getAttribute("data-id"));
         html += "<li class='collection-item'>" +
-            "<div>"+img.getAttribute("data-id")+"" +
+            "<div class='truncate'>"+img.getAttribute("data-id")+"" +
             "<a href='#' class='secondary-content delMedia' data-id='"+img.getAttribute("data-id")+"' data-list='"+ulDiv+"' data-target='"+targetInputId+"' >" +
             "<i class='material-icons red-text'>delete</i>" +
             "</a>" +

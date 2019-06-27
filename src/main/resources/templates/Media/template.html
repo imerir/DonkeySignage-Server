@@ -203,7 +203,7 @@
                                                 th:id="${'' + widgetConfig.getId() + '_' + confEdit.getId() + '_list'}">
                                                 <th:block th:each="media : ${confEdit.getValue()}">
                                                     <li class='collection-item' data-id=''>
-                                                        <div th:inline="text">
+                                                        <div th:inline="text" class="truncate">
                                                             [[${media}]]
                                                             <a href='#' class='secondary-content delMedia'
                                                                th:attr="data-id=${media}, data-target=${'modify_custom_' + widgetConfig.getId() + '_' + confEdit.getId()}, data-list=${'' + widgetConfig.getId() + '_' + confEdit.getId() + '_list'}">
