@@ -182,7 +182,12 @@ public class RaplaCalendar implements WidgetInterface{
 
         List<ICalendar> calendarList = reader.readAll();
         reader.close();
-        List<RaplaCalEvent> list = new ArrayList<>();
+        List<RaplaCalEvent> list = new ArrayList<>();{
+        if(calendarList == null || calendarList.isEmpty()){
+            logger.info("Calendar is empty or read error ?");
+            return new ArrayList<>();
+        }
+
         VTimezone timezone = (VTimezone) calendarList.get(0).getTimezoneInfo().getComponents().toArray()[0];
         String tzstr = timezone.getTimezoneId().getValue();
         int offset = LocalDateTime.now().atZone(ZoneId.of(tzstr)).getOffset().getTotalSeconds();
