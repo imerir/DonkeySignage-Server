@@ -2,6 +2,7 @@ package Donkey.Database.Entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -25,7 +26,9 @@ public class WidgetConfigEntity {
     private Integer posY;
     private Integer sizeWidth;
     private Integer sizeHeight;
+
     @Column(length = 4048)
+    @Length(max = 4048)
     private String param;
 
     @Column(columnDefinition = "DATETIME")
