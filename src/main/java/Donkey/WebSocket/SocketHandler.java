@@ -103,8 +103,14 @@ public class SocketHandler extends TextWebSocketHandler {
                     break;
 
                 case "CONFIG":
+                    new Thread(() -> {
+                        try {
+                            webSocketUtils.sendConfig(session);
+                        } catch (IOException e) {
+                            logger.catching(e);
+                        }
+                    }).start();
 
-                    webSocketUtils.sendConfig(session);
                     break;
 
             }
