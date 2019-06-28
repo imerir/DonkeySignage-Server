@@ -4,6 +4,8 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.web.multipart.MultipartResolver;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.LocaleContextResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -14,16 +16,18 @@ import org.springframework.web.servlet.resource.ContentVersionStrategy;
 import org.springframework.web.servlet.resource.ResourceUrlEncodingFilter;
 import org.springframework.web.servlet.resource.VersionResourceResolver;
 
-import java.util.Locale;
+import javax.servlet.ServletContext;
 
 /**
  * Configuration for js auto versioning
  */
 @Configuration
+
 public class MvcApplication extends WebMvcConfigurerAdapter {
 
     /**
      * Add javascript auto versioning.
+     *
      * @param registry
      */
     @Override
@@ -55,7 +59,7 @@ public class MvcApplication extends WebMvcConfigurerAdapter {
         return new ResourceUrlEncodingFilter();
     }
 
-    @Bean(name="localeResolver")
+    @Bean(name = "localeResolver")
     public LocaleContextResolver getLocaleContextResolver() {
         CookieLocaleResolver localeResolver = new CookieLocaleResolver();
         return localeResolver;
@@ -63,10 +67,11 @@ public class MvcApplication extends WebMvcConfigurerAdapter {
 
     /**
      * Define the LocalChangeInterceptor to intercept parameter "lang" to change locale.
+     *
      * @return Configured LocaleChangeInterceptor
      */
     @Bean
-    public LocaleChangeInterceptor localeChangeInterceptor(){
+    public LocaleChangeInterceptor localeChangeInterceptor() {
         LocaleChangeInterceptor lci = new LocaleChangeInterceptor();
         lci.setParamName("lang");
         return lci;
@@ -74,16 +79,26 @@ public class MvcApplication extends WebMvcConfigurerAdapter {
 
     /**
      * Configure message source for locale
+     *
      * @return
      */
     @Bean
-    public MessageSource messageSource(){
+    public MessageSource messageSource() {
         ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
         messageSource.setBasename("messages/messages");
         messageSource.setDefaultEncoding("UTF-8");
         return messageSource;
     }
 
+
+    @Bean(name = "multipartResolver")
+    public MultipartResolver multipartResolver(ServletContext servletContext){
+        CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
+        multipartResolver.setMaxUploadSize(10485760);
+        multipartResolver.setResolveLazily(false);
+
+        return multipartResolver;
+    }
 
 
 }

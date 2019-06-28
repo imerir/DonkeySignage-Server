@@ -30,19 +30,21 @@
     <div class="card-panel">
         <div class="row">
             <div class="row">
-                <div class="row">
-                    <div class="row">
                         <ul class="collection with-header z-depth-1">
                             <li class="collection-header"><h4><b th:text="#{media.file}"></b></h4></li>
                         </ul>
-                    </div>
+            </div>
+            <div class="row" th:if="${error == 'FILE_TO_LARGE'}">
+                <div class="col s12">
+                    <h6 class="red-text" th:text="#{form.fileToLarge}"></h6>
                 </div>
             </div>
-            <form method="POST" enctype="multipart/form-data" action="/addMedia">
+            <form method="post" enctype="multipart/form-data" action="/addMedia">
                 <div class="row">
                     <div class="file-field input-field col s12">
                         <div class="btn">
-                            <span th:utext="#{media.file}"></span>
+                            <span><i class="material-icons">create_new_folder</i></span>
+
                             <input class="validate" name="file" onchange="readURL(this)" type="file"/>
                         </div>
                         <div class="file-path-wrapper">
