@@ -60,34 +60,27 @@
                     <li th:classappend="${page == 'screenRegister'? 'active' : ''}">
                         <a href="/screenRegister"  th:text="#{screenregister.screenregister}"></a>
                     </li>
-                    <li th:if="${user?.isAdmin()}" th:classappend="${page == 'addGroup'? 'active' : ''}">
-                        <a href="/addGroup"  th:text="#{group.addGroup}"></a>
-                    </li>
                     <li th:if="${user?.isAdmin()}" th:classappend="${page == 'addUser'? 'active' : ''}">
                         <a href="/addUser"  th:text="#{login.newUser}"></a>
+                    </li>
+                    <li th:classappend="${page == 'user'? 'active' : ''}">
+                        <a href="/user"  th:text="#{login.user}"></a>
                     </li>
                     <li>
                         <div class="divider"></div>
                     </li>
                 </th:block>
                 <li th:classappend="${page == 'group'? 'active' : ''}">
-                    <a href="/group"  th:text="#{group.group}"></a>
+                    <a href="/group"  th:text="#{group.screen}"></a>
                 </li>
-                <li th:classappend="${page == 'user'? 'active' : ''}">
-                    <a href="/user"  th:text="#{login.user}"></a>
+                <li th:classappend="${page == 'media'? 'active' : ''}">
+                    <a href="/media" th:utext="#{media.media}"></a>
                 </li>
+
                 <li>
                     <div class="divider"></div>
                 </li>
-                <li th:classappend="${page == 'media'? 'active' : ''}">
-                <a href="/media" th:utext="#{media.media}"></a>
-                </li>
-                <li th:classappend="${page == 'addTemplate'? 'active' : ''}">
-                    <a href="/addTemplate" th:utext="#{media.newTemplate}"></a>
-                </li>
-                <li th:classappend="${page == 'uplaodForm'? 'active' : ''}">
-                    <a href="/addMedia" th:utext="#{media.addMedia}"></a>
-                </li>
+
             </ul>
         </th:block>
 
