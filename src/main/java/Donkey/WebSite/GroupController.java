@@ -44,7 +44,11 @@ public class GroupController {
      * @return
      */
     @RequestMapping(value="/addGroup", method = RequestMethod.GET)
-    public String addGroup(Model model){
+    public String addGroup(Model model, @RequestParam(name = "parent", defaultValue = "-1")  int parent){
+        if(parent != -1){
+            GroupEntity parentGroup = grpRep.getGroupEntityById(parent);
+            model.addAttribute("parent", parentGroup);
+        }
         model.addAttribute("addGroupForm", new AddGroupForm());
         return "Group/addGroup";
     }

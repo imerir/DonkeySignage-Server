@@ -44,15 +44,16 @@
             </div>
             <a class="waves-effect waves-light btn modal-trigger" href="#modalGroup" th:text="#{form.select}"></a>
             <div class="file-path-wrapper">
-                <input type="text" disabled="disabled" id="groupName"/>
+                <input type="text" disabled="disabled" id="groupName" th:value="${parent != null ? parent.getName(): ''}"/>
             </div>
             <input type="hidden" id="groupId" name="groupId"
-                   th:value="${addGroupForm?.getParent() == null ? -1 : addGroupForm?.getParent().getId()}"/>
+                   th:value="${parent != null ? parent.getId() : '-1'}"/>
         </div>
 
         <div class="row">
             <div class="col s12 center">
-                <button id="validateBtn" class="disabled waves-effect waves-light btn green"
+                <button id="validateBtn" class="waves-effect waves-light btn green"
+                        th:classappend="${parent == null ? 'disabled' : ''}"
                         th:utext="#{form.submit}" ></button>
             </div>
         </div>
