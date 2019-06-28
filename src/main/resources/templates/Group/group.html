@@ -40,7 +40,7 @@
                             <i class="material-icons left blue-text" style="font-size: 40px">dvr</i>
                             <b th:text="${group.getName()}"></b>
                             <span class="right">
-                            <a class="btn green waves-effect" th:href="${'/addGroup?parent=' + group.getId()}"><i class="material-icons"
+                            <a class="btn green waves-effect" th:if="${user?.isAdmin()}" th:href="${'/addGroup?parent=' + group.getId()}"><i class="material-icons"
                                                                                      style="font-size: 2rem !important;">create_new_folder</i></a>
                         </span>
                         </h4>
@@ -73,7 +73,7 @@
                             <i class="material-icons left blue-text" style="font-size: 40px">dvr</i>
                             <b th:text="#{group.mainGroup}"></b>
                             <span class="right">
-                            <a class="btn green waves-effect" href="/addGroup"><i class="material-icons"
+                            <a class="btn green waves-effect" th:if="${user?.isAdmin()}" href="/addGroup"><i class="material-icons"
                                                                                      style="font-size: 2rem !important;">create_new_folder</i></a>
                         </span>
                         </h4>
