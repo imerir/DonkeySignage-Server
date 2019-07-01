@@ -52,7 +52,7 @@
         <div class="row">
             <!--<label th:text="#{login.chooseRole}"></label>-->
             <div class="input-field col s12">
-                <select id="roleSelect" class="browser-default">
+                <select id="roleSelect" class="">
                     <th:block th:each="role : ${roleList}">
                         <th:block th:if="${role.getName() == 'ROLE_USER'}">
                             <option th:value='${role.getId()}' selected="selected" th:utext="${#strings.substringAfter(role.getName(),'_')}"></option>

@@ -19,6 +19,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -112,6 +115,15 @@ public class UserApiController {
                     return new ResponseEntity<>(new Error("username already use or empty or null","USER_CONFLICT"),HttpStatus.CONFLICT);
                 }else{
                     user.setUsername(userJson.username);
+                    if(userJson.roleId != null){
+                        RolesEntity role = roleRepository.getRolesEntityById(userJson.roleId);
+                        if(role != null){
+                            List<RolesEntity> rolesList = new ArrayList<>();
+                            rolesList.add(role);
+                            user.setRoles(rolesList);
+                        }
+
+                    }
                     userRepository.save(user);
                     return new ResponseEntity<>(user, HttpStatus.OK);
                 }
@@ -145,17 +157,6 @@ public class UserApiController {
             logger.info("[api/modifyMyAccount PUT] wrong password access denied !");
             return new ResponseEntity<>(new Error("wrong password","WRONG_PASSWORD"),HttpStatus.UNAUTHORIZED);
         }else{
-//            if(!loggedUser.getUsername().equals(userJson.username) &&
-//                    userRepository.getUserEntityByUsername(userJson.username) == null &&
-//                    userJson.newPassword.isEmpty())
-//                loggedUser.setUsername(userJson.username);
-//            else{
-//                logger.debug("[api/user PUT] username already use");
-//                return new ResponseEntity<>(new Error("username already use or empty or null","USER_CONFLICT"),HttpStatus.CONFLICT);
-//            }
-//            if(!encoder.matches(userJson.newPassword,loggedUser.getPassword()))
-//                loggedUser.setPassword(encoder.encode(userJson.newPassword));
-
             if(userJson.newPassword.isEmpty()){
 //                modifcation username
                 if(!loggedUser.getUsername().equals(userJson.username) &&

@@ -60,9 +60,6 @@
                     <li th:classappend="${page == 'screenRegister'? 'active' : ''}">
                         <a href="/screenRegister"  th:text="#{screenregister.screenregister}"></a>
                     </li>
-                    <li th:if="${user?.isAdmin()}" th:classappend="${page == 'addUser'? 'active' : ''}">
-                        <a href="/addUser"  th:text="#{login.newUser}"></a>
-                    </li>
                     <li th:classappend="${page == 'user'? 'active' : ''}">
                         <a href="/user"  th:text="#{login.user}"></a>
                     </li>
