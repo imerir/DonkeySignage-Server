@@ -318,6 +318,12 @@
     }
 
     function updateDisplay_$id() {
+        let now = new Date(Date.now());
+        if(now > sunday_$id){
+            $.post('/api/forceUpdate');
+            location.reload();
+            return;
+        }
         for (let name in activeEvents_$id) {
             if (needUpdate_$id(activeEvents_$id[name])) {
                 console.log("need update");
