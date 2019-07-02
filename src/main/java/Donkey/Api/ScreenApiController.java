@@ -68,8 +68,13 @@ public class ScreenApiController {
     public ResponseEntity<?> getToken(HttpServletRequest request, @RequestBody UuidJson uuid) {
         TemporalScreenEntity newTmpRegister;
         //log.debug("Post on getToken, value of uuid : " + uuid.getUuid());
+        String remoteAddress = request.getHeader("X-Forwarded-For");
+        if (remoteAddress == null || remoteAddress.isEmpty()) {
+            remoteAddress = request.getRemoteAddr();
+        }
+
         if (tmpRegisterRep.getTemporalRegisterByUuid(uuid.getUuid()) == null) {
-            newTmpRegister = new TemporalScreenEntity(request.getRemoteAddr(), ScreenTools.getInstance().generateCheckToken(), uuid.getUuid(), ScreenTools.getInstance().generateExpirationDateLocalDate());
+            newTmpRegister = new TemporalScreenEntity(remoteAddress, ScreenTools.getInstance().generateCheckToken(), uuid.getUuid(), ScreenTools.getInstance().generateExpirationDateLocalDate());
         } else {
             newTmpRegister = tmpRegisterRep.getTemporalRegisterByUuid(uuid.getUuid());
             newTmpRegister.setTempToken(ScreenTools.getInstance().generateCheckToken());
