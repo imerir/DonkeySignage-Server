@@ -227,14 +227,13 @@
             });
 
         });
-
-        if (window.location.hash.includes("success")) {
+        if(sessionStorage.getItem("success") != null && sessionStorage.getItem("success") !== "null"){
+            sessionStorage.setItem("success", null);
             M.toast({
-                html: " <i class=\"material-icons\" style='margin-right: 10px'>check_circle</i> Update Success",
+                html: " <i class=\"material-icons\" style='margin-right: 10px'>check</i> Change saved",
                 classes: 'green',
                 displayLength: 4000
             });
-            window.location.hash = "";
         }
     });
 
@@ -259,6 +258,7 @@
         console.log(settings);
         $.ajax(settings).done(function (response) {
             console.log(response);
+            sessionStorage.setItem("success", "true");
             window.location.reload();
         }).fail(function (response) {
             console.log(response);

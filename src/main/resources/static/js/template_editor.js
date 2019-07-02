@@ -102,6 +102,7 @@ function templateEditorListeners() {
         };
 
         $.ajax(settings).done(function () {
+            sessionStorage.setItem("success", "true");
             window.location.href = "#" + id;
             location.reload()
         }).fail(function (response) {
@@ -114,9 +115,17 @@ function templateEditorListeners() {
         });
     });
     console.log(window.location.hash);
-
     if(window.location.hash) {
         $(window.location.hash).click();
+    }
+
+    if(sessionStorage.getItem("success") != null && sessionStorage.getItem("success") !== "null"){
+        sessionStorage.setItem("success", null);
+        M.toast({
+            html: " <i class=\"material-icons\" style='margin-right: 10px'>check</i> Change saved",
+            classes: 'green',
+            displayLength: 4000
+        });
     }
 }
 

@@ -206,6 +206,15 @@
         $('#validResetPassword').click(function () {
             resetPassword();
         });
+
+        if(sessionStorage.getItem("success") != null && sessionStorage.getItem("success") !== "null"){
+            sessionStorage.setItem("success", null);
+            M.toast({
+                html: " <i class=\"material-icons\" style='margin-right: 10px'>check</i> Change saved",
+                classes: 'green',
+                displayLength: 4000
+            });
+        }
     });
 
     function sendForm() {
@@ -225,6 +234,7 @@
 
         console.log(settings);
         $.ajax(settings).done(function (response) {
+            sessionStorage.setItem("success", "true");
             window.location.reload();
         }).fail(function (response) {
             console.log(response);
