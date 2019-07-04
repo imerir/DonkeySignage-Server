@@ -133,6 +133,7 @@
     var toRemoveStart_$id;
     var gridList_$id = [];
     var selectedGrid_$id = 0;
+    var weekend_$id = false;
     $.get("/api/getWidgetConf?id=$id", (config) => {
         let param = config.param;
         console.log(config);
@@ -141,6 +142,7 @@
         let toRemoveEnd = (24 - param.day_end) * 60 / 15 + 1;
         let dayLength = 96 - toRemoveEnd - toRemoveStart_$id;
         let nbrDay = param.weekend ? 7 : 5;
+        weekend_$id = param.weekend;
         let now = new Date(Date.now());
         monday_$id = getMonday_$id(now);
         sunday_$id = new Date();
@@ -216,6 +218,12 @@
     function fillCalendar_$id(name, ev, now, toRemoveStart) {
         let start = new Date(ev.dtstart * 1000);
         let end = new Date(ev.dtend * 1000);
+        if(!weekend_$id){
+            let friday = new Date(sunday_$id.getTime());
+            friday.setDate(friday.getDate() - 2);
+            if( start > friday)
+                return ;
+        }
         let startMin = start.getMinutes() + start.getHours() * 60;
         let endMin = end.getMinutes() + end.getHours() * 60;
         let startPos = startMin / 15 - toRemoveStart + 1;
@@ -342,10 +350,36 @@
             if (ev != null) {
                 ev.forEach(function (event) {
                     let start = new Date(event.dtstart * 1000);
+                    let end = new Date(event.dtend * 1000);
                     if (start > monday_$id && start < sunday_$id) {
                         if (toShow[name] === undefined)
                             toShow[name] = [];
-                        toShow[name].push(event);
+                        let dayOffset = getDayOffset_$id(end, start);
+                        if(dayOffset > 1){
+                            let start_end = new Date(start.getTime());
+                            start_end.setHours(end.getHours());
+                            start_end.setMinutes(end.getMinutes());
+                            for(let i = 0 ; i<dayOffset; i++){
+                                if(start < sunday_$id){
+                                    let tmp = {
+                                        dtstart: start.getTime() / 1000,
+                                        dtend: start_end.getTime() /1000,
+                                        summary: event.summary,
+                                        location: event.location
+                                    };
+                                    toShow[name].push(tmp);
+                                    start.setDate(start.getDate() + 1);
+                                    start_end.setDate(start_end.getDate() + 1);
+                                }
+                                else{
+                                    break;
+                                }
+                            }
+
+                        }else{
+                            toShow[name].push(event);
+                        }
+
                     }
                 });
             } else {
@@ -373,6 +407,11 @@
         M.Tabs.getInstance(document.querySelector("#tabs_$id")).select(gridList_$id[selectedGrid_$id]);
 
 
+    }
+
+
+    function getDayOffset_$id(end, start){
+        return Math.floor((end - start) / (1000 * 60 * 60 * 24));
     }
 
 
