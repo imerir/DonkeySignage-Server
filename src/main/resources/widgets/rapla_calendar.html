@@ -229,12 +229,13 @@
         let startPos = startMin / 15 - toRemoveStart + 1;
         let endPos = endMin / 15 - toRemoveStart + 1;
         let dayPos = start.getDay() + 1;
+        debugger;
         let summary = ev.summary.replace(/\[(.*)]+/, "");
         let resource = ev.summary.match(/\[(.*)]+/);
         if (resource)
             resource = resource[1];
         let places = ev.location;
-        if (dayPos === 0) {
+        if (dayPos === 1) {
             dayPos = 8;
         }
         let options = {hour: "numeric", minute: "numeric"};
