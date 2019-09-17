@@ -10,6 +10,10 @@ import biweekly.ICalendar;
 import biweekly.component.VEvent;
 import biweekly.component.VTimezone;
 import biweekly.io.text.ICalReader;
+import biweekly.property.ExceptionDates;
+import biweekly.util.Frequency;
+import biweekly.util.ICalDate;
+import biweekly.util.Recurrence;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,7 +29,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
 
-public class RaplaCalendar implements WidgetInterface{
+public class RaplaCalendar implements WidgetInterface {
     Logger logger = LogManager.getLogger();
 
     @Override
@@ -57,11 +61,12 @@ public class RaplaCalendar implements WidgetInterface{
             HashMap<String, String> calendars = (HashMap<String, String>) conf.get("URLS");
             HashMap<String, List<RaplaCalEvent>> convertedCal = new HashMap<>();
             //check no cal
-            for(Map.Entry<String, String> entry : calendars.entrySet()){
+            for (Map.Entry<String, String> entry : calendars.entrySet()) {
                 List<RaplaCalEvent> events = null;
-                try{
+                try {
                     events = convertIcal(entry.getValue());
-                }catch (IOException ignored){}
+                } catch (IOException ignored) {
+                }
                 convertedCal.put(entry.getKey(), events);
             }
             HashMap<String, Object> toReturn = new HashMap<>();
@@ -80,9 +85,9 @@ public class RaplaCalendar implements WidgetInterface{
     @JsonIgnore
     @Override
     public List<WidgetConfDefinition> getParam() {
-        WidgetConfDefinition url = new WidgetConfDefinition("URLS", "Calendar name : Calendar URL", ConfType.MAP, true, false, false, "", "",  null);
-        WidgetConfDefinition dayStart = new WidgetConfDefinition("day_start", "Day start at (Hour):", ConfType.NUMBER, true, false, false, "7", "",  null);
-        WidgetConfDefinition dayEnd = new WidgetConfDefinition("day_end", "Day end at (hour):", ConfType.NUMBER, true, false, false, "19", "",  null);
+        WidgetConfDefinition url = new WidgetConfDefinition("URLS", "Calendar name : Calendar URL", ConfType.MAP, true, false, false, "", "", null);
+        WidgetConfDefinition dayStart = new WidgetConfDefinition("day_start", "Day start at (Hour):", ConfType.NUMBER, true, false, false, "7", "", null);
+        WidgetConfDefinition dayEnd = new WidgetConfDefinition("day_end", "Day end at (hour):", ConfType.NUMBER, true, false, false, "19", "", null);
         WidgetConfDefinition weekEnd = new WidgetConfDefinition("weekend", "Show weekend:", ConfType.BOOL, true, false, false, "true", "", null);
 
         return Arrays.asList(dayStart, dayEnd, weekEnd, url);
@@ -94,11 +99,11 @@ public class RaplaCalendar implements WidgetInterface{
         Map<String, WidgetConfDefinition> map = new HashMap<>();
         map.put("URLS", new WidgetConfDefinition("URLS", "Calendar name | Calendar URL", ConfType.MAP, true, false, false, parsed.get("URLS"), Json.stringify(parsed.get("URLS")), null));
 
-        map.put("day_start", new WidgetConfDefinition("day_start", "Day start at (Hour):", ConfType.NUMBER, true, false, false, parsed.get("day_start"),  Integer.toString((Integer)parsed.get("day_start")), null));
+        map.put("day_start", new WidgetConfDefinition("day_start", "Day start at (Hour):", ConfType.NUMBER, true, false, false, parsed.get("day_start"), Integer.toString((Integer) parsed.get("day_start")), null));
 
         map.put("day_end", new WidgetConfDefinition("day_end", "Day end at (hour):", ConfType.NUMBER, true, false, false, parsed.get("day_end"), Integer.toString((Integer) parsed.get("day_end")), null));
         map.put("weekend", new WidgetConfDefinition("weekend", "Show weekend:", ConfType.BOOL, true, false, false, parsed.get("weekend"), Boolean.toString((Boolean) parsed.get("weekend")), null));
-        return  map;
+        return map;
     }
 
     @Override
@@ -107,24 +112,25 @@ public class RaplaCalendar implements WidgetInterface{
         try {
             String param = widgetConf.getParam();
             Date lastEdit = widgetConf.getLastUpdate();
-            if(lastEdit == null)
+            if (lastEdit == null)
                 return true;
             HashMap<String, Object> conf = Json.loadObject(param);
             HashMap<String, String> calendars = (HashMap<String, String>) conf.get("URLS");
             int totalSize = 0;
-            for(Map.Entry<String, String> entry : calendars.entrySet()){
-                try{
+            for (Map.Entry<String, String> entry : calendars.entrySet()) {
+                try {
                     List<RaplaCalEvent> events = convertIcal(entry.getValue());
                     totalSize += events.size();
-                    for(RaplaCalEvent event : events){
-                        if(event.lastEdit.getTime() > lastEdit.getTime()) //TODO Correct bug whit UTC on rapla ??????
+                    for (RaplaCalEvent event : events) {
+                        if (event.lastEdit.getTime() > lastEdit.getTime()) //TODO Correct bug whit UTC on rapla ??????
                             return true;
                     }
-                }catch (IOException ignored){}
+                } catch (IOException ignored) {
+                }
             }
-            if(conf.get("lastSize") != null){
+            if (conf.get("lastSize") != null) {
                 int lastSize = (int) conf.get("lastSize");
-                if(lastSize != totalSize){
+                if (lastSize != totalSize) {
                     conf.put("lastSize", totalSize);
                     ApplicationContext context = SpringContext.getAppContext();
                     WidgetConfigRepository widgetConfigRepository = (WidgetConfigRepository) context.getBean("widgetConfigRepository");
@@ -133,8 +139,7 @@ public class RaplaCalendar implements WidgetInterface{
                     return true;
 
                 }
-            }
-            else{
+            } else {
                 conf.put("lastSize", totalSize);
                 ApplicationContext context = SpringContext.getAppContext();
                 WidgetConfigRepository widgetConfigRepository = (WidgetConfigRepository) context.getBean("widgetConfigRepository");
@@ -146,7 +151,6 @@ public class RaplaCalendar implements WidgetInterface{
             logger.error("Fail to load json config.");
             return false;
         }
-
 
 
         return false;
@@ -164,31 +168,42 @@ public class RaplaCalendar implements WidgetInterface{
 
         public RaplaCalEvent(Date lastEdit, long created, long dtstart, long dtstamp, long dtend, String uid, String summary, String location) {
             this.lastEdit = lastEdit;
-            this.created = created/1000;
-            this.dtstart = dtstart/1000;
-            this.dtstamp = dtstamp/1000;
-            this.dtend = dtend/1000;
+            this.created = created / 1000;
+            this.dtstart = dtstart / 1000;
+            this.dtstamp = dtstamp / 1000;
+            this.dtend = dtend / 1000;
             this.uid = uid;
             this.summary = summary;
             this.location = location;
         }
+
+        public RaplaCalEvent(RaplaCalEvent event) {
+            this.lastEdit = event.lastEdit;
+            this.created = event.created;
+            this.dtstart = event.dtstart;
+            this.dtstamp = event.dtstamp;
+            this.dtend = event.dtend;
+            this.uid = event.uid;
+            this.summary = event.summary;
+            this.location = event.location;
+        }
     }
 
     private List<RaplaCalEvent> convertIcal(String url) throws IOException {
-        if(!pingHost(url, 1000)){
-            logger.warn("Calendar unreachable (url: " + url + ")" );
+        if (!pingHost(url, 1000)) {
+            logger.warn("Calendar unreachable (url: " + url + ")");
             return new ArrayList<>();
         }
         URL urlC = new URL(url);
         URLConnection yc = urlC.openConnection();
-        InputStreamReader in =new InputStreamReader(yc.getInputStream());
+        InputStreamReader in = new InputStreamReader(yc.getInputStream());
 
         ICalReader reader = new ICalReader(in);
 
         List<ICalendar> calendarList = reader.readAll();
         reader.close();
         List<RaplaCalEvent> list = new ArrayList<>();
-        if(calendarList == null || calendarList.isEmpty()){
+        if (calendarList == null || calendarList.isEmpty()) {
             logger.info("Calendar is empty or read error ?");
             return new ArrayList<>();
         }
@@ -196,38 +211,109 @@ public class RaplaCalendar implements WidgetInterface{
         VTimezone timezone = (VTimezone) calendarList.get(0).getTimezoneInfo().getComponents().toArray()[0];
         String tzstr = timezone.getTimezoneId().getValue();
         int offset = LocalDateTime.now().atZone(ZoneId.of(tzstr)).getOffset().getTotalSeconds();
-        for(VEvent event : calendarList.get(0).getEvents()){
+        for (VEvent event : calendarList.get(0).getEvents()) {
             Calendar lastModified = Calendar.getInstance();
             lastModified.setTime(event.getLastModified().getValue());
             lastModified.add(Calendar.SECOND, offset);
-            list.add(new RaplaCalEvent(lastModified.getTime(), event.getCreated().getValue().getTime(), event.getDateStart().getValue().getTime(), event.getDateTimeStamp().getValue().getTime(), event.getDateEnd().getValue().getTime(), event.getUid().getValue(), event.getSummary().getValue(), event.getLocation().getValue()));
+            RaplaCalEvent baseEvent = new RaplaCalEvent(lastModified.getTime(), event.getCreated().getValue().getTime(), event.getDateStart().getValue().getTime(), event.getDateTimeStamp().getValue().getTime(), event.getDateEnd().getValue().getTime(), event.getUid().getValue(), event.getSummary().getValue(), event.getLocation().getValue());
+            list.add(baseEvent);
+
+            if (event.getRecurrenceRule() != null) {
+                Recurrence recurrence = event.getRecurrenceRule().getValue();
+
+                Calendar rollingStartDate = Calendar.getInstance();
+                rollingStartDate.setTime(event.getDateStart().getValue());
+
+                Calendar rollingEndDate = Calendar.getInstance();
+                rollingEndDate.setTime(event.getDateEnd().getValue());
+
+                List<Calendar> exceptionCalendars = new ArrayList<>();
+                for (ExceptionDates exDate : event.getExceptionDates()) {
+                    for (ICalDate date : exDate.getValues()) {
+                        Calendar tempDate = Calendar.getInstance();
+                        tempDate.setTime(date);
+                        exceptionCalendars.add(tempDate);
+                    }
+                }
+
+                Calendar enDate = Calendar.getInstance();
+                enDate.setTime(recurrence.getUntil());
+                int freq = -1;
+                switch (recurrence.getFrequency()){
+                    case SECONDLY:
+                        freq = Calendar.SECOND;
+                        break;
+                    case MINUTELY:
+                        freq = Calendar.MINUTE;
+                        break;
+                    case HOURLY:
+                        freq = Calendar.HOUR;
+                        break;
+                    case DAILY:
+                        freq = Calendar.DATE;
+                        break;
+                    case WEEKLY:
+                        freq = Calendar.WEEK_OF_YEAR;
+                        break;
+                    case MONTHLY:
+                        freq = Calendar.MONTH;
+                        break;
+                    case YEARLY:
+                        freq = Calendar.YEAR;
+                        break;
+                }
+                
+                if(freq == -1){
+                    logger.error("Recurrence frequency unknown : " + recurrence.getFrequency());
+                    break;
+                }
+
+                while (rollingStartDate.before(enDate)) {
+                    rollingStartDate.add(Calendar.DATE, recurrence.getInterval());
+                    rollingEndDate.add(Calendar.DATE, recurrence.getInterval());
+                    if (!isExceptionDay(rollingStartDate, exceptionCalendars)) {
+                        RaplaCalEvent tempEvent = new RaplaCalEvent(baseEvent);
+                        tempEvent.dtstart = rollingStartDate.getTimeInMillis() / 1000;
+                        tempEvent.dtend = rollingEndDate.getTimeInMillis() / 1000;
+                        list.add(tempEvent);
+                    }
+
+                }
+            }
         }
 
         return list;
     }
 
+    private boolean isExceptionDay(Calendar date, List<Calendar> exceptionDates) {
+        for (Calendar exDate : exceptionDates) {
+            if (exDate.get(Calendar.DAY_OF_YEAR) == date.get(Calendar.DAY_OF_YEAR) && exDate.get(Calendar.YEAR) == date.get(Calendar.YEAR))
+                return true;
+        }
+        return false;
+    }
+
     public boolean pingHost(String url, int timeout) {
         boolean isSSL = false;
-        if(url.startsWith("https")){
+        if (url.startsWith("https")) {
             url = url.replace("https://", "");
             isSSL = true;
-        }else{
+        } else {
             url = url.replace("http://", "");
         }
         int endHost = url.indexOf('/');
         String host;
-        if(endHost != -1){
+        if (endHost != -1) {
             host = url.substring(0, endHost);
-        }
-        else
+        } else
             host = url;
 
         int port;
-        if(host.contains(":")){
+        if (host.contains(":")) {
             String portStr = host.substring(host.indexOf(':')).replace(":", "");
             port = Integer.parseInt(portStr);
             host = host.substring(0, host.indexOf(':'));
-        }else{
+        } else {
             port = isSSL ? 443 : 80;
 
         }
