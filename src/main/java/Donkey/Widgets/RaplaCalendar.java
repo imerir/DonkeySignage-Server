@@ -116,6 +116,8 @@ public class RaplaCalendar implements WidgetInterface {
                 return true;
             HashMap<String, Object> conf = Json.loadObject(param);
             HashMap<String, String> calendars = (HashMap<String, String>) conf.get("URLS");
+            if(calendars == null)
+                return false;
             int totalSize = 0;
             for (Map.Entry<String, String> entry : calendars.entrySet()) {
                 try {
@@ -262,7 +264,7 @@ public class RaplaCalendar implements WidgetInterface {
                         freq = Calendar.YEAR;
                         break;
                 }
-                
+
                 if(freq == -1){
                     logger.error("Recurrence frequency unknown : " + recurrence.getFrequency());
                     break;
