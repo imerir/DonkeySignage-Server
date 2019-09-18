@@ -52,6 +52,18 @@ public class TemplateController {
         model.addAttribute("template", templateRepository.getAllBy());
         return "Media/media";
     }
+    /**
+     * Display template list page
+     * @param model
+     * @param authentication
+     * @return media.html
+     */
+    @RequestMapping(value = "/templateList", method = RequestMethod.GET)
+    public String getTemplateList(Model model, Authentication authentication) {
+
+        model.addAttribute("template", templateRepository.getAllBy());
+        return "Media/templateList";
+    }
 
     /**
      * Display form for adding a widget to a template
