@@ -13,11 +13,6 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
     <link href="/css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
     <style>
-        @media only screen and (min-width: 993px) {
-            main {
-                padding-right: 300px !important;
-            }
-        }
 
         .customScroll::-webkit-scrollbar {
             width: 6px;
@@ -32,6 +27,25 @@
             background: #ddd;
             border-radius: 15px;
         }
+        #slide-edit{
+            margin-top: 0;
+            height: 100vh;
+        }
+
+
+        @media only screen and (min-width : 601px) {
+            #slide-edit{
+                width: 70%;
+            }
+        }
+
+        @media only screen and (max-width : 600px) {
+            #slide-edit{
+                width: 100%;
+            }
+        }
+
+
     </style>
 
 
@@ -43,58 +57,81 @@
 </header>
 
 <main class="" style="margin-left: 5px; margin-right: 5px;">
+    <div class="row">
+        <div class="col s12 m10 offset-m1">
+            <ul class="collection with-header z-depth-1">
+                <a class="collection-item"
+                   href="/media"><i
+                        class="material-icons">arrow_back</i> </a>
+                <li class="collection-header">
+                    <h4>
+                        <i class="material-icons left blue-text" style="font-size: 40px">description</i>
+                        <b th:text="#{media.template}"></b>
+                    </h4>
+                </li>
+                <li class="collection-item">
+                    <div class="row">
+                        <div class="input-field col s10 offset-s1">
+                            <input class="editableTemplate grey-text text-darken-2" placeholder="Placeholder" id="name"
+                                   type="text"
+                                   disabled="disabled" th:value="${template.getName()}"/>
+                            <label for="name" class="grey-text" th:text="#{form.name}"></label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col s10 offset-s1">
+                            <ul class="collection with-header">
+                                <li class="collection-header"><h4 th:text="#{media.widgetList}"></h4></li>
+                                <th:block th:each="widgetConfig : ${widgetConfList}">
 
-    <div class="card-panel col s10 offset-s1">
-        <div class="row">
-            <div class="row">
-                <div class="col s12 center">
-                    <h2 th:utext="#{media.template}"></h2>
-                </div>
-            </div>
-            <div class="row">
-                <div class="divider col s10 offset-s1"></div>
-            </div>
+                                    <a th:href="${'#' + widgetConfig.getId()}" class="collection-item widget_item"
+                                       th:id="${widgetConfig.getId()}"
+                                       th:text="${widgetConfig.getName()}">
+                                    </a>
 
-            <div class="input-field col s10 offset-s1">
-                <input class="editableTemplate grey-text text-darken-2" placeholder="Placeholder" id="name" type="text"
-                       disabled="disabled" th:value="${template.getName()}"/>
-                <label for="name" class="grey-text" th:text="#{form.name}"></label>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col s10 offset-s1">
-                <ul class="collection with-header">
-                    <li class="collection-header"><h4 th:text="#{media.widgetList}"></h4></li>
-                    <th:block th:each="widgetConfig : ${widgetConfList}">
+                                </th:block>
+                            </ul>
+                        </div>
 
-                        <a th:href="${'#' + widgetConfig.getId()}" class="collection-item widget_item"
-                           th:id="${widgetConfig.getId()}"
-                           th:text="${widgetConfig.getName()}">
-                        </a>
+                        <div class="row">
+                            <div class="col s12 center">
+                                <a class="waves-effect waves-light btn modal-trigger blue " href="#addWidgetToTemplate"
+                                   th:utext="#{media.addWidget}"></a>
+                            </div>
+                        </div>
 
-                    </th:block>
-                </ul>
-            </div>
-
-            <div class="row">
-                <div class="col s12 center">
-                    <a class="waves-effect waves-light btn modal-trigger blue " href="#addWidgetToTemplate"
-                       th:utext="#{media.addWidget}"></a>
-                </div>
-            </div>
-
-            <div class="row hide-to-edit">
-                <div class="col s12 center">
-                    <a class="waves-effect waves-light btn modal-trigger red" href="#delModal"
-                       th:utext="#{form.delete}"></a>
-                </div>
-            </div>
+                        <div class="row hide-to-edit">
+                            <div class="col s12 center">
+                                <a class="waves-effect waves-light btn modal-trigger red" href="#delModal"
+                                   th:utext="#{form.delete}"></a>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
         </div>
     </div>
 
+
     <!-- Right side, edit-->
-    <ul id="slide-edit" class="sidenav sidenav-fixed customScroll"
-        style="padding-top: 15px; margin-bottom: 0; padding-bottom: 0 ">
+    <ul id="slide-edit" class="sidenav customScroll"
+        style="padding-top: 15px; margin-bottom: 0; padding-bottom: 0">
+        <div class="row">
+            <div class="col s12 ">
+                <h5>
+                    <i class="material-icons left blue-text" style="font-size: 30px">widgets</i>
+                    <b th:text="#{media.widget}"></b>
+                    <span class="right">
+                            <a class="btn red waves-effect" href="#" id="close-edit-btn"><i class="material-icons"
+                                                                                style="font-size: 2rem !important;">close</i></a>
+                        </span>
+
+                </h5>
+
+            </div>
+            <div class="col s12 divider"></div>
+        </div>
+
         <th:block th:each="widgetConfig : ${widgetConfList}">
             <div th:classappend="${'widget_' + widgetConfig.getId()}" class="modify-conf" hidden="hidden">
                 <div class="row">
@@ -152,6 +189,7 @@
                     </div>
 
 
+                    <!--                    Custom Config               -->
                     <th:block th:with="wInfo=${widgets[widgetConfig.getWidgetId()]}">
                         <!--/*@thymesVar id="wInfo" type="Donkey.Widgets.WidgetInterface"*/-->
                         <th:block th:each="confOrdered : ${wInfo.getParam()}">
@@ -194,7 +232,7 @@
                                 <th:block
                                         th:if="${confEdit.getType() == T(Donkey.Widgets.ConfType).MEDIA and confEdit.isList()}">
 
-                                    <div class="col s12 card-panel">
+                                    <div class="col s10 offset-s1 card-panel">
                                         <div class="row" style="margin-top: 5px;">
                                             <div class="col s12 center">
                                                 <h5 th:text="${#strings.capitalize(confEdit.getName())}"></h5>
@@ -231,7 +269,7 @@
                                 <th:block
                                         th:if="${confEdit.getType() == T(Donkey.Widgets.ConfType).MAP }">
 
-                                    <div class="col s12 card-panel">
+                                    <div class="col s10 offset-s1 card-panel">
                                         <div class="row" style="margin-top: 5px;">
                                             <div class="col s12 center">
                                                 <h6 th:text="${#strings.capitalize(confEdit.getName())}"></h6>

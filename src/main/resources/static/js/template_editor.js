@@ -1,8 +1,10 @@
 let selectedEditWidget = -1;
-
+let slide_edit;
 
 
 function templateEditorListeners() {
+
+
 
     $('#deleteTemplateBtn').click(function () {
         let settings = {
@@ -30,16 +32,29 @@ function templateEditorListeners() {
             window.location.reload();
         });
     });
+    let side = document.querySelectorAll('#slide-edit');
+    M.Sidenav.init(side, {edge: 'right', onCloseStart : onSideEditClose});
+
+    slide_edit = M.Sidenav.getInstance(document.querySelector("#slide-edit"));
     let listWidget = $('.widget_item');
 
+    /**
+     * Listen for click on one item in the list and open the side nav for editing
+     */
     listWidget.click(function () {
         let id = $(this)[0].id;
         listWidget.removeClass("active");
         $(this).addClass("active");
         $(".modify-conf").attr("hidden", "hidden");
         $('.widget_' + id).removeAttr("hidden");
+        slide_edit.open();
         selectedEditWidget = id;
     });
+
+    $("#close-edit-btn").click(function () {
+        slide_edit.close();
+    });
+
 
 
     let editInputs = $(".listen-edit");
@@ -155,4 +170,9 @@ function checkEditField(confInput) {
     else
         $(".modify-submit_"+selectedEditWidget).addClass("disabled");
 
+}
+
+function onSideEditClose(){
+    window.location.hash = "";
+    $('.widget_item').removeClass("active");
 }

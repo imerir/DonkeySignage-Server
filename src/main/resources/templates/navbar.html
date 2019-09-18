@@ -55,7 +55,7 @@
         </div>
 
         <th:block th:if="${page != 'login'}">
-            <ul id="side_nav" class="sidenav sidenav-fixed">
+            <ul id="side_nav" class="sidenav sidenav-fixed" style="z-index: 10">
                 <th:block th:if="${user?.isAdmin()}">
                     <li th:classappend="${page == 'screenRegister'? 'active' : ''}">
                         <a href="/screenRegister"  th:text="#{screenregister.screenregister}"></a>
