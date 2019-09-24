@@ -280,7 +280,6 @@
                 "</div>";
         }
         $('#grid_' + name + '_$id').append(html);
-        return (now > start && now < end);
 
     }
 
@@ -318,11 +317,19 @@
     }
 
 
-    function needUpdate_$id(lastActiveEvent) {
-        let now = new Date(Date.now());
-        let start = new Date(lastActiveEvent.dtstart * 1000);
-        let end = new Date(lastActiveEvent.dtend * 1000);
-        return !(now > start && now < end);
+    function needUpdate_$id() {
+        let currentActiveEvents = getActivesEvents_$id();
+        for( let name in currentActiveEvents){
+            let current = currentActiveEvents[name];
+            let last = activeEvents_$id[name];
+            if(current == null && last == null)
+                return false;
+            if(current != null && last != null){
+                return current.dtstart !== last.dtstart && current.dtend !== current.dtend;
+            }
+            else
+                return true;
+        }
     }
 
     function updateDisplay_$id() {
@@ -341,10 +348,30 @@
         }
     }
 
-
+    /**
+     * Draw All event for all calendar
+     */
     function drawEvents_$id() {
         let now = new Date(Date.now());
-        let toShow = {};
+        let toShow = getWeekEvent_$id();
+
+        for (let name in toShow) {
+            let list = toShow[name];
+            list.sort(compareDate_$id);
+            $('#grid_' + name + '_$id').empty();
+            list.forEach(function (ev) {
+                fillCalendar_$id(name, ev, now, toRemoveStart_$id);
+
+            })
+        }
+        activeEvents_$id = getActivesEvents_$id();
+    }
+
+    /**
+     * Return all the event on this week
+     */
+    function getWeekEvent_$id(){
+        let toReturn = {};
         for (let name in calendars_$id) {
             let ev = calendars_$id[name];
             if (ev != null) {
@@ -352,8 +379,8 @@
                     let start = new Date(event.dtstart * 1000);
                     let end = new Date(event.dtend * 1000);
                     if (start > monday_$id && start < sunday_$id) {
-                        if (toShow[name] === undefined)
-                            toShow[name] = [];
+                        if (toReturn[name] === undefined)
+                            toReturn[name] = [];
                         let dayOffset = getDayOffset_$id(end, start);
                         if(dayOffset > 1){
                             let start_end = new Date(start.getTime());
@@ -367,7 +394,7 @@
                                         summary: event.summary,
                                         location: event.location
                                     };
-                                    toShow[name].push(tmp);
+                                    toReturn[name].push(tmp);
                                     start.setDate(start.getDate() + 1);
                                     start_end.setDate(start_end.getDate() + 1);
                                 }
@@ -377,7 +404,7 @@
                             }
 
                         }else{
-                            toShow[name].push(event);
+                            toReturn[name].push(event);
                         }
 
                     }
@@ -386,18 +413,31 @@
                 toShow[name] = [];
             }
         }
+        return toReturn;
+    }
 
-        for (let name in toShow) {
-            let list = toShow[name];
+    /**
+     * Return an object that contain the active event of each calendar
+     */
+    function getActivesEvents_$id(){
+        let active = {};
+        let weekCal = getWeekEvent_$id();
+        for (let name in weekCal) {
+            let list = weekCal[name];
+            active[name] = null;
             list.sort(compareDate_$id);
-            $('#grid_' + name + '_$id').empty();
-            list.forEach(function (ev) {
-                let activeEv = fillCalendar_$id(name, ev, now, toRemoveStart_$id);
-                if (activeEv)
-                    activeEvents_$id[name] = ev;
+            let now = new Date(Date.now());
+            list.some(function (ev) {
+                let start = new Date(ev.dtstart * 1000);
+                let end = new Date(ev.dtend * 1000);
+                if((now > start && now < end)){
+                    active[name] = ev;
+                    return true;
+                }
+            });
 
-            })
         }
+        return active;
     }
 
     function nextGrid_$id() {
