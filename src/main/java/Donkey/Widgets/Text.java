@@ -49,7 +49,8 @@ public class Text implements WidgetInterface{
     public List<WidgetConfDefinition> getParam() {
         WidgetConfDefinition message = new WidgetConfDefinition("message", "Message", ConfType.TEXT, true, false, false, "", "",  null);
         WidgetConfDefinition font_size = new WidgetConfDefinition("font_size", "Font Size", ConfType.NUMBER, true, false, false, "12", "",null);
-        return Arrays.asList(message, font_size);
+        WidgetConfDefinition color = new WidgetConfDefinition("color", "Color", ConfType.COLOR, false, false, false, "#000000", "",null);
+        return Arrays.asList(message, font_size, color);
     }
 
     @Override
@@ -60,6 +61,7 @@ public class Text implements WidgetInterface{
         Map<String, WidgetConfDefinition> map = new HashMap<>();
         map.put("message", new WidgetConfDefinition("message", "Message",ConfType.TEXT, true, false, false, parsed.get("message"), (String) parsed.get("message"), null));
         map.put("font_size", new WidgetConfDefinition("font_size", "Font Size", ConfType.NUMBER, true, false, false, parsed.get("font_size"), ((Integer)parsed.get("font_size")).toString(),  null));
+        map.put("color", new WidgetConfDefinition("color", "Color", ConfType.COLOR, false, false, false, parsed.get("color"), (String) parsed.get("color"),null));
         return  map;
     }
 

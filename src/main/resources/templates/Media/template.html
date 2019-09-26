@@ -27,20 +27,21 @@
             background: #ddd;
             border-radius: 15px;
         }
-        #slide-edit{
+
+        #slide-edit {
             margin-top: 0;
             height: 100vh;
         }
 
 
-        @media only screen and (min-width : 601px) {
-            #slide-edit{
+        @media only screen and (min-width: 601px) {
+            #slide-edit {
                 width: 70%;
             }
         }
 
-        @media only screen and (max-width : 600px) {
-            #slide-edit{
+        @media only screen and (max-width: 600px) {
+            #slide-edit {
                 width: 100%;
             }
         }
@@ -123,7 +124,7 @@
                     <b th:text="#{media.widget}"></b>
                     <span class="right">
                             <a class="btn red waves-effect" href="#" id="close-edit-btn"><i class="material-icons"
-                                                                                style="font-size: 2rem !important;">close</i></a>
+                                                                                            style="font-size: 2rem !important;">close</i></a>
                         </span>
 
                 </h5>
@@ -208,6 +209,20 @@
                                                th:value="${confEdit.getValue()}"/>
                                         <label th:for="${'modify_custom_' + widgetConfig.getId() + '_' + confEdit.getId()}"
                                                th:text="${#strings.capitalize(confEdit.getName())}"></label>
+                                    </div>
+                                </th:block>
+                                <th:block
+                                        th:if="${confEdit.getType() == T(Donkey.Widgets.ConfType).COLOR }">
+                                    <div class="input-field col s10 offset-s1 valign-wrapper" style="margin-top: 0">
+                                        <p th:text="${#strings.capitalize(confEdit.getName())} + ': ' " style="display: inline; margin-right: 10px; color: #9e9e9e" ></p>
+                                        <input class="validate listen-edit valid"
+                                               th:classappend="${'modify_custom_' + widgetConfig.getId()}"
+                                               type="color"
+                                               th:id="${'modify_custom_' + widgetConfig.getId() + '_' + confEdit.getId()}"
+                                               th:attr="data-name=${confEdit.getId()}"
+                                               th:value="${confEdit.getValue()}"
+                                                style="width: 100px; height: 30px"/>
+
                                     </div>
                                 </th:block>
                                 <th:block th:if="${confEdit.getType()  == T(Donkey.Widgets.ConfType).BOOL}">

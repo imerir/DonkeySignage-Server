@@ -5,5 +5,7 @@ public enum ConfType {
     TEXT,
     NUMBER,
     BOOL,
-    MAP
+    MAP,
+    MAP_WITH_COLOR,
+    COLOR
 }

@@ -1,6 +1,6 @@
 <div id="$id" class="valign-wrapper" style="width: 100%; height: 100%">
     <div class="center-align valign-wrapper" style="width: 100%; height: 100%">
-        <h1 id="text_$id" class="truncate" style="font-size: $font_size px; margin: 0;text-align: center; width: 100%">$message</h1>
+        <h1 id="text_$id" class="truncate" style="font-size: $font_size px; margin: 0;text-align: center; width: 100%; color: $color">$message</h1>
     </div>
 </div>
 
@@ -10,7 +10,7 @@
         $("#$id").each(function () {
             $(this)[0].innerHTML = $(this)[0].innerHTML.replace(/\$message/g, param.message);
             $(this)[0].innerHTML = $(this)[0].innerHTML.replace(/\$font_size/g, param.font_size);
-
+            $(this)[0].innerHTML = $(this)[0].innerHTML.replace(/\$color/g, param.color);
         });
     });
 
