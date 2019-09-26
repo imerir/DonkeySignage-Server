@@ -15,4 +15,5 @@ public interface WidgetConfigRepository extends CrudRepository<WidgetConfigEntit
     WidgetConfigEntity getById(int id);
     List<WidgetConfigEntity> getAllByTemplateId(int id);
     List<WidgetConfigEntity> getAllBy();
+    List<WidgetConfigEntity> getAllByWidgetId(String id);
 }

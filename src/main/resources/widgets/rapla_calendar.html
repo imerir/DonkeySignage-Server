@@ -215,7 +215,7 @@
     }
 
 
-    function fillCalendar_$id(name, ev, now, toRemoveStart) {
+    function fillCalendar_$id(name, ev, now, toRemoveStart, color) {
         let start = new Date(ev.dtstart * 1000);
         let end = new Date(ev.dtend * 1000);
         if(!weekend_$id){
@@ -240,7 +240,7 @@
         let options = {hour: "numeric", minute: "numeric"};
         let html;
         if (end.getHours() - start.getHours() >= 2) {
-            html = "<div class='" + ((now > start && now < end) ? "activeDay" : "") + " calendarCase' style='grid-area: " + startPos + " / " + dayPos + " / " + endPos + "/ " + dayPos + ";text-align: center'>" +
+            html = "<div class='" + ((now > start && now < end) ? "activeDay" : "") + " calendarCase' style='grid-area: " + startPos + " / " + dayPos + " / " + endPos + "/ " + dayPos + ";text-align: center; background-color: "+ color +"D9'>" +
                 "<div class='row'>" +
                 "<div class='col s12'>" +
                 start.toLocaleString("fr-FR", options) + " - " + end.toLocaleTimeString("fr-FR", options) +
@@ -266,7 +266,7 @@
                 "</div>" +
                 "</div>";
         } else {
-            html = "<div class='" + ((now > start && now < end) ? "activeDay" : "") + " calendarCase' style='grid-area: " + startPos + " / " + dayPos + " / " + endPos + "/ " + dayPos + ";text-align: center'>" +
+            html = "<div class='" + ((now > start && now < end) ? "activeDay" : "") + " calendarCase' style='grid-area: " + startPos + " / " + dayPos + " / " + endPos + "/ " + dayPos + ";text-align: center; background-color: "+ color +"D9'>" +
                 "<div class='row'>" +
                 "<div class='col s12'>" +
                 start.toLocaleString("fr-FR", options) + " - " + places +
@@ -360,7 +360,7 @@
             list.sort(compareDate_$id);
             $('#grid_' + name + '_$id').empty();
             list.forEach(function (ev) {
-                fillCalendar_$id(name, ev, now, toRemoveStart_$id);
+                fillCalendar_$id(name, ev, now, toRemoveStart_$id, calendars_$id[name].color);
 
             })
         }
@@ -373,7 +373,7 @@
     function getWeekEvent_$id(){
         let toReturn = {};
         for (let name in calendars_$id) {
-            let ev = calendars_$id[name];
+            let ev = calendars_$id[name].events;
             if (ev != null) {
                 ev.forEach(function (event) {
                     let start = new Date(event.dtstart * 1000);

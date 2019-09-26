@@ -58,16 +58,16 @@ public class RaplaCalendar implements WidgetInterface {
 
         try {
             HashMap<String, Object> conf = Json.loadObject(paramStr);
-            HashMap<String, String> calendars = (HashMap<String, String>) conf.get("URLS");
-            HashMap<String, List<RaplaCalEvent>> convertedCal = new HashMap<>();
+            HashMap<String, HashMap<String, String>> calendars = (HashMap<String, HashMap<String, String>>) conf.get("URLS");
+            HashMap<String, RaplaContainer> convertedCal = new HashMap<>();
             //check no cal
-            for (Map.Entry<String, String> entry : calendars.entrySet()) {
+            for (Map.Entry<String, HashMap<String, String>> entry : calendars.entrySet()) {
                 List<RaplaCalEvent> events = null;
                 try {
-                    events = convertIcal(entry.getValue());
+                    events = convertIcal(entry.getValue().get("value"));
                 } catch (IOException ignored) {
                 }
-                convertedCal.put(entry.getKey(), events);
+                convertedCal.put(entry.getKey(), new RaplaContainer(entry.getKey(), events, entry.getValue().get("color")));
             }
             HashMap<String, Object> toReturn = new HashMap<>();
             toReturn.put("day_start", conf.get("day_start"));
@@ -85,7 +85,7 @@ public class RaplaCalendar implements WidgetInterface {
     @JsonIgnore
     @Override
     public List<WidgetConfDefinition> getParam() {
-        WidgetConfDefinition url = new WidgetConfDefinition("URLS", "Calendar name : Calendar URL", ConfType.MAP, true, false, false, "", "", null);
+        WidgetConfDefinition url = new WidgetConfDefinition("URLS", "Calendar name : Calendar URL", ConfType.MAP_WITH_COLOR, true, false, false, "", "", null);
         WidgetConfDefinition dayStart = new WidgetConfDefinition("day_start", "Day start at (Hour):", ConfType.NUMBER, true, false, false, "7", "", null);
         WidgetConfDefinition dayEnd = new WidgetConfDefinition("day_end", "Day end at (hour):", ConfType.NUMBER, true, false, false, "19", "", null);
         WidgetConfDefinition weekEnd = new WidgetConfDefinition("weekend", "Show weekend:", ConfType.BOOL, true, false, false, "true", "", null);
@@ -97,7 +97,13 @@ public class RaplaCalendar implements WidgetInterface {
     public Map<String, WidgetConfDefinition> getParam(String jsonValue) throws IOException {
         HashMap<String, Object> parsed = Json.loadObject(jsonValue);
         Map<String, WidgetConfDefinition> map = new HashMap<>();
-        map.put("URLS", new WidgetConfDefinition("URLS", "Calendar name | Calendar URL", ConfType.MAP, true, false, false, parsed.get("URLS"), Json.stringify(parsed.get("URLS")), null));
+        if( parsed.get("URLS") != null) {
+            map.put("URLS", new WidgetConfDefinition("URLS", "Calendar name | Calendar URL", ConfType.MAP_WITH_COLOR, true, false, false, parsed.get("URLS"), Json.stringify(parsed.get("URLS")), null));
+        }
+        else{
+            map.put("URLS", new WidgetConfDefinition("URLS", "Calendar name | Calendar URL", ConfType.MAP_WITH_COLOR, true, false, false, new HashMap<>(), Json.stringify(parsed.get("URLS")), null));
+        }
+
 
         map.put("day_start", new WidgetConfDefinition("day_start", "Day start at (Hour):", ConfType.NUMBER, true, false, false, parsed.get("day_start"), Integer.toString((Integer) parsed.get("day_start")), null));
 
@@ -115,13 +121,13 @@ public class RaplaCalendar implements WidgetInterface {
             if (lastEdit == null)
                 return true;
             HashMap<String, Object> conf = Json.loadObject(param);
-            HashMap<String, String> calendars = (HashMap<String, String>) conf.get("URLS");
+            HashMap<String, HashMap<String, String>> calendars = (HashMap<String, HashMap<String, String>>) conf.get("URLS");
             if(calendars == null)
                 return false;
             int totalSize = 0;
-            for (Map.Entry<String, String> entry : calendars.entrySet()) {
+            for (Map.Entry<String, HashMap<String, String>> entry : calendars.entrySet()) {
                 try {
-                    List<RaplaCalEvent> events = convertIcal(entry.getValue());
+                    List<RaplaCalEvent> events = convertIcal(entry.getValue().get("value"));
                     totalSize += events.size();
                     for (RaplaCalEvent event : events) {
                         if (event.lastEdit.getTime() > lastEdit.getTime()) //TODO Correct bug whit UTC on rapla ??????
@@ -158,7 +164,7 @@ public class RaplaCalendar implements WidgetInterface {
         return false;
     }
 
-    class RaplaCalEvent {
+    static class RaplaCalEvent {
         public Date lastEdit;
         public long created;
         public long dtstart;
@@ -188,6 +194,18 @@ public class RaplaCalendar implements WidgetInterface {
             this.uid = event.uid;
             this.summary = event.summary;
             this.location = event.location;
+        }
+    }
+
+    public static class RaplaContainer{
+        public String name;
+        public List<RaplaCalEvent> events;
+        public String color;
+
+        public RaplaContainer(String name, List<RaplaCalEvent> events, String color) {
+            this.name = name;
+            this.events = events;
+            this.color = color;
         }
     }
 

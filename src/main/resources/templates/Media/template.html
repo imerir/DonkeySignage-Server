@@ -214,14 +214,15 @@
                                 <th:block
                                         th:if="${confEdit.getType() == T(Donkey.Widgets.ConfType).COLOR }">
                                     <div class="input-field col s10 offset-s1 valign-wrapper" style="margin-top: 0">
-                                        <p th:text="${#strings.capitalize(confEdit.getName())} + ': ' " style="display: inline; margin-right: 10px; color: #9e9e9e" ></p>
+                                        <p th:text="${#strings.capitalize(confEdit.getName())} + ': ' "
+                                           style="display: inline; margin-right: 10px; color: #9e9e9e"></p>
                                         <input class="validate listen-edit valid"
                                                th:classappend="${'modify_custom_' + widgetConfig.getId()}"
                                                type="color"
                                                th:id="${'modify_custom_' + widgetConfig.getId() + '_' + confEdit.getId()}"
                                                th:attr="data-name=${confEdit.getId()}"
                                                th:value="${confEdit.getValue()}"
-                                                style="width: 100px; height: 30px"/>
+                                               style="width: 100px; height: 30px"/>
 
                                     </div>
                                 </th:block>
@@ -282,7 +283,7 @@
                                 </th:block>
 
                                 <th:block
-                                        th:if="${confEdit.getType() == T(Donkey.Widgets.ConfType).MAP }">
+                                        th:if="${confEdit.getType() == T(Donkey.Widgets.ConfType).MAP || confEdit.getType() == T(Donkey.Widgets.ConfType).MAP_WITH_COLOR }">
 
                                     <div class="col s10 offset-s1 card-panel">
                                         <div class="row" style="margin-top: 5px;">
@@ -292,26 +293,31 @@
                                             <ul class="col s12 collection"
                                                 th:id="${'map_' + widgetConfig.getId() + '_' + confEdit.getId()}"
                                                 style="padding: 0px">
-                                                <th:block th:each="calendar : ${confEdit.getValue()}">
+                                                <th:block th:each="item : ${confEdit.getValue()}">
 
-                                                    <li class='collection-item' data-id='' style="padding: 5px">
-                                                        <div class="row" style="margin: 0">
+                                                    <li class='collection-item ' data-id='' style="padding: 5px">
+                                                        <div class="row valign-wrapper" style="margin: 0">
                                                             <div class="col s4">
                                                                 <input type="text" class="listen-map"
                                                                        th:classappend="${'key_' + widgetConfig.getId() + '_' + confEdit.getId()}"
-                                                                       th:value="${#strings.replace(calendar.key, '_', ' ')}"
+                                                                       th:value="${#strings.replace(item.key, '_', ' ')}"
                                                                        th:attr="data-target=${'modify_custom_' + widgetConfig.getId() + '_' + confEdit.getId()}"/>
                                                             </div>
-                                                            <div class="col s8">
+                                                            <div class="col"
+                                                                 th:classappend="${confEdit.getType() == T(Donkey.Widgets.ConfType).MAP ? 's8' : 's7'}">
                                                                 <input type="text" class="listen-map"
                                                                        th:classappend="${'value_' + widgetConfig.getId() + '_' + confEdit.getId()}"
-                                                                       th:value="${calendar.value}"
+                                                                       th:value="${item.value.value}"
                                                                        th:attr="data-target=${'modify_custom_' + widgetConfig.getId() + '_' + confEdit.getId()}"/>
                                                             </div>
-                                                            <!--                                                            <a href='#' class='secondary-content delMedia'-->
-                                                            <!--                                                               th:attr="data-id=${media}, data-target=${'modify_custom_' + widgetConfig.getId() + '_' + confEdit.getId()}, data-list=${'' + widgetConfig.getId() + '_' + confEdit.getId() + '_list'}">-->
-                                                            <!--                                                                <i class='material-icons red-text'>delete</i>-->
-                                                            <!--                                                            </a>-->
+                                                            <div class="col s1 "
+                                                                 th:if="${confEdit.getType() == T(Donkey.Widgets.ConfType).MAP_WITH_COLOR}">
+                                                                <input type="color" class="listen-map" style="width: 100%; height: 30px"
+                                                                       th:classappend="${'color_' + widgetConfig.getId() + '_' + confEdit.getId()}"
+                                                                       th:value="${item.value.color}"
+                                                                       th:attr="data-target=${'modify_custom_' + widgetConfig.getId() + '_' + confEdit.getId()}"/>
+                                                            </div>
+
                                                         </div>
                                                     </li>
                                                 </th:block>
@@ -319,6 +325,7 @@
                                             </ul>
                                             <div class="col s12 center">
                                                 <a class="btn blue waves-effect map_add"
+                                                   th:classappend="${confEdit.getType() == T(Donkey.Widgets.ConfType).MAP_WITH_COLOR ? 'withColor' : ''}"
                                                    th:text="#{form.add}"
                                                    th:attr="data-map=${'map_' + widgetConfig.getId() + '_' + confEdit.getId()}"></a>
                                             </div>
