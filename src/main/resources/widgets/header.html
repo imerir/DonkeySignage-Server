@@ -1,0 +1,110 @@
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css">
+
+<div id="$id" class="valign-wrapper row" style="width: 100%; height: 100%; margin-bottom: 0;margin-top: 2px">
+    <div class="col s2 ">
+        <h3 id="clock_$id"
+            style="margin: 0; margin-left: 30px; font-size: $clock_font_sizepx; color: $clock_color"></h3>
+    </div>
+    <div class="col s8 center">
+        <h3 style="margin: 0; font-size: $text_font_sizepx; color: $text_color">$text</h3>
+    </div>
+    <div class="col s2">
+        <div class="row valign-wrapper" style="margin: 0">
+            <div class="col s5" id="weather_icon_$id" style="padding-right: 0">
+
+            </div>
+            <div class="col s7 center" style="padding-left: 0">
+                <h4 style="margin: 0" id="weather_temp_$id">10°C</h4>
+                <p style="margin: 0" id="weather_text_$id">test</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/js/all.js"></script>
+<!-- TODO add font awesome to the main page-->
+
+<script>
+    let weather_url_$id = "http://api.openweathermap.org/data/2.5/weather?units=metric&lang=$language&q=$weather_city&APPID=$api_key";
+    let param_$id;
+    $.get("/api/getWidgetConf?id=$id", (config) => {
+        param_$id = config.param;
+        if (param_$id.border) {
+            $("#$id").css("border", "black 2px solid");
+            $("#$id").css("border-radius", "10px");
+        }
+        $("#$id").each(function () {
+            $(this)[0].innerHTML = $(this)[0].innerHTML.replace(/\$text_font_size/g, param_$id.text_font_size);
+            $(this)[0].innerHTML = $(this)[0].innerHTML.replace(/\$text_color/g, param_$id.text_color);
+            $(this)[0].innerHTML = $(this)[0].innerHTML.replace(/\$text/g, param_$id.text);
+            $(this)[0].innerHTML = $(this)[0].innerHTML.replace(/\$clock_font_size/g, param_$id.clock_font_size);
+            $(this)[0].innerHTML = $(this)[0].innerHTML.replace(/\$clock_color/g, param_$id.text_color);
+        });
+
+        weather_url_$id = weather_url_$id.replace(/\$weather_city/g, param_$id.weather_city);
+        weather_url_$id = weather_url_$id.replace(/\$api_key/g, param_$id.api_key);
+
+        let lang = navigator.language;
+        if(lang.indexOf('-') !== -1){
+            lang = lang.slice(0, lang.indexOf('-'));
+        }
+        weather_url_$id = weather_url_$id.replace(/\$language/g, lang);
+
+
+        weather();
+        setInterval(weather, 900000); /* Refresh every 15min */
+        clock();
+        setInterval(clock, 1000);
+
+
+    });
+
+
+    function clock() {
+
+        let date = new Date();
+
+        $("#clock_$id").text(date.getHours() + ":" + (date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes()));
+    }
+
+    function weather() {
+        let weather_icon = '<i class="fas $name fa-3x right "></i>';
+        $.get(weather_url_$id, function (data) {
+            let weather_id = data.weather[0].id;
+            if (weather_id === 800) {
+                weather_icon = weather_icon.replace(/\$name/g, "fa-sun orange-text");
+            }
+            else if (weather_id < 300 || (weather_id > 511 && weather_id < 532)){
+                weather_icon = weather_icon.replace(/\$name/g, "fa-bolt orange-text"); /* 09d */
+            }
+            else if (weather_id < 500){
+                weather_icon = weather_icon.replace(/\$name/g, "fa-cloud-showers-heavy grey-text"); /* 09n */
+            }
+            else if (weather_id < 505){
+                weather_icon = weather_icon.replace(/\$name/g, "fa-cloud-sun-rain orange-text"); /* 10n */
+            }
+            else if (weather_id === 511 || weather_id < 700){
+                weather_icon = weather_icon.replace(/\$name/g, "fa-snowflake grey-text"); /* 13n */
+            }
+            else if (weather_id < 800){
+                weather_icon = weather_icon.replace(/\$name/g, "fa-smog grey-text"); /* 50d */
+            }
+            else if (weather_id === 801){
+                weather_icon = weather_icon.replace(/\$name/g, "fa-cloud-sun grey-text"); /* 02d */
+            }
+            else if (weather_id < 804){
+                weather_icon = weather_icon.replace(/\$name/g, "fa-cloud grey-text"); /* 03d && 04d */
+            }
+
+
+            $('#weather_icon_$id').html($(weather_icon));
+            $('#weather_temp_$id').text(Math.round(data.main.temp) + "°C");
+            let text = data.weather[0].description;
+            text = text.charAt(0).toUpperCase() + text.slice(1);
+            $('#weather_text_$id').text(text);
+        });
+    }
+
+
+</script>
