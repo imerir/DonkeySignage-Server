@@ -48,7 +48,7 @@ public class Text implements WidgetInterface{
     @Override
     public List<WidgetConfDefinition> getParam() {
         WidgetConfDefinition message = new WidgetConfDefinition("message", "Message", ConfType.TEXT, true, false, false, "", "",  null);
-        WidgetConfDefinition font_size = new WidgetConfDefinition("font_size", "Font Size", ConfType.NUMBER, true, false, false, "12", "",null);
+        WidgetConfDefinition font_size = new WidgetConfDefinition("font_size", "Font Size", ConfType.NUMBER, true, false, false, "30", "",null);
         WidgetConfDefinition color = new WidgetConfDefinition("color", "Color", ConfType.COLOR, false, false, false, "#000000", "",null);
         return Arrays.asList(message, font_size, color);
     }
