@@ -144,12 +144,8 @@
         let nbrDay = param.weekend ? 7 : 5;
         weekend_$id = param.weekend;
         let now = new Date(Date.now());
-        monday_$id = getMonday_$id(now);
-        sunday_$id = new Date();
-        sunday_$id.setDate(monday_$id.getDate() + 6);
-        sunday_$id.setHours(23);
-        sunday_$id.setMinutes(59);
 
+        updateWeekLimit_$id();
 
         let toShow = {};
         for (let name in calendars_$id) {
@@ -289,7 +285,8 @@
         let diff = d.getDate() - day + (day === 0 ? -6 : 1);
         let result = new Date(d.setDate(diff));
         result.setHours(0);
-        result.setMinutes(1);
+        result.setMinutes(0);
+        result.setSeconds(0);
         console.log(result.toLocaleString("fr-FR"));
         return result;
     }
@@ -372,6 +369,7 @@
      */
     function getWeekEvent_$id(){
         let toReturn = {};
+        updateWeekLimit_$id();
         for (let name in calendars_$id) {
             let ev = calendars_$id[name].events;
             if (ev != null) {
@@ -379,6 +377,7 @@
                     let start = new Date(event.dtstart * 1000);
                     let end = new Date(event.dtend * 1000);
                     if (start > monday_$id && start < sunday_$id) {
+                        debugger;
                         if (toReturn[name] === undefined)
                             toReturn[name] = [];
                         let dayOffset = getDayOffset_$id(end, start);
@@ -452,6 +451,15 @@
 
     function getDayOffset_$id(end, start){
         return Math.floor((end - start) / (1000 * 60 * 60 * 24));
+    }
+
+    function updateWeekLimit_$id(){
+        let now = new Date();
+        monday_$id = getMonday_$id(now);
+        sunday_$id = new Date(monday_$id);
+        sunday_$id.setDate(monday_$id.getDate() + 6);
+        sunday_$id.setHours(23);
+        sunday_$id.setMinutes(59);
     }
 
 
