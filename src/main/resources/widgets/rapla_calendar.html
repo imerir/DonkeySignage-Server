@@ -287,7 +287,6 @@
         result.setHours(0);
         result.setMinutes(0);
         result.setSeconds(0);
-        console.log(result.toLocaleString("fr-FR"));
         return result;
     }
 
@@ -377,7 +376,6 @@
                     let start = new Date(event.dtstart * 1000);
                     let end = new Date(event.dtend * 1000);
                     if (start > monday_$id && start < sunday_$id) {
-                        debugger;
                         if (toReturn[name] === undefined)
                             toReturn[name] = [];
                         let dayOffset = getDayOffset_$id(end, start);

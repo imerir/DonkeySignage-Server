@@ -71,6 +71,7 @@
     function weather() {
         let weather_icon = '<i class="fas $name fa-3x right "></i>';
         $.get(weather_url_$id, function (data) {
+            console.log(data);
             let weather_id = data.weather[0].id;
             if (weather_id === 800) {
                 weather_icon = weather_icon.replace(/\$name/g, "fa-sun orange-text");
