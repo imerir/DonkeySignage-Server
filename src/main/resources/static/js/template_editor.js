@@ -13,7 +13,7 @@ function templateEditorListeners() {
         };
         $.ajax(settings).done(function (response) {
             console.log(response);
-            window.location.replace("/media");
+            window.location.replace("/templateList");
         });
 
     });

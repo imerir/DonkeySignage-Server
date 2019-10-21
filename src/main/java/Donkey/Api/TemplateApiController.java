@@ -5,6 +5,7 @@ import Donkey.Api.JSON.Error;
 import Donkey.Database.Entity.ScreenEntity;
 import Donkey.Database.Entity.TemplateEntity;
 import Donkey.Database.Entity.WidgetConfigEntity;
+import Donkey.Database.Repository.ScreenRepository;
 import Donkey.Database.Repository.TemplateRepository;
 import Donkey.Database.Repository.WidgetConfigRepository;
 import Donkey.WebSocket.WebSocketUtils;
@@ -26,12 +27,14 @@ public class TemplateApiController {
 
     private Logger logger = LogManager.getLogger();
     private final TemplateRepository templateRepository;
+    private final ScreenRepository screenRepository;
     private final WidgetConfigRepository widgetConfigRepository;
 
     @Autowired
-    public TemplateApiController(TemplateRepository templateRepository, WidgetConfigRepository widgetConfigRepository) {
+    public TemplateApiController(TemplateRepository templateRepository, WidgetConfigRepository widgetConfigRepository, ScreenRepository screenRepository) {
         this.templateRepository = templateRepository;
         this.widgetConfigRepository = widgetConfigRepository;
+        this.screenRepository = screenRepository;
     }
 
 
@@ -101,6 +104,16 @@ public class TemplateApiController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
+        // Remove all reference to this template in screens
+        List<ScreenEntity> screens = screenRepository.getScreenEntitiesByTemplate(inDb);
+        for(ScreenEntity screen : screens){
+            screen.setTemplate(null);
+        }
+        screenRepository.save(screens);
+
+        //Remove all widgetconfig of this template
+        List<WidgetConfigEntity> widgets = widgetConfigRepository.getAllByTemplate(inDb);
+        widgetConfigRepository.delete(widgets);
 
         templateRepository.delete(inDb);
 
