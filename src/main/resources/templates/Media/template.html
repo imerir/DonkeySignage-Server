@@ -72,11 +72,23 @@
                 </li>
                 <li class="collection-item">
                     <div class="row">
-                        <div class="input-field col s10 offset-s1">
-                            <input class="editableTemplate grey-text text-darken-2" placeholder="Placeholder" id="name"
-                                   type="text"
-                                   disabled="disabled" th:value="${template.getName()}"/>
-                            <label for="name" class="grey-text" th:text="#{form.name}"></label>
+                        <div class="col s10 offset-s1">
+                            <div class="row">
+                                <div class="col s10 input-field" style="padding-right: 0">
+                                    <input class="editable grey-text text-darken-2" placeholder="Placeholder" id="name"
+                                           type="text"
+                                           disabled="disabled" th:value="${template.getName()}" />
+                                    <label for="name" class="grey-text" th:text="#{form.name}"></label>
+                                </div>
+
+                                <div class="col s2 input-field hide-to-edit" style="padding-left: 0">
+                                    <a class="btn green" id="edit_btn"><i class="material-icons " >edit</i> </a>
+                                </div>
+                                <div class="col s2 input-field show-to-edit"  hidden="hidden" style="padding-left: 0">
+                                    <a class="btn green" id="confirm_btn"><i class="material-icons " >done</i></a>
+                                </div>
+
+                            </div>
                         </div>
                     </div>
                     <div class="row">
@@ -101,7 +113,7 @@
                             </div>
                         </div>
 
-                        <div class="row hide-to-edit">
+                        <div class="row">
                             <div class="col s12 center">
                                 <a class="waves-effect waves-light btn modal-trigger red" href="#delModal"
                                    th:utext="#{form.delete}"></a>
@@ -554,6 +566,47 @@
 <script th:inline="javascript">
     /*<![CDATA[*/
     var templateId = [[${template.getId()}]];
+
+
+    if(sessionStorage.getItem("success") != null && sessionStorage.getItem("success") !== "null"){
+        sessionStorage.setItem("success", null);
+        M.toast({
+            html: " <i class=\"material-icons\" style='margin-right: 10px'>check</i> Change saved",
+            classes: 'green',
+            displayLength: 4000
+        });
+    }
+
+
+    function sendForm() {
+        let name = $('#name').val();
+
+        var settings = {
+            url: "/api/template?id="+templateId,
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            data: JSON.stringify({
+                name: name,
+            })
+        };
+
+        console.log(settings);
+        $.ajax(settings).done(function (response) {
+            console.log(response);
+            sessionStorage.setItem("success", "true");
+            window.location.reload();
+        }).fail(function (response) {
+            console.log(response);
+            M.toast({
+                html: " <i class=\"material-icons\" style='margin-right: 10px'>warning</i> Update fail",
+                classes: 'red',
+                displayLength: 4000
+            });
+        });
+    }
+
     /*]]>*/
 </script>
 <script th:src="@{/js/MediaModal.js}"></script>
@@ -561,6 +614,13 @@
 <script th:src="@{/js/template_editor.js}"></script>
 <script th:src="@{/js/template_add.js}"></script>
 <script th:src="@{/js/template.js}"></script>
+<script th:src="@{/js/screen_edit.js}"></script>
+
+<script>
+
+
+
+</script>
 
 </body>
 </html>
