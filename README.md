@@ -15,13 +15,16 @@ We use Gradle for this project.
 - [Gradle](https://gradle.org/install/)
 
 ### Environment Variable
+```
+PORT=8080
+DB_URL=jdbc:mysql://localhost:3306/test
+DB_USER=root
+DB_PWS=temp
+DB_MODE=update
+LOG_LEVEL=trace
+OPEN_WEATHER_API_KEY=xxxxxx
+```
 
-1. PORT : 8080
-2. DB_URL : jdbc:mysql://localhost:3306/test
-3. DB_USER : root
-4. DB_PWS : temp
-5. DB_MODE : update
-6. LOG_LEVEL : trace
 
 ### Install Database:
  
