@@ -1,5 +1,8 @@
 # DonkeySignage-Server
 
+Username : admin
+password : donkey
+
 Jenkins Build:<br/>
 [![Build Status](https://jenkins.donkeysignage.imerir.org/buildStatus/icon?job=DonkeySignage-Server%2Fmaster)](https://jenkins.donkeysignage.imerir.org/job/DonkeySignage-Server/job/master/)
 
@@ -19,7 +22,7 @@ We use Gradle for this project.
 PORT=8080
 DB_URL=jdbc:mysql://localhost:3306/test
 DB_USER=root
-DB_PWS=temp
+DB_PWD=temp
 DB_MODE=update
 LOG_LEVEL=trace
 OPEN_WEATHER_API_KEY=xxxxxx
