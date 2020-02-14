@@ -25,7 +25,7 @@ DB_USER=root
 DB_PWD=temp
 DB_MODE=update
 LOG_LEVEL=trace
-OPEN_WEATHER_API_KEY=xxxxxx
+OPEN_WEATHER_API_KEY=65fdeb35f3716ee3e4740f3fcfaa24a3
 ```
 
 
