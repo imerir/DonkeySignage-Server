@@ -22,8 +22,8 @@ public class WidgetConfigEntity {
 
     private String name;
     private String widgetId;
-    private Integer posX;
-    private Integer posY;
+    //private Integer posX;
+    //private Integer posY;
     private Integer sizeWidth;
     private Integer sizeHeight;
 
@@ -52,6 +52,7 @@ public class WidgetConfigEntity {
         this.template = template;
     }
 
+    /*
     public Integer getPosX() {
         return posX;
     }
@@ -67,6 +68,7 @@ public class WidgetConfigEntity {
     public void setPosY(Integer posY) {
         this.posY = posY;
     }
+    */
 
     public Integer getSizeWidth() {
         return sizeWidth;
@@ -101,18 +103,20 @@ public class WidgetConfigEntity {
     }
 
     public boolean checkConf(){
-        return sizeWidth != null && sizeHeight != null && posY != null && posX != null && widgetId != null && param != null;
+        return sizeWidth != null && sizeHeight != null && /*posY != null && posX != null && */ widgetId != null && param != null;
     }
 
     public void update(WidgetConfigEntity widgetConfigEntity){
         if(widgetConfigEntity.param != null)
             this.param = widgetConfigEntity.param;
 
+        /*
         if(widgetConfigEntity.posX != null)
             this.posX = widgetConfigEntity.posX;
 
         if(widgetConfigEntity.posY != null)
             this.posY = widgetConfigEntity.posY;
+        */
 
         if(widgetConfigEntity.sizeHeight != null)
             this.sizeHeight = widgetConfigEntity.sizeHeight;
