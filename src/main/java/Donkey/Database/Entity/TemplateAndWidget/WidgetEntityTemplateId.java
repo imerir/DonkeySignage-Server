@@ -1,12 +1,13 @@
 package Donkey.Database.Entity.TemplateAndWidget;
 
 import Donkey.Database.Entity.UserAndPrivileges.UserScreenPrivilegeId;
-
+import javax.persistence.Embeddable;
 import java.io.Serializable;
 import java.util.Objects;
 
+@Embeddable
 public class WidgetEntityTemplateId implements Serializable {
-    private int widgetEntity;
+    private int widgetConfigEntity;
     private int templateEntity;
 
     public WidgetEntityTemplateId(){
@@ -14,13 +15,13 @@ public class WidgetEntityTemplateId implements Serializable {
     }
 
     public WidgetEntityTemplateId(int widgetEntity, int templateEntity) {
-        this.widgetEntity = widgetEntity;
+        this.widgetConfigEntity = widgetEntity;
         this.templateEntity = templateEntity;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(widgetEntity, templateEntity);
+        return Objects.hash(widgetConfigEntity, templateEntity);
     }
 
     @Override
@@ -31,15 +32,15 @@ public class WidgetEntityTemplateId implements Serializable {
             return false;
 
         WidgetEntityTemplateId that = (WidgetEntityTemplateId) obj;
-        return Objects.equals(widgetEntity, that.widgetEntity) && Objects.equals(templateEntity, that.templateEntity);
+        return Objects.equals(widgetConfigEntity, that.widgetConfigEntity) && Objects.equals(templateEntity, that.templateEntity);
     }
 
     public int getWidgetEntity() {
-        return widgetEntity;
+        return widgetConfigEntity;
     }
 
     public void setWidgetEntity(int widgetEntity) {
-        this.widgetEntity = widgetEntity;
+        this.widgetConfigEntity = widgetEntity;
     }
 
     public int getTemplateEntity() {
