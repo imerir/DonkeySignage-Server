@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${lang}">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+    <!--TODO <meta name="description" content=""/>-->
+    <title>Template - Donkey Signage</title>
+    <link rel="icon"
+          type="image/x-icon"
+          href="/favicon.png"/>
+
+    <!-- CSS  -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+    <link href="/css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+    <style>
+
+        .customScroll::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .customScroll::-webkit-scrollbar-thumb {
+            background: #7e7e7e;
+            border-radius: 15px;
+        }
+
+        .customScroll::-webkit-scrollbar-track {
+            background: #ddd;
+            border-radius: 15px;
+        }
+
+        #slide-edit {
+            margin-top: 0;
+            height: 100vh;
+        }
+
+
+        @media only screen and (min-width: 601px) {
+            #slide-edit {
+                width: 70%;
+            }
+        }
+
+        @media only screen and (max-width: 600px) {
+            #slide-edit {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body class="blue-grey lighten-5">>
+<header>
+    <div th:replace="navbar :: navbar ('Template')"></div>
+</header>
+    WIDGET
+</body>
+</html>

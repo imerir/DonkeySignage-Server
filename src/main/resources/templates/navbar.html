@@ -76,7 +76,9 @@
                 <li th:classappend="${page == 'template'? 'active' : ''}">
                     <a href="/templateList" th:utext="#{media.template}"></a>
                 </li>
-
+                <li th:classappend="${page == 'widget'? 'active' : ''}">
+                    <a href="/widget" th:utext="#{media.widget}"></a>
+                </li>
                 <li>
                     <div class="divider"></div>
                 </li>
