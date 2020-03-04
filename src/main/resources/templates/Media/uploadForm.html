@@ -55,7 +55,8 @@
                 </div>
                 <div class="row">
                     <div class="col s12 center">
-                        <img id="preview" width="180"/>
+                        <img id="previewImg" width="180"/>
+                        <video id="previewVideo" width="180" type="video/mp4" autoplay="true"></video>
                     </div>
                 </div>
                 <div class="row">
@@ -98,8 +99,14 @@
             var reader = new FileReader();
 
             reader.onload = function (e) {
-                $('#preview')
-                    .attr('src', e.target.result);
+                if(input.files[0].name.includes(".mp4")){
+                    $('#previewVideo')
+                        .attr('src', e.target.result);
+                }
+                else{
+                    $('#previewImg')
+                        .attr('src', e.target.result);
+                }
             };
 
             reader.readAsDataURL(input.files[0]);
