@@ -28,7 +28,13 @@ function initMediaModal(ulDivId, inputId, selectedList) {
             if(selectedList.indexOf(elem) !== -1){
 
             }
-            html += "<div class='col s2'><a href='#' class='media-box "+(selectedList.indexOf(elem) !== -1 ? "selected" : "")+"' data-id='"+elem+"'><div class='card-panel "+(selectedList.indexOf(elem) !== -1 ? "green" : "")+"' style='padding: 5px; line-height: 0;'><img class='responsive-img' src='/files/"+elem+"'/> </div></a></div>"
+            console.log(elem);
+            if(elem.includes(".jpg")){
+                html += "<div class='col s2'><a href='#' class='media-box "+(selectedList.indexOf(elem) !== -1 ? "selected" : "")+"' data-id='"+elem+"'><div class='card-panel "+(selectedList.indexOf(elem) !== -1 ? "green" : "")+"' style='padding: 5px; line-height: 0;height: 16vh;'><img class='responsive-img' src='/files/"+elem+"'/> </div></a></div>"
+            }
+            if(elem.includes(".mp4")){
+                html += "<div class='col s2'><a href='#' class='media-box "+(selectedList.indexOf(elem) !== -1 ? "selected" : "")+"' data-id='"+elem+"'><div class='card-panel "+(selectedList.indexOf(elem) !== -1 ? "green" : "")+"' style='padding: 5px; line-height: 0; height: 16vh;'><video class='responsive-video' src='/files/"+elem+"' type=\"video/mp4\" controls=\"true\"></video></div></a></div>"
+            }
         }
 
         mediaDiv.html(html);
