@@ -44,13 +44,14 @@
                     <div class="row" style="margin-top: 20px">
                         <th:block th:each="file : ${files}">
                             <div class="col s2">
-                                <text th:text="${file}"></text>
-                                <div th:if="${#strings.contains(file, '.mp4')}" class="modal-trigger" href="#modal" onclick="setFileToDelete(this)">
-                                    <video th:src="${file}" width="180" type="video/mp4" controls="true"/>
-                                </div>
-                                <div th:if="${#strings.contains(file, '.jpg')}" class="modal-trigger" href="#modal" onclick="setFileToDelete(this)">
-                                    <img class="responsive-img" th:src="${file}"/>
-                                </div>
+
+                                <a th:if="${#strings.contains(file, '.jpg')}" class="modal-trigger" href="#modal" onclick="setFileToDelete(this)"><img class="responsive-img" th:src="${file}"/></a>
+
+                                <a th:if="${#strings.contains(file, '.mp4')}" class="modal-trigger" href="#modal" onclick="setFileToDelete(this)"><video class="responsive-video" th:src="${file}" type="video/mp4" controls="true"/>
+                                    <center><button type="button" class="modal-close waves-effect waves-green btn red"
+                                            th:utext="#{form.delete}"></button></center>
+                                </a>
+
                             </div>
                         </th:block>
                     </div>
@@ -116,7 +117,7 @@
     });
 
     function setFileToDelete(input) {
-        console.log(input.childNodes[0].src);
+        console.log("source : " + input.childNodes[0].src);
         fileToDelete = input.childNodes[0].src;
     }
 
