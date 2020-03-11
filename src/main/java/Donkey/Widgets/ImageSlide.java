@@ -48,13 +48,18 @@ public class ImageSlide implements WidgetInterface {
             for (String image : param.images){
                 File file = new File("upload-dir/" + image);
                 String encoded = Base64.encodeFileToBase64Binary(file);
+                if(image.contains(".jpg")){
+                    converted.add("jpg");
+                }
+                else if(image.contains(".mp4")){
+                    converted.add("mp4");
+                }
                 converted.add(encoded);
 
             }
         } catch (FileNotFoundException e) {
             logger.info("File not found, ignore it.");
         }
-
         param.images = converted;
 
 
