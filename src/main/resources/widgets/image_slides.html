@@ -37,14 +37,17 @@
                     "        </li>";
             }
             if(param.images[i].includes("mp4")){
-                imgHtml += " <li>\n" +
-                    "            <video muted autoplay loop><source src='data:video/mp4;base64," + param.images[i+1] + "'/></video>\n" +
-                    "        </li>";
+                imgHtml +="        <li>\n" +
+                    "            <video id='video' muted autoplay><source src='data:video/mp4;base64," + param.images[i+1] + "'/></video>\n" +
+                    "        </li>" +
+                    "   ";
             }
         }
 
         document.getElementById("$id").querySelector(".slides").innerHTML = imgHtml;
-        let elems = document.querySelectorAll('.slider');
-        M.Slider.init(elems, {height: heigth, indicators: false});
+        var elems = document.querySelectorAll('.slider');
+        M.Slider.init(elems, {height: heigth, indicators: false, interval: 6000});
+
     });
 </script>
+
