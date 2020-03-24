@@ -59,3 +59,20 @@ OPEN_WEATHER_API_KEY=65fdeb35f3716ee3e4740f3fcfaa24a3
 
 ## Jenkins
 - [Jenkins](https://jenkins.donkeysignage.imerir.org)
+
+
+### Install Donkey Project on a new PC
+- Requirement:
+IntelliJ IDEA Ultimate
+Docker-compose
+
+- Open the project with IntelliJ IDEA Ultimate, select Gradle and Finish
+- Go to Run>Edit Configurations, open Environment in Configuration Tab, click on the $ in Environment variables, and then enter all environment variable (see above) and apply
+- Now to install the Database : create a file called docker-compose.yml, and copy-paste inside the file what's written in the "Install Database"
+- Open a terminal inside the folder where the file docker-compose.yml is, use the command ```sudo docker-compose up``` to start the database
+- On the main window of IntelliJ, open Database Tab on the right side and create a new Data Souce with mysql or MariaDB
+- On User write the user username (MYSQL_USER) from the docker-compose file, in our case it's "bot", do the same for the password (MYSQL_PASSWORD) and apply
+
+You can now run the project !
+
+
